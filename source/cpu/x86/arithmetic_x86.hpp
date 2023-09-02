@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cmath>
 #include <memory.h>
 #include <stdio.h>
+#include <cmath>
 
 #include <immintrin.h>
 #include <nmmintrin.h>
@@ -30,7 +30,6 @@ inline void add(float* C, const float* A, const float* B, int size) {
         C[i] = A[i] + B[i];
     }
 }
-
 
 inline void sub(float* C, const float* A, const float* B, int size) {
     int i = 0;
@@ -84,14 +83,13 @@ inline void div(float* C, const float* A, const float* B, int size) {
     }
 }
 
-
 inline void fma(float* D, const float* A, const float* B, const float* C, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_a = _mm256_loadu_ps(A);
         __m256 _v_b = _mm256_loadu_ps(B);
         __m256 _v_c = _mm256_loadu_ps(C);
-        
+
         __m256 _v_d = _mm256_fmadd_ps(_v_a, _v_b, _v_c);
 
         _mm256_storeu_ps(D, _v_d);
@@ -105,7 +103,6 @@ inline void fma(float* D, const float* A, const float* B, const float* C, int si
         D[i] = A[i] * B[i] + C[i];
     }
 }
-
 
 inline void add_scaler(float* C, const float* A, const float B, int size) {
     __m256 _v_b = _mm256_broadcast_ss(&B);
@@ -163,7 +160,6 @@ inline void div_scaler(float* C, const float* A, const float B, int size) {
         C[i] = A[i] * inv_B;
     }
 }
-
 
 }  // namespace kernel
 }  // namespace cpu

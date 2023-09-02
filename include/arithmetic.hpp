@@ -1,7 +1,6 @@
 #pragma once
 
 #include <math.h>
-#include "numhelper.hpp"
 
 namespace fastnum {
 namespace cpu {

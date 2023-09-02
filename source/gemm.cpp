@@ -1,7 +1,7 @@
-#include <algorithm>
 #include "gemm.hpp"
-#include "cpu/mpack_block.hpp"
+#include <algorithm>
 #include "cpu/mma_block.hpp"
+#include "cpu/mpack_block.hpp"
 
 #define MC 144
 #define NC 144
@@ -9,7 +9,6 @@
 
 namespace fastnum {
 namespace cpu {
-
 
 void sgemm_nn(int M, int N, int K, float alpha, const float* A, int lda, const float* B, int ldb, float beta, float* C,
               int ldc) {

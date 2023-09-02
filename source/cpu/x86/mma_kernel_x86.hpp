@@ -10,7 +10,6 @@
 
 #include "vectorize_x86.hpp"
 
-
 namespace fastnum {
 namespace cpu {
 namespace kernel {
@@ -115,8 +114,6 @@ inline void mma_16xn(int N, const float* packed_A, const float* packed_B, int K,
     float* c13_ptr = C + 13 * ldc;
     float* c14_ptr = C + 14 * ldc;
     float* c15_ptr = C + 15 * ldc;
-    
-
 
     for (int k = 0; k < K; ++k) {
         float tmp0 = packed_A[0];
@@ -198,7 +195,7 @@ inline void mma_mx8(int M, const float* packed_A, const float* packed_B, int K, 
 }
 
 inline void mma_mx6(int M, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    for(int k=0; k<K; ++k) {
+    for (int k = 0; k < K; ++k) {
         float b0 = *packed_B++;
         float b1 = *packed_B++;
         float b2 = *packed_B++;
@@ -206,15 +203,15 @@ inline void mma_mx6(int M, const float* packed_A, const float* packed_B, int K, 
         float b4 = *packed_B++;
         float b5 = *packed_B++;
 
-        for(int m=0; m<M; ++m) {
+        for (int m = 0; m < M; ++m) {
             float a = packed_A[m];
-            float c0 = a*b0;
-            float c1 = a*b1;
-            float c2 = a*b2;
-            float c3 = a*b3;
-            float c4 = a*b4;
-            float c5 = a*b5;
-            float* c_ptr = C + m*ldc;
+            float c0 = a * b0;
+            float c1 = a * b1;
+            float c2 = a * b2;
+            float c3 = a * b3;
+            float c4 = a * b4;
+            float c5 = a * b5;
+            float* c_ptr = C + m * ldc;
             c_ptr[0] += c0;
             c_ptr[1] += c1;
             c_ptr[2] += c2;
@@ -228,11 +225,11 @@ inline void mma_mx6(int M, const float* packed_A, const float* packed_B, int K, 
 }
 
 inline void mma_mx1(int M, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    for(int k=0; k<K; ++k) {
+    for (int k = 0; k < K; ++k) {
         float b = *packed_B++;
-        for(int m=0; m<M; ++m) {
+        for (int m = 0; m < M; ++m) {
             float a = packed_A[m];
-            *(C + m*ldc) += a*b;
+            *(C + m * ldc) += a * b;
         }
         packed_A += M;
     }
@@ -259,7 +256,6 @@ inline void mma_mx16(int M, const float* packed_A, const float* packed_B, int K,
         packed_B += 16;
     }
 }
-
 
 inline void mma_8x1(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
     __m256 _v_c0 = _mm256_setzero_ps();
@@ -660,17 +656,17 @@ inline void mma_1x1(const float* packed_A, const float* packed_B, int K, float* 
     __m256 _v_c2 = _mm256_setzero_ps();
     __m256 _v_c3 = _mm256_setzero_ps();
 
-    int k=0;
-    for(k=0; k<K-31; k+=32) {
-        __m256 _v_a0 = _mm256_loadu_ps(packed_A+0*8);
-        __m256 _v_a1 = _mm256_loadu_ps(packed_A+1*8);
-        __m256 _v_a2 = _mm256_loadu_ps(packed_A+2*8);
-        __m256 _v_a3 = _mm256_loadu_ps(packed_A+3*8);
+    int k = 0;
+    for (k = 0; k < K - 31; k += 32) {
+        __m256 _v_a0 = _mm256_loadu_ps(packed_A + 0 * 8);
+        __m256 _v_a1 = _mm256_loadu_ps(packed_A + 1 * 8);
+        __m256 _v_a2 = _mm256_loadu_ps(packed_A + 2 * 8);
+        __m256 _v_a3 = _mm256_loadu_ps(packed_A + 3 * 8);
 
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B+0*8);
-        __m256 _v_b1 = _mm256_loadu_ps(packed_B+1*8);
-        __m256 _v_b2 = _mm256_loadu_ps(packed_B+2*8);
-        __m256 _v_b3 = _mm256_loadu_ps(packed_B+3*8);
+        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0 * 8);
+        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 1 * 8);
+        __m256 _v_b2 = _mm256_loadu_ps(packed_B + 2 * 8);
+        __m256 _v_b3 = _mm256_loadu_ps(packed_B + 3 * 8);
 
         _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
         _v_c1 = _mm256_fmadd_ps(_v_a1, _v_b1, _v_c1);
@@ -684,11 +680,11 @@ inline void mma_1x1(const float* packed_A, const float* packed_B, int K, float* 
     _v_c0 = _mm256_add_ps(_v_c0, _v_c1);
     _v_c2 = _mm256_add_ps(_v_c2, _v_c3);
 
-    for(;k<K-15; k+=16) {
-        __m256 _v_a0 = _mm256_loadu_ps(packed_A+0*8);
-        __m256 _v_a1 = _mm256_loadu_ps(packed_A+1*8);
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B+0*8);
-        __m256 _v_b1 = _mm256_loadu_ps(packed_B+1*8);
+    for (; k < K - 15; k += 16) {
+        __m256 _v_a0 = _mm256_loadu_ps(packed_A + 0 * 8);
+        __m256 _v_a1 = _mm256_loadu_ps(packed_A + 1 * 8);
+        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0 * 8);
+        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 1 * 8);
 
         _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
         _v_c2 = _mm256_fmadd_ps(_v_a1, _v_b1, _v_c2);
@@ -697,12 +693,11 @@ inline void mma_1x1(const float* packed_A, const float* packed_B, int K, float* 
     _v_c0 = _mm256_add_ps(_v_c0, _v_c2);
     float sum = reduce_add_ps(_v_c0);
 
-    for(;k<K;++k) {
+    for (; k < K; ++k) {
         sum += (*packed_A++) * (*packed_B++);
     }
 
     *C += sum;
-
 }
 
 }  // namespace kernel

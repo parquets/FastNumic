@@ -3,7 +3,6 @@
 namespace fastnum {
 namespace cpu {
 
-
 void mpack_block_h8(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack) {
     int x = 0;
     for (x = 0; x < xc - 7; x += 8) {
@@ -78,7 +77,7 @@ void mpack_block_v16(int xc, int yc, float* data, const float* X, int ldx, int n
 }
 
 void mpack_block_h1(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack) {
-    for(int x=0; x<xc; ++x) {
+    for (int x = 0; x < xc; ++x) {
         kernel::mpack_h1(data, X, ldx, n_pack, max_pack);
         data += xc;
         X += ldx;
@@ -86,7 +85,7 @@ void mpack_block_h1(int xc, int yc, float* data, const float* X, int ldx, int n_
 }
 
 void mpack_block_v1(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack) {
-    for(int y=0; y<yc;++y) {
+    for (int y = 0; y < yc; ++y) {
         kernel::mpack_v1(data, X, ldx, n_pack, max_pack);
         data += xc;
         X += 1;
@@ -94,17 +93,22 @@ void mpack_block_v1(int xc, int yc, float* data, const float* X, int ldx, int n_
 }
 
 void mpack_h(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack) {
-    if constexpr (MR == 8) mpack_block_h8(xc, yc, data, X, ldx, n_pack, max_pack);
-    else if constexpr (MR == 6) mpack_block_h6(xc, yc, data, X, ldx, n_pack, max_pack);
-    else if constexpr (MR == 16) mpack_block_h16(xc, yc, data, X, ldx, n_pack, max_pack);
+    if constexpr (MR == 8)
+        mpack_block_h8(xc, yc, data, X, ldx, n_pack, max_pack);
+    else if constexpr (MR == 6)
+        mpack_block_h6(xc, yc, data, X, ldx, n_pack, max_pack);
+    else if constexpr (MR == 16)
+        mpack_block_h16(xc, yc, data, X, ldx, n_pack, max_pack);
 }
 
 void mpack_v(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack) {
-    if constexpr (NR == 8) mpack_block_v8(xc, yc, data, X, ldx, n_pack, max_pack);
-    else if constexpr (NR == 6) mpack_block_v6(xc, yc, data, X, ldx, n_pack, max_pack);
-    else if constexpr (NR == 16) mpack_block_v16(xc, yc, data, X, ldx, n_pack, max_pack);
+    if constexpr (NR == 8)
+        mpack_block_v8(xc, yc, data, X, ldx, n_pack, max_pack);
+    else if constexpr (NR == 6)
+        mpack_block_v6(xc, yc, data, X, ldx, n_pack, max_pack);
+    else if constexpr (NR == 16)
+        mpack_block_v16(xc, yc, data, X, ldx, n_pack, max_pack);
 }
-
 
 }  // namespace cpu
 }  // namespace fastnum

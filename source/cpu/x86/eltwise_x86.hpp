@@ -108,23 +108,23 @@ inline void exp(float* A, const float* B, int size) {
 
 inline void relu(float* A, const float* B, int size) {
     int i;
-    for(i=0; i<size-7; i+=8) {
+    for (i = 0; i < size - 7; i += 8) {
         __m256 x = _mm256_loadu_ps(B);
         x = _mm256_max_ps(x, _mm256_set1_ps(0.0));
         _mm256_storeu_ps(A, x);
         A += 8;
         B += 8;
     }
-    for(; i<size; ++i) {
+    for (; i < size; ++i) {
         *A = *B > 0 ? *B : 0;
         ++A;
-        ++B; 
+        ++B;
     }
 }
 
 inline void sigmoid(float* A, const float* B, int size) {
     int i;
-    for(i=0; i<size-7; i+=8) {
+    for (i = 0; i < size - 7; i += 8) {
         __m256 x = _mm256_loadu_ps(B);
         __m256 v = _mm256_add_ps(_mm256_set1_ps(1.0), _mm256_exp_ps(_mm256_mul_ps(x, _mm256_set1_ps(-1.0f))));
         x = _mm256_rcp_ps(v);
@@ -132,10 +132,10 @@ inline void sigmoid(float* A, const float* B, int size) {
         A += 8;
         B += 8;
     }
-    for(; i<size; ++i) {
-        *A = 1.0f/(1.0f+std::exp(-1*(B[0])));
+    for (; i < size; ++i) {
+        *A = 1.0f / (1.0f + std::exp(-1 * (B[0])));
         ++A;
-        ++B; 
+        ++B;
     }
 }
 

@@ -328,7 +328,6 @@ inline void mpack_h16(float* packed, const float* X, int ldx, int n_pack, int ma
         __m256 _v_a6 = _mm256_loadu_ps(x6_ptr);
         __m256 _v_a7 = _mm256_loadu_ps(x7_ptr);
 
-
         transpose_8x8(_v_a0, _v_a1, _v_a2, _v_a3, _v_a4, _v_a5, _v_a6, _v_a7);
 
         __m256 _v_a8 = _mm256_loadu_ps(x8_ptr);
@@ -339,7 +338,6 @@ inline void mpack_h16(float* packed, const float* X, int ldx, int n_pack, int ma
         __m256 _v_a13 = _mm256_loadu_ps(x13_ptr);
         __m256 _v_a14 = _mm256_loadu_ps(x14_ptr);
         __m256 _v_a15 = _mm256_loadu_ps(x15_ptr);
-
 
         transpose_8x8(_v_a8, _v_a9, _v_a10, _v_a11, _v_a12, _v_a13, _v_a14, _v_a15);
 
@@ -405,66 +403,64 @@ inline void mpack_h16(float* packed, const float* X, int ldx, int n_pack, int ma
 
 inline void mpack_v16(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
     //__m256 d0, d1;
-    int i=0;
-    for(i=0; i<n_pack-3; i+=4) {
-        
+    int i = 0;
+    for (i = 0; i < n_pack - 3; i += 4) {
+
         __m256 d0 = _mm256_loadu_ps(X);
-        __m256 d1 = _mm256_loadu_ps(X+8);
-        __m256 d2 = _mm256_loadu_ps(X+ldx);
-        __m256 d3 = _mm256_loadu_ps(X+8+ldx);
-        __m256 d4 = _mm256_loadu_ps(X+2*ldx);
-        __m256 d5 = _mm256_loadu_ps(X+8+2*ldx);
-        __m256 d6 = _mm256_loadu_ps(X+3*ldx);
-        __m256 d7 = _mm256_loadu_ps(X+8+3*ldx);
+        __m256 d1 = _mm256_loadu_ps(X + 8);
+        __m256 d2 = _mm256_loadu_ps(X + ldx);
+        __m256 d3 = _mm256_loadu_ps(X + 8 + ldx);
+        __m256 d4 = _mm256_loadu_ps(X + 2 * ldx);
+        __m256 d5 = _mm256_loadu_ps(X + 8 + 2 * ldx);
+        __m256 d6 = _mm256_loadu_ps(X + 3 * ldx);
+        __m256 d7 = _mm256_loadu_ps(X + 8 + 3 * ldx);
 
-        _mm_prefetch((char*)(X+4*ldx+0*ldx), _MM_HINT_T0);
-        _mm_prefetch((char*)(X+4*ldx+1*ldx), _MM_HINT_T0);
-        _mm_prefetch((char*)(X+4*ldx+2*ldx), _MM_HINT_T0);
-        _mm_prefetch((char*)(X+4*ldx+3*ldx), _MM_HINT_T0);
+        _mm_prefetch((char*)(X + 4 * ldx + 0 * ldx), _MM_HINT_T0);
+        _mm_prefetch((char*)(X + 4 * ldx + 1 * ldx), _MM_HINT_T0);
+        _mm_prefetch((char*)(X + 4 * ldx + 2 * ldx), _MM_HINT_T0);
+        _mm_prefetch((char*)(X + 4 * ldx + 3 * ldx), _MM_HINT_T0);
 
-        
         _mm256_store_ps(packed, d0);
-        _mm256_store_ps(packed+8, d1);
-        _mm256_store_ps(packed+16, d2);
-        _mm256_store_ps(packed+24, d3);
-        _mm256_store_ps(packed+32, d4);
-        _mm256_store_ps(packed+40, d5);
-        _mm256_store_ps(packed+48, d6);
-        _mm256_store_ps(packed+56, d7);
+        _mm256_store_ps(packed + 8, d1);
+        _mm256_store_ps(packed + 16, d2);
+        _mm256_store_ps(packed + 24, d3);
+        _mm256_store_ps(packed + 32, d4);
+        _mm256_store_ps(packed + 40, d5);
+        _mm256_store_ps(packed + 48, d6);
+        _mm256_store_ps(packed + 56, d7);
 
-
-        X += 4*ldx;
+        X += 4 * ldx;
         packed += 64;
     }
 
-    for(; i<n_pack; ++i) {
+    for (; i < n_pack; ++i) {
         __m256 d0 = _mm256_loadu_ps(X);
-        __m256 d1 = _mm256_loadu_ps(X+8);
+        __m256 d1 = _mm256_loadu_ps(X + 8);
         _mm256_store_ps(packed, d0);
-        _mm256_store_ps(packed+8, d1);
+        _mm256_store_ps(packed + 8, d1);
         X += ldx;
         packed += 16;
-    } 
+    }
 
-    if(n_pack < max_pack) {
-        memset(packed, 0, 16*(max_pack-n_pack)*sizeof(*packed));
+    if (n_pack < max_pack) {
+        memset(packed, 0, 16 * (max_pack - n_pack) * sizeof(*packed));
     }
 }
 
 inline void mpack_h1(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
-    memcpy(packed, X, sizeof(float)*n_pack);
+    memcpy(packed, X, sizeof(float) * n_pack);
     packed += n_pack;
-    if(n_pack < max_pack) {
-        memset(packed, 0, 1*(max_pack-n_pack)*sizeof(*packed));
+    if (n_pack < max_pack) {
+        memset(packed, 0, 1 * (max_pack - n_pack) * sizeof(*packed));
     }
 }
 
 inline void mpack_v1(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
-    for(int i=0; i<n_pack; ++i) {
-        *packed++ = *(X+i*ldx);
+    for (int i = 0; i < n_pack; ++i) {
+        *packed++ = *(X + i * ldx);
     }
-    if(n_pack < max_pack) {
-        memset(packed, 0, 1*(max_pack-n_pack)*sizeof(*packed));
+    if (n_pack < max_pack) {
+        memset(packed, 0, 1 * (max_pack - n_pack) * sizeof(*packed));
     }
 }
 

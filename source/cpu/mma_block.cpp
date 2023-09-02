@@ -143,6 +143,5 @@ void mma_block(int mc, int nc, int kc, const float* packA, const float* packB, f
     }
 }
 
-
 }  // namespace cpu
 }  // namespace fastnum
