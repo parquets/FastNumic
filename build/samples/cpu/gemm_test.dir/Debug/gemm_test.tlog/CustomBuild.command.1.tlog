@@ -1,0 +1,10 @@
+^D:\VSCODE\FASTNUM\SAMPLES\CPU\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/vscode/FastNum -BD:/vscode/FastNum/build --check-stamp-file D:/vscode/FastNum/build/samples/cpu/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
