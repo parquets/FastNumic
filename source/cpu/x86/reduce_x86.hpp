@@ -150,6 +150,37 @@ float reduce_add(const float* src, int size) {
     return ret;
 }
 
+
+int argmax(const float* src, int size) {
+    int max_index;
+    int i=0;
+    float fmin = -9999999;
+    __m256 _v_max = _mm256_broadcast_ss(&fmin);
+    __m256i _v_indices = _mm256_setzero_si256();
+
+    for(i=0; i<size-31; i+=32) {
+        __m256 _v_x0 = _mm256_loadu_ps(src+0*8);
+        __m256 _v_x1 = _mm256_loadu_ps(src+1*8);
+        __m256 _v_x2 = _mm256_loadu_ps(src+2*8);
+        __m256 _v_x3 = _mm256_loadu_ps(src+3*8);
+
+        __m256 _v_t0 = _mm256_max_ps(_v_x0, _v_x1);
+        __m256 _v_t1 = _mm256_max_ps(_v_x2, _v_x3);
+        
+        __m256 _v_cmax = _mm256_max_ps(_v_t0, _v_t1);
+        
+        __mmask8 m0 = _mm256_cmp_ps_mask(_v_cmax, _v_max, _CMP_GT_OS);
+
+        if(m0) {
+            _v_max = _mm256_mask_blend_ps(m0, _v_max, _v_cmax);
+            _v_indices = _mm256_mask_set1_epi32(_v_indices, m0, i);
+        }
+
+        src += 32;
+    }
+}
+
+
 }  // namespace kernel
 }  // namespace cpu
 }  // namespace fastnum

@@ -13,6 +13,7 @@ void log10(int M, int N, const float* A, int lda, float* B, int ldb);
 
 void relu(int M, int N, const float* A, int lda, float* B, int ldb);
 void sigmoid(int M, int N, const float* A, int lda, float* B, int ldb);
+void thrshold(int M, int N, const float* A, int lda, float* B, int ldb, float thres);
 
 }
 }

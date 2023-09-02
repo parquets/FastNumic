@@ -34,6 +34,36 @@ void mma_block_8x8(int mc, int nc, int kc, const float* packA, const float* pack
     }
 }
 
+void mma_block_4x4(int mc, int nc, int kc, const float* packA, const float* packB, float* C, int ldc) {
+    int offset_a = 0;
+    int offset_b = 0;
+
+    int mm = 0, nn = 0;
+
+    for (mm = 0; mm < mc - 3; mm += 4) {
+        offset_b = 0;
+        for (nn = 0; nn < nc - 3; nn += 4) {
+            kernel::mma_4x4(packA + offset_a, packB + offset_b, kc, C + mm * ldc + nn, ldc);
+            offset_b += 4 * kc;
+        }
+        if (nn < nc) {
+            kernel::mma_4xn(nc - nn, packA + offset_a, packB + offset_b, kc, C + mm * ldc + nn, ldc);
+        }
+        offset_a += 8 * kc;
+    }
+
+    if (mm < mc) {
+        offset_b = 0;
+        for (nn = 0; nn < nc - 3; nn += 4) {
+            kernel::mma_mx4(mc - mm, packA + offset_a, packB + offset_b, kc, C + mm * ldc + nn, ldc);
+            offset_b += 8 * kc;
+        }
+        if (nn < nc) {
+            kernel::mma_mxn(mc - mm, nc - nn, packA + offset_a, packB + offset_b, kc, C + mm * ldc + nn, ldc);
+        }
+    }
+}
+
 void mma_block_8x1(int mc, int nc, int kc, const float* packA, const float* packB, float* C, int ldc) {
 
     int offset_a = 0;
@@ -48,6 +78,30 @@ void mma_block_8x1(int mc, int nc, int kc, const float* packA, const float* pack
             offset_b += kc;
         }
         offset_a += 8 * kc;
+    }
+
+    if (mm < mc) {
+        offset_b = 0;
+        for (nn = 0; nn < nc; ++nn) {
+            kernel::mma_mx1(mc - mm, packA + offset_a, packB + offset_b, kc, C + mm * ldc + nn, ldc);
+            offset_b += kc;
+        }
+    }
+}
+
+void mma_block_4x1(int mc, int nc, int kc, const float* packA, const float* packB, float* C, int ldc) {
+    int offset_a = 0;
+    int offset_b = 0;
+
+    int mm = 0, nn = 0;
+
+    for (mm = 0; mm < mc - 3; mm += 4) {
+        offset_b = 0;
+        for (nn = 0; nn < nc; ++nn) {
+            kernel::mma_4x1(packA + offset_a, packB + offset_b, kc, C + mm * ldc + nn, ldc);
+            offset_b += kc;
+        }
+        offset_a += 4 * kc;
     }
 
     if (mm < mc) {
