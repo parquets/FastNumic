@@ -26,25 +26,11 @@ inline void mpack_vx(float* packed, const float* X, int ldx, int v, int n_pack, 
 }
 }  // namespace kernel
 
-void mpack_block_h8(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
 
-void mpack_block_h6(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_block_h16(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_block_v8(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_block_v6(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_block_v16(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_block_h1(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_block_v1(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_h(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
-
-void mpack_v(int xc, int yc, float* data, const float* X, int ldx, int n_pack, int max_pack);
+void h_packA(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack);
+void v_packA(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack);
+void h_packB(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack);
+void v_packB(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack);
 
 }  // namespace cpu
 }  // namespace fastnum

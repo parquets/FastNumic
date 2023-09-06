@@ -600,6 +600,220 @@ inline void mma_6x8(const float* packed_A, const float* packed_B, int K, float* 
     _mm256_storeu_ps(C + 5 * ldc, _v_c5);
 }
 
+inline void mma_6x4(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+    __m128 _v_c0 = _mm_loadu_ps(C + 0 * ldc);
+    __m128 _v_c1 = _mm_loadu_ps(C + 2 * ldc);
+    __m128 _v_c2 = _mm_loadu_ps(C + 2 * ldc);
+    __m128 _v_c3 = _mm_loadu_ps(C + 3 * ldc);
+    __m128 _v_c4 = _mm_loadu_ps(C + 4 * ldc);
+    __m128 _v_c5 = _mm_loadu_ps(C + 5 * ldc);
+
+    for (int i = 0; i < K; ++i) {
+
+        __m128 _v_b0 = _mm_loadu_ps(packed_B);
+
+        __m128 _v_a0 = _mm_broadcast_ss(packed_A + 0);
+        __m128 _v_a1 = _mm_broadcast_ss(packed_A + 1);
+        __m128 _v_a2 = _mm_broadcast_ss(packed_A + 2);
+        __m128 _v_a3 = _mm_broadcast_ss(packed_A + 3);
+        __m128 _v_a4 = _mm_broadcast_ss(packed_A + 4);
+        __m128 _v_a5 = _mm_broadcast_ss(packed_A + 5);
+
+        _v_c0 = _mm_fmadd_ps(_v_a0, _v_b0, _v_c0);
+        _v_c1 = _mm_fmadd_ps(_v_a1, _v_b0, _v_c1);
+        _v_c2 = _mm_fmadd_ps(_v_a2, _v_b0, _v_c2);
+        _v_c3 = _mm_fmadd_ps(_v_a3, _v_b0, _v_c3);
+        _v_c4 = _mm_fmadd_ps(_v_a4, _v_b0, _v_c4);
+        _v_c5 = _mm_fmadd_ps(_v_a5, _v_b0, _v_c5);
+
+        packed_A += 6;
+        packed_B += 4;
+    }
+
+    _mm_storeu_ps(C + 0 * ldc, _v_c0);
+    _mm_storeu_ps(C + 1 * ldc, _v_c1);
+    _mm_storeu_ps(C + 2 * ldc, _v_c2);
+    _mm_storeu_ps(C + 3 * ldc, _v_c3);
+    _mm_storeu_ps(C + 4 * ldc, _v_c4);
+    _mm_storeu_ps(C + 5 * ldc, _v_c5);
+}
+
+inline void mma_6x1(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+
+    float c0 = 0;
+    float c1 = 0;
+    float c2 = 0;
+    float c3 = 0;
+    float c4 = 0;
+    float c5 = 0;
+    float c6 = 0;
+
+    for(int k=0; k<K; ++k) {
+        float a0 = packed_A[0];
+        float a1 = packed_A[1];
+        float a2 = packed_A[2];
+        float a3 = packed_A[3];
+        float a4 = packed_A[4];
+        float a5 = packed_A[5];
+
+        float b = packed_B[0];
+
+        c0 += a0*b;
+        c1 += a1*b;
+        c2 += a2*b;
+        c3 += a3*b;
+        c4 += a4*b;
+        c5 += a5*b;
+    }
+    *(C+0*ldc) += c0;
+    *(C+1*ldc) += c1;
+    *(C+2*ldc) += c2;
+    *(C+3*ldc) += c3;
+    *(C+4*ldc) += c4;
+    *(C+5*ldc) += c5;
+}
+
+inline void print_avx2_ps(__m256& v) {
+    float data[8];
+    _mm256_storeu_ps(data, v);
+    printf("%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+}
+
+inline void mma_4x16(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+    
+    __m256 _v_c00 = _mm256_loadu_ps(C + 0 * ldc + 0);
+    __m256 _v_c01 = _mm256_loadu_ps(C + 0 * ldc + 8);
+    __m256 _v_c10 = _mm256_loadu_ps(C + 1 * ldc + 0);
+    __m256 _v_c11 = _mm256_loadu_ps(C + 1 * ldc + 8);
+    __m256 _v_c20 = _mm256_loadu_ps(C + 2 * ldc + 0);
+    __m256 _v_c21 = _mm256_loadu_ps(C + 2 * ldc + 8);
+    __m256 _v_c30 = _mm256_loadu_ps(C + 3 * ldc + 0);
+    __m256 _v_c31 = _mm256_loadu_ps(C + 3 * ldc + 8);
+
+    for (int k = 0; k < K; ++k) {
+
+        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0);
+        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 8);
+
+        __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
+        __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
+        __m256 _v_a2 = _mm256_broadcast_ss(packed_A + 2);
+        __m256 _v_a3 = _mm256_broadcast_ss(packed_A + 3);
+
+        _v_c00 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c00);
+        _v_c01 = _mm256_fmadd_ps(_v_a0, _v_b1, _v_c01);
+        _v_c10 = _mm256_fmadd_ps(_v_a1, _v_b0, _v_c10);
+        _v_c11 = _mm256_fmadd_ps(_v_a1, _v_b1, _v_c11);
+        _v_c20 = _mm256_fmadd_ps(_v_a2, _v_b0, _v_c20);
+        _v_c21 = _mm256_fmadd_ps(_v_a2, _v_b1, _v_c21);
+        _v_c30 = _mm256_fmadd_ps(_v_a3, _v_b0, _v_c30);
+        _v_c31 = _mm256_fmadd_ps(_v_a3, _v_b1, _v_c31);
+
+        packed_A += 4;
+        packed_B += 16;
+    }
+
+    // print_avx2_ps(_v_c00);
+    // print_avx2_ps(_v_c10);
+    // print_avx2_ps(_v_c20);
+    // print_avx2_ps(_v_c30);
+
+    _mm256_storeu_ps(C + 0 * ldc + 0, _v_c00);
+    _mm256_storeu_ps(C + 0 * ldc + 8, _v_c01);
+    _mm256_storeu_ps(C + 1 * ldc + 0, _v_c10);
+    _mm256_storeu_ps(C + 1 * ldc + 8, _v_c11);
+    _mm256_storeu_ps(C + 2 * ldc + 0, _v_c20);
+    _mm256_storeu_ps(C + 2 * ldc + 8, _v_c21);
+    _mm256_storeu_ps(C + 3 * ldc + 0, _v_c30);
+    _mm256_storeu_ps(C + 3 * ldc + 8, _v_c31);
+}
+
+inline void mma_1x16(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+    int k = 0;
+
+    __m256 _v_c00 = _mm256_loadu_ps(C + 0);
+    __m256 _v_c01 = _mm256_loadu_ps(C + 8);
+
+    __m256 _v_c10 = _mm256_setzero_ps();
+    __m256 _v_c11 = _mm256_setzero_ps();
+
+
+    for (k = 0; k < K - 1; k += 2) {
+
+        __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
+        __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
+
+        __m256 _v_b00 = _mm256_loadu_ps(packed_B + 16 * 0 + 0);
+        __m256 _v_b01 = _mm256_loadu_ps(packed_B + 16 * 0 + 8);
+        __m256 _v_b10 = _mm256_loadu_ps(packed_B + 16 * 1 + 0);
+        __m256 _v_b11 = _mm256_loadu_ps(packed_B + 16 * 1 + 8);
+
+        _v_c00 = _mm256_fmadd_ps(_v_a0, _v_b00, _v_c00);
+        _v_c01 = _mm256_fmadd_ps(_v_a0, _v_b01, _v_c01);
+        _v_c10 = _mm256_fmadd_ps(_v_a1, _v_b10, _v_c10);
+        _v_c11 = _mm256_fmadd_ps(_v_a1, _v_b11, _v_c11);
+
+        packed_A += 2;
+        packed_B += 32;
+    }
+
+    __m256 _v_c0 = _mm256_add_ps(_v_c00, _v_c10);
+    __m256 _v_c1 = _mm256_add_ps(_v_c01, _v_c11);
+
+    for (; k < K; ++k) {
+        __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
+        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 16 * 0 + 0);
+        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 16 * 0 + 8);
+
+        _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
+        _v_c1 = _mm256_fmadd_ps(_v_a0, _v_b1, _v_c1);
+
+        ++packed_A;
+        packed_B += 16;
+    }
+    _mm256_storeu_ps(C + 0, _v_c0);
+    _mm256_storeu_ps(C + 8, _v_c1);
+
+    // for(int k=0; k<K; ++k) {
+    //     float a = packed_A[0];
+    //     for(int x=0; x<16; ++x) {
+    //         C[x] += a*packed_B[x];
+    //     }
+    //     ++packed_A;
+    //     packed_B+=16;
+    // }
+}
+
+inline void mma_4x8(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+    __m256 _v_c0 = _mm256_loadu_ps(C + 0 * ldc);
+    __m256 _v_c1 = _mm256_loadu_ps(C + 1 * ldc);
+    __m256 _v_c2 = _mm256_loadu_ps(C + 2 * ldc);
+    __m256 _v_c3 = _mm256_loadu_ps(C + 3 * ldc);
+
+    for (int i = 0; i < K; ++i) {
+
+        __m256 _v_b0 = _mm256_loadu_ps(packed_B);
+
+        __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
+        __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
+        __m256 _v_a2 = _mm256_broadcast_ss(packed_A + 2);
+        __m256 _v_a3 = _mm256_broadcast_ss(packed_A + 3);
+
+        _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
+        _v_c1 = _mm256_fmadd_ps(_v_a1, _v_b0, _v_c1);
+        _v_c2 = _mm256_fmadd_ps(_v_a2, _v_b0, _v_c2);
+        _v_c3 = _mm256_fmadd_ps(_v_a3, _v_b0, _v_c3);
+
+        packed_A += 4;
+        packed_B += 8;
+    }
+
+    _mm256_storeu_ps(C + 0 * ldc, _v_c0);
+    _mm256_storeu_ps(C + 1 * ldc, _v_c1);
+    _mm256_storeu_ps(C + 2 * ldc, _v_c2);
+    _mm256_storeu_ps(C + 3 * ldc, _v_c3);
+}
+
 inline void mma_16x6(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
     __m256 _v_c00 = _mm256_loadu_ps(C);
     __m256 _v_c01 = _mm256_loadu_ps(C + 8);
@@ -692,6 +906,16 @@ inline void mma_1x8(const float* packed_A, const float* packed_B, int K, float* 
     }
 
     __m256 _v_c = _mm256_add_ps(_mm256_add_ps(_v_c0, _v_c1), _mm256_add_ps(_v_c2, _v_c3));
+
+    for (; k < K; ++k) {
+        __m256 _v_a = _mm256_broadcast_ss(packed_A + 0);
+        __m256 _v_b = _mm256_loadu_ps(packed_B + 8 * 0);
+
+        _v_c = _mm256_fmadd_ps(_v_a, _v_b, _v_c);
+
+        ++packed_A;
+        packed_B += 8;
+    }
     _mm256_storeu_ps(C, _v_c);
 }
 
@@ -721,7 +945,7 @@ inline void mma_1x4(const float* packed_A, const float* packed_B, int K, float* 
         _v_c3 = _mm_fmadd_ps(_v_a3, _v_b3, _v_c3);
 
         packed_A += 4;
-        packed_B += 32;
+        packed_B += 16;
     }
 
     __m128 _v_c = _mm_add_ps(_mm_add_ps(_v_c0, _v_c1), _mm_add_ps(_v_c2, _v_c3));
@@ -730,6 +954,8 @@ inline void mma_1x4(const float* packed_A, const float* packed_B, int K, float* 
         __m128 _v_a = _mm_broadcast_ss(packed_A);
         __m128 _v_b = _mm_loadu_ps(packed_B);
         _v_c = _mm_fmadd_ps(_v_a, _v_b, _v_c);
+        packed_A += 1;
+        packed_B += 4;
     }
     _mm_storeu_ps(C, _v_c);
 }
@@ -783,6 +1009,226 @@ inline void mma_1x1(const float* packed_A, const float* packed_B, int K, float* 
 
     *C += sum;
 }
+
+inline void mma_6x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+    double* c_ptr0 = C + 0 * ldc;
+    double* c_ptr1 = C + 1 * ldc;
+    double* c_ptr2 = C + 2 * ldc;
+    double* c_ptr3 = C + 3 * ldc;
+    double* c_ptr4 = C + 4 * ldc;
+    double* c_ptr5 = C + 5 * ldc;
+
+    __m256d _v_c0 = _mm256_loadu_pd(c_ptr0);
+    __m256d _v_c1 = _mm256_loadu_pd(c_ptr1);
+    __m256d _v_c2 = _mm256_loadu_pd(c_ptr2);
+    __m256d _v_c3 = _mm256_loadu_pd(c_ptr3);
+    __m256d _v_c4 = _mm256_loadu_pd(c_ptr4);
+    __m256d _v_c5 = _mm256_loadu_pd(c_ptr5);
+
+    for (int k = 0; k < K; ++k) {
+        __m256d _v_a0 = _mm256_broadcast_sd(packed_A + 0);
+        __m256d _v_a1 = _mm256_broadcast_sd(packed_A + 1);
+        __m256d _v_a2 = _mm256_broadcast_sd(packed_A + 2);
+        __m256d _v_a3 = _mm256_broadcast_sd(packed_A + 3);
+        __m256d _v_a4 = _mm256_broadcast_sd(packed_A + 4);
+        __m256d _v_a5 = _mm256_broadcast_sd(packed_A + 5);
+
+        
+        __m256d _v_b = _mm256_loadu_pd(packed_B);
+
+        _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b, _v_c0);
+        _v_c1 = _mm256_fmadd_pd(_v_a1, _v_b, _v_c1);
+        _v_c2 = _mm256_fmadd_pd(_v_a2, _v_b, _v_c2);
+        _v_c3 = _mm256_fmadd_pd(_v_a3, _v_b, _v_c3);
+        _v_c4 = _mm256_fmadd_pd(_v_a4, _v_b, _v_c4);
+        _v_c5 = _mm256_fmadd_pd(_v_a5, _v_b, _v_c5);
+
+        packed_A += 6;
+        packed_B += 4;
+    }
+
+    _mm256_storeu_pd(c_ptr0, _v_c0);
+    _mm256_storeu_pd(c_ptr1, _v_c1);
+    _mm256_storeu_pd(c_ptr2, _v_c2);
+    _mm256_storeu_pd(c_ptr3, _v_c3);
+    _mm256_storeu_pd(c_ptr4, _v_c4);
+    _mm256_storeu_pd(c_ptr5, _v_c5);
+}
+
+inline void mma_4x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+    double* c_ptr0 = C + 0 * ldc;
+    double* c_ptr1 = C + 1 * ldc;
+    double* c_ptr2 = C + 2 * ldc;
+    double* c_ptr3 = C + 3 * ldc;
+
+    __m256d _v_c0 = _mm256_loadu_pd(c_ptr0);
+    __m256d _v_c1 = _mm256_loadu_pd(c_ptr1);
+    __m256d _v_c2 = _mm256_loadu_pd(c_ptr2);
+    __m256d _v_c3 = _mm256_loadu_pd(c_ptr3);
+
+    for (int k = 0; k < K; ++k) {
+        __m256d _v_a0 = _mm256_broadcast_sd(packed_A + 0);
+        __m256d _v_a1 = _mm256_broadcast_sd(packed_A + 1);
+        __m256d _v_a2 = _mm256_broadcast_sd(packed_A + 2);
+        __m256d _v_a3 = _mm256_broadcast_sd(packed_A + 3);
+
+        __m256d _v_b = _mm256_loadu_pd(packed_B);
+
+        _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b, _v_c0);
+        _v_c1 = _mm256_fmadd_pd(_v_a1, _v_b, _v_c1);
+        _v_c2 = _mm256_fmadd_pd(_v_a2, _v_b, _v_c2);
+        _v_c3 = _mm256_fmadd_pd(_v_a3, _v_b, _v_c3);
+
+        packed_A += 4;
+        packed_B += 4;
+    }
+
+    _mm256_storeu_pd(c_ptr0, _v_c0);
+    _mm256_storeu_pd(c_ptr1, _v_c1);
+    _mm256_storeu_pd(c_ptr2, _v_c2);
+    _mm256_storeu_pd(c_ptr3, _v_c3);
+}
+
+inline void mma_6x2(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+    double* c_ptr0 = C + 0 * ldc;
+    double* c_ptr1 = C + 1 * ldc;
+    double* c_ptr2 = C + 2 * ldc;
+    double* c_ptr3 = C + 3 * ldc;
+    double* c_ptr4 = C + 4 * ldc;
+    double* c_ptr5 = C + 5 * ldc;
+
+    __m128d _v_c0 = _mm_loadu_pd(c_ptr0);
+    __m128d _v_c1 = _mm_loadu_pd(c_ptr1);
+    __m128d _v_c2 = _mm_loadu_pd(c_ptr2);
+    __m128d _v_c3 = _mm_loadu_pd(c_ptr3);
+    __m128d _v_c4 = _mm_loadu_pd(c_ptr4);
+    __m128d _v_c5 = _mm_loadu_pd(c_ptr5);
+
+    for (int k = 0; k < K; ++k) {
+        
+        __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
+        __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
+        __m128d _v_a2 = _mm_set1_pd(packed_A[2]);
+        __m128d _v_a3 = _mm_set1_pd(packed_A[3]);
+        __m128d _v_a4 = _mm_set1_pd(packed_A[4]);
+        __m128d _v_a5 = _mm_set1_pd(packed_A[5]);
+
+        __m128d _v_b = _mm_loadu_pd(packed_B);
+
+        _v_c0 = _mm_fmadd_pd(_v_a0, _v_b, _v_c0);
+        _v_c1 = _mm_fmadd_pd(_v_a1, _v_b, _v_c1);
+        _v_c2 = _mm_fmadd_pd(_v_a2, _v_b, _v_c2);
+        _v_c3 = _mm_fmadd_pd(_v_a3, _v_b, _v_c3);
+        _v_c4 = _mm_fmadd_pd(_v_a4, _v_b, _v_c4);
+        _v_c5 = _mm_fmadd_pd(_v_a5, _v_b, _v_c5);
+
+        packed_A += 6;
+        packed_B += 2;
+    }
+
+    _mm_storeu_pd(c_ptr0, _v_c0);
+    _mm_storeu_pd(c_ptr1, _v_c1);
+    _mm_storeu_pd(c_ptr2, _v_c2);
+    _mm_storeu_pd(c_ptr3, _v_c3);
+    _mm_storeu_pd(c_ptr4, _v_c4);
+    _mm_storeu_pd(c_ptr5, _v_c5);
+}
+
+inline void mma_4x2(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+    double* c_ptr0 = C + 0 * ldc;
+    double* c_ptr1 = C + 1 * ldc;
+    double* c_ptr2 = C + 2 * ldc;
+    double* c_ptr3 = C + 3 * ldc;
+
+
+    __m128d _v_c0 = _mm_loadu_pd(c_ptr0);
+    __m128d _v_c1 = _mm_loadu_pd(c_ptr1);
+    __m128d _v_c2 = _mm_loadu_pd(c_ptr2);
+    __m128d _v_c3 = _mm_loadu_pd(c_ptr3);
+
+    for (int k = 0; k < K; ++k) {
+        
+        __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
+        __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
+        __m128d _v_a2 = _mm_set1_pd(packed_A[2]);
+        __m128d _v_a3 = _mm_set1_pd(packed_A[3]);
+
+
+        __m128d _v_b = _mm_loadu_pd(packed_B);
+
+        _v_c0 = _mm_fmadd_pd(_v_a0, _v_b, _v_c0);
+        _v_c1 = _mm_fmadd_pd(_v_a1, _v_b, _v_c1);
+        _v_c2 = _mm_fmadd_pd(_v_a2, _v_b, _v_c2);
+        _v_c3 = _mm_fmadd_pd(_v_a3, _v_b, _v_c3);
+
+        packed_A += 6;
+        packed_B += 2;
+    }
+
+    _mm_storeu_pd(c_ptr0, _v_c0);
+    _mm_storeu_pd(c_ptr1, _v_c1);
+    _mm_storeu_pd(c_ptr2, _v_c2);
+    _mm_storeu_pd(c_ptr3, _v_c3);
+}
+
+inline void mma_2x2(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+    double* c_ptr0 = C + 0 * ldc;
+    double* c_ptr1 = C + 1 * ldc;
+
+    __m128d _v_c0 = _mm_loadu_pd(c_ptr0);
+    __m128d _v_c1 = _mm_loadu_pd(c_ptr1);
+
+    for (int k = 0; k < K; ++k) {
+        
+        __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
+        __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
+
+        __m128d _v_b = _mm_loadu_pd(packed_B);
+
+        _v_c0 = _mm_fmadd_pd(_v_a0, _v_b, _v_c0);
+        _v_c1 = _mm_fmadd_pd(_v_a1, _v_b, _v_c1);
+
+        packed_A += 2;
+        packed_B += 2;
+    }
+
+    _mm_storeu_pd(c_ptr0, _v_c0);
+    _mm_storeu_pd(c_ptr1, _v_c1);
+}
+
+inline void mma_2x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+    double* c_ptr0 = C + 0 * ldc;
+    double* c_ptr1 = C + 1 * ldc;
+
+    __m128d _v_c00 = _mm_loadu_pd(c_ptr0+0);
+    __m128d _v_c01 = _mm_loadu_pd(c_ptr0+2);
+    __m128d _v_c10 = _mm_loadu_pd(c_ptr1+0);
+    __m128d _v_c11 = _mm_loadu_pd(c_ptr1+2);
+
+    for (int k = 0; k < K; ++k) {
+        
+        __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
+        __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
+
+        __m128d _v_b0 = _mm_loadu_pd(packed_B+0);
+        __m128d _v_b1 = _mm_loadu_pd(packed_B+2);
+
+        _v_c00 = _mm_fmadd_pd(_v_a0, _v_b0, _v_c00);
+        _v_c01 = _mm_fmadd_pd(_v_a0, _v_b1, _v_c01);
+        _v_c10 = _mm_fmadd_pd(_v_a1, _v_b0, _v_c10);
+        _v_c11 = _mm_fmadd_pd(_v_a1, _v_b1, _v_c11);
+
+        packed_A += 2;
+        packed_B += 4;
+    }
+
+    _mm_storeu_pd(c_ptr0+0, _v_c00);
+    _mm_storeu_pd(c_ptr0+2, _v_c01);
+    _mm_storeu_pd(c_ptr1+0, _v_c10);
+    _mm_storeu_pd(c_ptr1+2, _v_c11);
+}
+
+
 
 }  // namespace kernel
 }  // namespace cpu

@@ -26,10 +26,10 @@ void sgemm_nn(int M, int N, int K, float alpha, const float* A, int lda, const f
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            mpack_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, KC);
+            h_packA(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, KC);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
-                mpack_v(s_kc, s_nc, packB, B + kk * ldb + nn, ldb, s_kc, KC);
+                v_packB(s_kc, s_nc, packB, B + kk * ldb + nn, ldb, s_kc, KC);
                 mma_block(s_mc, s_nc, s_kc, packA, packB, C + mm * ldc + nn, ldc);
             }
         }
@@ -56,10 +56,10 @@ void sgemm_nt(int M, int N, int K, float alpha, const float* A, int lda, const f
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            mpack_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, KC);
+            h_packA(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, KC);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
-                mpack_h(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc, KC);
+                h_packB(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc, KC);
                 mma_block(s_mc, s_nc, s_kc, packA, packB, C + mm * ldc + nn, ldc);
             }
         }
@@ -85,11 +85,11 @@ void sgemm_tn(int M, int N, int K, float alpha, const float* A, int lda, const f
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            mpack_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, KC);
+            v_packA(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, KC);
 
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
-                mpack_v(s_kc, s_nc, packB, B + kk * ldb + nn, ldb, s_kc, KC);
+                v_packB(s_kc, s_nc, packB, B + kk * ldb + nn, ldb, s_kc, KC);
                 mma_block(s_mc, s_nc, s_kc, packA, packB, C + mm * ldc + nn, ldc);
             }
         }
@@ -116,11 +116,11 @@ void sgemm_tt(int M, int N, int K, float alpha, const float* A, int lda, const f
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
 
-            mpack_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, KC);
+            v_packA(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, KC);
 
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
-                mpack_h(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc, KC);
+                h_packB(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc, KC);
                 mma_block(s_mc, s_nc, s_kc, packA, packB, C + mm * ldc + nn, ldc);
             }
         }

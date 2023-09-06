@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include <immintrin.h>
 #include <math.h>
 #include <memory.h>

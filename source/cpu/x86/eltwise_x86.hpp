@@ -139,6 +139,10 @@ inline void sigmoid(float* A, const float* B, int size) {
     }
 }
 
+// inline void threshold_less(float* A, const float* B, int size) {
+
+// }
+
 }  // namespace kernel
 }  // namespace cpu
 }  // namespace fastnum

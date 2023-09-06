@@ -255,7 +255,7 @@ inline void mpack_h4(float* packed, const float* X, int ldx, int n_pack, int max
         x1_ptr += 4;
         x2_ptr += 4;
         x3_ptr += 4;
-        packed += 32;
+        packed += 16;
     }
 
     for (; i < n_pack; ++i) {
@@ -405,7 +405,7 @@ inline void mpack_v16(float* packed, const float* X, int ldx, int n_pack, int ma
     //__m256 d0, d1;
     int i = 0;
     for (i = 0; i < n_pack - 3; i += 4) {
-
+        //printf("i=%d\n", i);
         __m256 d0 = _mm256_loadu_ps(X);
         __m256 d1 = _mm256_loadu_ps(X + 8);
         __m256 d2 = _mm256_loadu_ps(X + ldx);
@@ -414,11 +414,6 @@ inline void mpack_v16(float* packed, const float* X, int ldx, int n_pack, int ma
         __m256 d5 = _mm256_loadu_ps(X + 8 + 2 * ldx);
         __m256 d6 = _mm256_loadu_ps(X + 3 * ldx);
         __m256 d7 = _mm256_loadu_ps(X + 8 + 3 * ldx);
-
-        _mm_prefetch((char*)(X + 4 * ldx + 0 * ldx), _MM_HINT_T0);
-        _mm_prefetch((char*)(X + 4 * ldx + 1 * ldx), _MM_HINT_T0);
-        _mm_prefetch((char*)(X + 4 * ldx + 2 * ldx), _MM_HINT_T0);
-        _mm_prefetch((char*)(X + 4 * ldx + 3 * ldx), _MM_HINT_T0);
 
         _mm256_store_ps(packed, d0);
         _mm256_store_ps(packed + 8, d1);

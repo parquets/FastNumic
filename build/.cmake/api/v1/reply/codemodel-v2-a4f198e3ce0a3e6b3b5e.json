@@ -1,0 +1,616 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						3
+					]
+				},
+				{
+					"build" : "source",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-source-Debug-be4710394502bfacce20.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "source",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "source/cpu",
+					"jsonFile" : "directory-source.cpu-Debug-ef0e1d2a64714c9f5bab.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "source/cpu",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "samples",
+					"childIndexes" : 
+					[
+						4
+					],
+					"jsonFile" : "directory-samples-Debug-026e8de27727d40e5852.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "samples"
+				},
+				{
+					"build" : "samples/cpu",
+					"jsonFile" : "directory-samples.cpu-Debug-879cf7a6f6a82adddedf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "samples/cpu",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					],
+					"name" : "FastNum",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-Debug-9de7b3e2803edc83b89b.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "FastNum::@411ffd8adc737496fe19",
+					"jsonFile" : "target-FastNum-Debug-da0757febd7a555ed25f.json",
+					"name" : "FastNum",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "FastNumCPU::@7f78f823788276dca7d7",
+					"jsonFile" : "target-FastNumCPU-Debug-221b1c8b59c2c5240d61.json",
+					"name" : "FastNumCPU",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-Debug-9fdef088eca667c83113.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "gemm_test::@19b04e7d99e82f69b90a",
+					"jsonFile" : "target-gemm_test-Debug-8e8245a22c47a9dab659.json",
+					"name" : "gemm_test",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3
+					],
+					"jsonFile" : "directory-.-Release-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						3
+					]
+				},
+				{
+					"build" : "source",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-source-Release-be4710394502bfacce20.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "source",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "source/cpu",
+					"jsonFile" : "directory-source.cpu-Release-ef0e1d2a64714c9f5bab.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "source/cpu",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "samples",
+					"childIndexes" : 
+					[
+						4
+					],
+					"jsonFile" : "directory-samples-Release-026e8de27727d40e5852.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "samples"
+				},
+				{
+					"build" : "samples/cpu",
+					"jsonFile" : "directory-samples.cpu-Release-879cf7a6f6a82adddedf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "samples/cpu",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					],
+					"name" : "FastNum",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-Release-9de7b3e2803edc83b89b.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "FastNum::@411ffd8adc737496fe19",
+					"jsonFile" : "target-FastNum-Release-f2b15d8e093ffd4873ff.json",
+					"name" : "FastNum",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "FastNumCPU::@7f78f823788276dca7d7",
+					"jsonFile" : "target-FastNumCPU-Release-d09d3bdf4eef24bcd8fe.json",
+					"name" : "FastNumCPU",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-Release-9fdef088eca667c83113.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "gemm_test::@19b04e7d99e82f69b90a",
+					"jsonFile" : "target-gemm_test-Release-4eb85ea996482350fe6c.json",
+					"name" : "gemm_test",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3
+					],
+					"jsonFile" : "directory-.-MinSizeRel-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						3
+					]
+				},
+				{
+					"build" : "source",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-source-MinSizeRel-be4710394502bfacce20.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "source",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "source/cpu",
+					"jsonFile" : "directory-source.cpu-MinSizeRel-ef0e1d2a64714c9f5bab.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "source/cpu",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "samples",
+					"childIndexes" : 
+					[
+						4
+					],
+					"jsonFile" : "directory-samples-MinSizeRel-026e8de27727d40e5852.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "samples"
+				},
+				{
+					"build" : "samples/cpu",
+					"jsonFile" : "directory-samples.cpu-MinSizeRel-879cf7a6f6a82adddedf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "samples/cpu",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "MinSizeRel",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					],
+					"name" : "FastNum",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-9de7b3e2803edc83b89b.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "FastNum::@411ffd8adc737496fe19",
+					"jsonFile" : "target-FastNum-MinSizeRel-57b906b4879fc4f9a60c.json",
+					"name" : "FastNum",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "FastNumCPU::@7f78f823788276dca7d7",
+					"jsonFile" : "target-FastNumCPU-MinSizeRel-fd658c8489b8497918c6.json",
+					"name" : "FastNumCPU",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-MinSizeRel-9fdef088eca667c83113.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "gemm_test::@19b04e7d99e82f69b90a",
+					"jsonFile" : "target-gemm_test-MinSizeRel-75708e2cdee3743a41cf.json",
+					"name" : "gemm_test",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3
+					],
+					"jsonFile" : "directory-.-RelWithDebInfo-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						3
+					]
+				},
+				{
+					"build" : "source",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-source-RelWithDebInfo-be4710394502bfacce20.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "source",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "source/cpu",
+					"jsonFile" : "directory-source.cpu-RelWithDebInfo-ef0e1d2a64714c9f5bab.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "source/cpu",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "samples",
+					"childIndexes" : 
+					[
+						4
+					],
+					"jsonFile" : "directory-samples-RelWithDebInfo-026e8de27727d40e5852.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "samples"
+				},
+				{
+					"build" : "samples/cpu",
+					"jsonFile" : "directory-samples.cpu-RelWithDebInfo-879cf7a6f6a82adddedf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "samples/cpu",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					],
+					"name" : "FastNum",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-9de7b3e2803edc83b89b.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "FastNum::@411ffd8adc737496fe19",
+					"jsonFile" : "target-FastNum-RelWithDebInfo-f875695cd999cd75c188.json",
+					"name" : "FastNum",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "FastNumCPU::@7f78f823788276dca7d7",
+					"jsonFile" : "target-FastNumCPU-RelWithDebInfo-79ff0e85034507a80332.json",
+					"name" : "FastNumCPU",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-RelWithDebInfo-9fdef088eca667c83113.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "gemm_test::@19b04e7d99e82f69b90a",
+					"jsonFile" : "target-gemm_test-RelWithDebInfo-c152116175250c813cbe.json",
+					"name" : "gemm_test",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/vscode/FastNum/build",
+		"source" : "D:/vscode/FastNum"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}
