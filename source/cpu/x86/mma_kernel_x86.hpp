@@ -1010,7 +1010,59 @@ inline void mma_1x1(const float* packed_A, const float* packed_B, int K, float* 
     *C += sum;
 }
 
+inline void mma_7x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+
+    double* c_ptr0 = C + 0 * ldc;
+    double* c_ptr1 = C + 1 * ldc;
+    double* c_ptr2 = C + 2 * ldc;
+    double* c_ptr3 = C + 3 * ldc;
+    double* c_ptr4 = C + 4 * ldc;
+    double* c_ptr5 = C + 5 * ldc;
+    double* c_ptr6 = C + 6 * ldc;
+
+    __m256d _v_c0 = _mm256_loadu_pd(c_ptr0);
+    __m256d _v_c1 = _mm256_loadu_pd(c_ptr1);
+    __m256d _v_c2 = _mm256_loadu_pd(c_ptr2);
+    __m256d _v_c3 = _mm256_loadu_pd(c_ptr3);
+    __m256d _v_c4 = _mm256_loadu_pd(c_ptr4);
+    __m256d _v_c5 = _mm256_loadu_pd(c_ptr5);
+    __m256d _v_c6 = _mm256_loadu_pd(c_ptr6);
+
+    for (int k = 0; k < K; ++k) {
+        __m256d _v_a0 = _mm256_broadcast_sd(packed_A + 0);
+        __m256d _v_a1 = _mm256_broadcast_sd(packed_A + 1);
+        __m256d _v_a2 = _mm256_broadcast_sd(packed_A + 2);
+        __m256d _v_a3 = _mm256_broadcast_sd(packed_A + 3);
+        __m256d _v_a4 = _mm256_broadcast_sd(packed_A + 4);
+        __m256d _v_a5 = _mm256_broadcast_sd(packed_A + 5);
+        __m256d _v_a6 = _mm256_broadcast_sd(packed_A + 6);
+
+        
+        __m256d _v_b = _mm256_loadu_pd(packed_B);
+
+        _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b, _v_c0);
+        _v_c1 = _mm256_fmadd_pd(_v_a1, _v_b, _v_c1);
+        _v_c2 = _mm256_fmadd_pd(_v_a2, _v_b, _v_c2);
+        _v_c3 = _mm256_fmadd_pd(_v_a3, _v_b, _v_c3);
+        _v_c4 = _mm256_fmadd_pd(_v_a4, _v_b, _v_c4);
+        _v_c5 = _mm256_fmadd_pd(_v_a5, _v_b, _v_c5);
+        _v_c6 = _mm256_fmadd_pd(_v_a6, _v_b, _v_c5);
+
+        packed_A += 7;
+        packed_B += 4;
+    }
+
+    _mm256_storeu_pd(c_ptr0, _v_c0);
+    _mm256_storeu_pd(c_ptr1, _v_c1);
+    _mm256_storeu_pd(c_ptr2, _v_c2);
+    _mm256_storeu_pd(c_ptr3, _v_c3);
+    _mm256_storeu_pd(c_ptr4, _v_c4);
+    _mm256_storeu_pd(c_ptr5, _v_c5);
+    _mm256_storeu_pd(c_ptr6, _v_c6);
+}
+
 inline void mma_6x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
+    
     double* c_ptr0 = C + 0 * ldc;
     double* c_ptr1 = C + 1 * ldc;
     double* c_ptr2 = C + 2 * ldc;

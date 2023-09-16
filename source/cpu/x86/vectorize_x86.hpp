@@ -33,6 +33,13 @@ inline float reduce_min_ps(const __m256& x) {
     return _mm_cvtss_f32(x32);
 }
 
+inline static float reduce_add_ps(__m128 x128) {
+	const __m128 x64 = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
+	const __m128 x32 = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
+	return _mm_cvtss_f32(x32);
+}
+
+
 }  // namespace kernel
 }  // namespace cpu
 }  // namespace fastnum
