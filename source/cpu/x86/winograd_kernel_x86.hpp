@@ -33,12 +33,182 @@ struct WinogradLayoutTransform<4, 3, 1> {
 };
 
 template <int TileSize, int KernelSize, int StrideSize, int NPack>
-struct WinogradWeightTransform {
-    inline void operator()(float* u, const float* g) const { printf("Error! Undefined Winograd Weight Transform"); }
+struct WinogradUVTransform {
+    inline void operator()(float* u, const float* g) const {
+        printf("Error! Undefined Winograd UV Transform");
+        exit(-1);
+    }
 };
 
-template <>
-struct WinogradWeightTransform<8, 3, 1, 8> {
+template <int TileSize, int KernelSize, int StrideSize, int NPack>
+struct WinogradDataTransform {
+    inline void operator()(float* u, const float* g) const {
+        printf("Error! Undefined Winograd Data Transform");
+        exit(-1);
+    }
+};
+
+template <int TileSize, int KernelSize, int StrideSize, int NPack>
+struct WinogradWeightTransform {
+    inline void operator()(float* u, const float* g) const {
+        printf("Error! Undefined Winograd Weight Transform");
+        exit(-1);
+    }
+};
+
+template <int NPack>
+struct WinogradWeightTransform<4, 3, 1, NPack> {
+    // G = [
+    //     [1.0f, 0.0f, 0.0f],
+    //     [1.0f / 2, 1.0f / 2, 1.0f / 2],
+    //     [1.0f / 2, -1.0f / 2, 1.0f / 2],
+    //     [0.0f, 0.0f, 1.0f]
+    // ]
+    inline void getGg(float* Gg, const float* g) const {
+        Gg[0] = g[0];
+        Gg[1] = g[1];
+        Gg[2] = g[2];
+        Gg[3] = (g[0] + g[3] + g[6]) / 2;
+        Gg[4] = (g[1] + g[4] + g[7]) / 2;
+        Gg[5] = (g[2] + g[5] + g[8]) / 2;
+        Gg[6] = (g[0] - g[3] + g[6]) / 2;
+        Gg[7] = (g[1] - g[4] + g[7]) / 2;
+        Gg[8] = (g[2] - g[5] + g[8]) / 2;
+        Gg[9] = g[6];
+        Gg[10] = g[7];
+        Gg[11] = g[8];
+    }
+
+    inline void getGgGt(float* GgGt, const float* Gg) const {
+        GgGt[0] = Gg[0];
+        GgGt[1] = (Gg[0] + Gg[1] + Gg[2]) / 2;
+        GgGt[2] = (Gg[0] - Gg[1] + Gg[2]) / 2;
+        GgGt[3] = Gg[2];
+
+        GgGt[4] = Gg[3];
+        GgGt[5] = (Gg[3] + Gg[4] + Gg[5]) / 2;
+        GgGt[6] = (Gg[3] - Gg[4] + Gg[5]) / 2;
+        GgGt[7] = Gg[5];
+
+        GgGt[8] = Gg[6];
+        GgGt[9] = (Gg[6] + Gg[7] + Gg[8]) / 2;
+        GgGt[10] = (Gg[6] - Gg[7] + Gg[8]) / 2;
+        GgGt[11] = Gg[8];
+
+        GgGt[12] = Gg[9];
+        GgGt[13] = (Gg[9] + Gg[10] + Gg[11]) / 2;
+        GgGt[14] = (Gg[9] - Gg[10] + Gg[11]) / 2;
+        GgGt[15] = Gg[11];
+    }
+
+    inline void operator()(float* u, const float* g) const {
+        int kernel_stride = 3 * 3;
+
+        float Gg[NPack][4][3] = {0};
+
+        for (int i = 0; i < NPack; ++i) {
+            getGg(&Gg[i][0][0], g + i * kernel_stride);
+        }
+
+        float GgGt[NPack][4][4] = {0};
+
+        for (int i = 0; i < NPack; ++i) {
+            getGgGt(&GgGt[i][0][0], &Gg[i][0][0])
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                for (int k = 0; k < NPack; ++k) {
+                    *u++ = GgGt[k][i][j];
+                }
+            }
+        }
+    }
+};
+
+template <int NPack>
+struct WinogradWeightTransform<6, 3, 1, NPack> {
+    /*
+    G = np.array([
+        [1.0, 0.0, 0.0],
+	    [-2.0 / 3, -sq2 / 3, -1.0 / 3],
+	    [-2.0 / 3, sq2 / 3, -1.0 / 3],
+	    [1.0 / 6, sq2 / 6, 1.0 / 3],
+	    [1.0 / 6, -sq2 / 6, 1.0 / 3],
+	    [0.0, 0.0, 1.0]
+    ])
+    */
+    inline void getGg(float* Gg, const float* g) const {
+        const float sq2 = 1.41421356237f;
+        Gg[0] = g[0];
+        Gg[1] = g[1];
+        Gg[2] = g[2];
+
+        Gg[3] = -(2.0f * g[0] + sq2 * g[3] + g[6]) / 3.0f;
+        Gg[4] = -(2.0f * g[1] + sq2 * g[4] + g[7]) / 3.0f;
+        Gg[5] = -(2.0f * g[2] + sq2 * g[5] + g[8]) / 3.0f;
+
+        Gg[6] = -(2.0f * g[0] - sq2 * g[3] + g[6]) / 3.0f;
+        Gg[7] = -(2.0f * g[1] - sq2 * g[4] + g[7]) / 3.0f;
+        Gg[8] = -(2.0f * g[2] - sq2 * g[5] + g[8]) / 3.0f;
+
+        Gg[9] = (1.0f * g[0] + sq2 * g[3] + 2.0f * g[6]) / 6.0f;
+        Gg[10] = (1.0f * g[1] + sq2 * g[4] + 2.0f * g[7]) / 6.0f;
+        Gg[11] = (1.0f * g[2] + sq2 * g[5] + 2.0f * g[8]) / 6.0f;
+
+        Gg[12] = (1.0f * g[0] - sq2 * g[3] + 2.0f * g[6]) / 6.0f;
+        Gg[13] = (1.0f * g[1] - sq2 * g[4] + 2.0f * g[7]) / 6.0f;
+        Gg[14] = (1.0f * g[2] - sq2 * g[5] + 2.0f * g[8]) / 6.0f;
+
+        Gg[15] = g[6];
+        Gg[16] = g[7];
+        Gg[18] = g[9];
+    }
+
+    inline void getGgGt(float* GgGt, const float* Gg) const {
+        const float sq2 = 1.41421356237f;
+
+        for (int i = 0; i < 6; ++i) {
+            GgGt[0] = Gg[0];
+            GgGt[1] = -(2.0f * Gg[0] + sq2 * Gg[1] + Gg[2]) / 3.0f;
+            GgGt[2] = -(2.0f * Gg[0] - sq2 * Gg[1] + Gg[2]) / 3.0f;
+            GgGt[3] = (1.0f * Gg[0] + sq2 * Gg[1] + 2.0f * Gg[2]) / 6.0f;
+            GgGt[4] = (1.0f * Gg[0] - sq2 * Gg[1] + 2.0f * Gg[2]) / 6.0f;
+            GgGt[5] = Gg[2];
+
+            GgGt += 6;
+            Gg += 3;
+        }
+    }
+
+    inline void operator()(float* u, const float* g) const {
+
+        int kernel_stride = 3 * 3;
+
+        float Gg[NPack][6][3] = {0};
+
+        for (int i = 0; i < NPack; ++i) {
+            getGg(&Gg[i][0][0], g + i * kernel_stride);
+        }
+
+        float GgGt[NPack][8][8] = {0};
+
+        for (int i = 0; i < NPack; ++i) {
+            getGgGt(&GgGt[i][0][0], &Gg[i][0][0])
+        }
+
+        for (int i = 0; i < 6; ++i) {
+            for (int j = 0; j < 6; ++j) {
+                for (int k = 0; k < NPack; ++k) {
+                    *u++ = GgGt[k][i][j];
+                }
+            }
+        }
+    }
+};
+
+template <int NPack>
+struct WinogradWeightTransform<8, 3, 1, NPack> {
     /*
     G = np.array([
         [1.0,      0.0,       0.0],
@@ -125,45 +295,162 @@ struct WinogradWeightTransform<8, 3, 1, 8> {
 
         int kernel_stride = 3 * 3;
 
-        float Gg[8][8][3] = {0};
+        float Gg[NPack][8][3] = {0};
 
-        getGg(&Gg[0][0][0], g + 0 * kernel_stride);
-        getGg(&Gg[1][0][0], g + 1 * kernel_stride);
-        getGg(&Gg[2][0][0], g + 2 * kernel_stride);
-        getGg(&Gg[3][0][0], g + 3 * kernel_stride);
-        getGg(&Gg[4][0][0], g + 4 * kernel_stride);
-        getGg(&Gg[5][0][0], g + 5 * kernel_stride);
-        getGg(&Gg[6][0][0], g + 6 * kernel_stride);
-        getGg(&Gg[7][0][0], g + 7 * kernel_stride);
+        for (int i = 0; i < NPack; ++i) {
+            getGg(&Gg[i][0][0], g + i * kernel_stride);
+        }
 
-        float GgGt[8][8][8] = {0};
+        float GgGt[NPack][8][8] = {0};
 
-        getGgGt(&GgGt[0][0][0], &Gg[0][0][0]);
-        getGgGt(&GgGt[1][0][0], &Gg[1][0][0]);
-        getGgGt(&GgGt[2][0][0], &Gg[2][0][0]);
-        getGgGt(&GgGt[3][0][0], &Gg[3][0][0]);
-        getGgGt(&GgGt[4][0][0], &Gg[4][0][0]);
-        getGgGt(&GgGt[5][0][0], &Gg[5][0][0]);
-        getGgGt(&GgGt[6][0][0], &Gg[6][0][0]);
-        getGgGt(&GgGt[7][0][0], &Gg[7][0][0]);
+        for (int i = 0; i < NPack; ++i) {
+            getGgGt(&GgGt[i][0][0], &Gg[i][0][0])
+        }
 
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
-                *u++ = GgGt[0][i][j];
-                *u++ = GgGt[1][i][j];
-                *u++ = GgGt[2][i][j];
-                *u++ = GgGt[3][i][j];
-                *u++ = GgGt[4][i][j];
-                *u++ = GgGt[5][i][j];
-                *u++ = GgGt[6][i][j];
-                *u++ = GgGt[7][i][j];
+                for (int k = 0; k < NPack; ++k) {
+                    *u++ = GgGt[k][i][j];
+                }
             }
         }
     }
 };
 
-template <int TileSize, int KernelSize, int StrideSize, int NPack>
-struct WinogradDataTransform {};
+template <>
+struct WinogradDataTransform<4, 3, 1, 1> {
+    inline void getBTd(float* BTd, const float* d, int ldd) const {
+        for (int i = 0; i < 4; ++i) {
+            float r0 = d[0 * ldd + i];
+            float r1 = d[1 * ldd + i];
+            float r2 = d[2 * ldd + i];
+            float r3 = d[3 * ldd + i];
+
+            float t0 = r0 - r2;
+            float t1 = r1 + r2;
+            float t2 = -r1 + r2;
+            float t3 = -r1 + r3;
+
+            BTd[0 * 4 + i] = t0;
+            BTd[1 * 4 + i] = t1;
+            BTd[2 * 4 + i] = t2;
+            BTd[3 * 4 + i] = t3;
+        }
+    }
+
+    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+        for (int i = 0; i < 4; ++i) {
+            float r0 = BTd[0];
+            float r1 = BTd[1];
+            float r2 = BTd[2];
+            float r3 = BTd[3];
+
+            float t0 = r0 - r2;
+            float t1 = r1 + r2;
+            float t2 = -r1 + r2;
+            float t3 = -r1 + r3;
+
+            BTdB[0] = t0;
+            BTdB[1] = t1;
+            BTdB[2] = t2;
+            BTdB[3] = t3;
+
+            BTdB += ldx;
+        }
+    }
+
+    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+        float BTd[4 * 4] = {0};
+        getBTd(BTd, d, ldd);
+        getBTdB(v, ldv, BTd);
+    }
+};
+
+template <>
+struct WinogradDataTransform<6, 3, 1, 1> {
+    /*
+BT = np.array([
+    [1.0,  0.0,  -2.5,  0.0,  1.0, 0.0],
+    [0.0, -sq2,   -2.0,  sq2 / 2.0, 1.0, 0.0],
+	[0.0,  sq2,   -2.0, -sq2 / 2.0, 1.0, 0.0],
+	[0.0, -sq2 / 2, -0.5,  sq2,   1.0, 0.0],
+	[0.0,  sq2 / 2, -0.5, -sq2,   1.0, 0.0],
+	[0.0,  1.0,   0.0,  -2.5, 0.0, 1.0]
+])
+*/
+    inline void getBTd(float* BTd, const float* d, int ldd) const {
+
+        const float sq2 = 1.41421356237f;
+
+        for (int i = 0; i < 6; ++i) {
+
+            float r0 = d[0 * ldd + i];
+            float r1 = d[1 * ldd + i];
+            float r2 = d[2 * ldd + i];
+            float r3 = d[3 * ldd + i];
+            float r4 = d[4 * ldd + i];
+            float r5 = d[5 * ldd + i];
+
+            float t12a = -sq2 / 2.0f * r3 + (sq2 * r1);
+            float t12b = -2 * r2 + r4;
+            float t34a = -sq2 / 2.0f * r1 + (sq2 * r3);
+            float t34b = -0.5 * r2 + r4;
+
+            float t0 = -2.5 * r2 + (r0 + r4);
+            float t1 = t12b - t12a;
+            float t2 = t12b + t12a;
+            float t3 = t34b + t34a;
+            float t4 = t34b - t34a;
+            float t5 = -2.5 * r3 + (r1 + r5);
+
+            BTd[0 * 6 + i] = t0;
+            BTd[1 * 6 + i] = t1;
+            BTd[2 * 6 + i] = t2;
+            BTd[3 * 6 + i] = t3;
+            BTd[4 * 6 + i] = t4;
+            BTd[5 * 6 + i] = t5;
+        }
+    }
+
+    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+        const float sq2 = 1.41421356237f;
+        for (int i = 0; i < 6; ++i) {
+            float r0 = BTd[i * 6 + 0];
+            float r1 = BTd[i * 6 + 1];
+            float r2 = BTd[i * 6 + 2];
+            float r3 = BTd[i * 6 + 3];
+            float r4 = BTd[i * 6 + 4];
+            float r5 = BTd[i * 6 + 5];
+
+            float t12a = -sq2 / 2.0f * r3 + (sq2 * r1);
+            float t12b = -2 * r2 + r4;
+            float t34a = -sq2 / 2.0f * r1 + (sq2 * r3);
+            float t34b = -0.5 * r2 + r4;
+
+            float t0 = -2.5 * r2 + (r0 + r4);
+            float t1 = t12b - t12a;
+            float t2 = t12b + t12a;
+            float t3 = t34b + t34a;
+            float t4 = t34b - t34a;
+            float t5 = -2.5 * r3 + (r1 + r5);
+
+            BTdB[0] = t0;
+            BTdB[1] = t1;
+            BTdB[2] = t2;
+            BTdB[3] = t3;
+            BTdB[4] = t4;
+            BTdB[5] = t5;
+
+            BTdB += ldx;
+        }
+    }
+
+    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+        float BTd[6 * 6] = {0};
+        getBTd(BTd, d, ldd);
+        getBTdB(v, ldv, BTd);
+    }
+};
 
 template <>
 struct WinogradDataTransform<8, 3, 1, 1> {
@@ -244,7 +531,8 @@ struct WinogradDataTransform<8, 3, 1, 1> {
             BTdB += ldx;
         }
     }
-public:
+
+   public:
     inline void operator()(float* v, int ldv, const float* d, int ldd) const {
         float BTd[64] = {0};
         getBTd(BTd, d, ldd);
@@ -253,8 +541,144 @@ public:
 };
 
 template <>
+struct WinogradDataTransform<4, 3, 1, 4> {
+    inline void getBTd(float* BTd, const float* d, int ldd) const {
+        for (int i = 0; i < 4; ++i) {
+            __m128 _v_r0 = _mm_loadu_ps(d + 0 * ldd + i * 4);
+            __m128 _v_r1 = _mm_loadu_ps(d + 1 * ldd + i * 4);
+            __m128 _v_r2 = _mm_loadu_ps(d + 2 * ldd + i * 4);
+            __m128 _v_r3 = _mm_loadu_ps(d + 3 * ldd + i * 4);
+
+            __m128 _v_t0 = _mm_sub_ps(_v_r0, _v_r2);
+            __m128 _v_t1 = _mm_add_ps(_v_r0, _v_r2);
+            __m128 _v_t2 = _mm_sub_ps(_v_r2, _v_r1);
+            __m128 _v_t3 = _mm_sub_ps(_v_r3, _v_r1);
+
+            _mm_storeu_ps(BTd + 0 * 4 * 4 + i * 4, _v_t0);
+            _mm_storeu_ps(BTd + 1 * 4 * 4 + i * 4, _v_t1);
+            _mm_storeu_ps(BTd + 2 * 4 * 4 + i * 4, _v_t2);
+            _mm_storeu_ps(BTd + 3 * 4 * 4 + i * 4, _v_t3);
+        }
+    }
+
+    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+        for (int i = 0; i < 4; ++i) {
+            __m128 _v_r0 = _mm_loadu_ps(BTd + i * 4 * 4 + 0 * 4);
+            __m128 _v_r1 = _mm_loadu_ps(BTd + i * 4 * 4 + 1 * 4);
+            __m128 _v_r2 = _mm_loadu_ps(BTd + i * 4 * 4 + 2 * 4);
+            __m128 _v_r3 = _mm_loadu_ps(BTd + i * 4 * 4 + 3 * 4);
+
+            __m128 _v_t0 = _mm_sub_ps(_v_r0, _v_r2);
+            __m128 _v_t1 = _mm_add_ps(_v_r0, _v_r2);
+            __m128 _v_t2 = _mm_sub_ps(_v_r2, _v_r1);
+            __m128 _v_t3 = _mm_sub_ps(_v_r3, _v_r1);
+
+            _mm_storeu_ps(BTdB + i * 4 * 4 + 0 * 4, _v_t0);
+            _mm_storeu_ps(BTdB + i * 4 * 4 + 1 * 4, _v_t1);
+            _mm_storeu_ps(BTdB + i * 4 * 4 + 2 * 4, _v_t2);
+            _mm_storeu_ps(BTdB + i * 4 * 4 + 3 * 4, _v_t3);
+
+            BTdB += ldx;
+        }
+    }
+
+    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+        float BTd[4 * 4 * 4] = {0};
+        getBTd(BTd, d, ldd);
+        getBTdB(v, ldv, BTd);
+    }
+};
+
+template <>
+struct WinogradDataTransform<6, 3, 1, 4> {
+    inline void getBTd(float* BTd, const float* d, int ldd) const {
+        const float sq2 = 1.41421356237f;
+        const float sq2_d2 = 1.41421356237f / 2;
+        __m128 _vm2_5 = _mm_set1_ps(-2.5f);
+        __m128 _vsq2 = _mm_set1_ps(sq2);
+        __m128 _vmsq2_d2 = _mm_set1_ps(-sq2_d2);
+        __m128 _vm2 = _mm_set1_ps(-2.f);
+        __m128 _vm0_5 = _mm_set1_ps(-0.5f);
+
+        for (int i = 0; i < 6; ++i) {
+            __m128 _v_r0 = _mm_loadu_ps(d + 0 * ldd + i * 4);
+            __m128 _v_r1 = _mm_loadu_ps(d + 1 * ldd + i * 4);
+            __m128 _v_r2 = _mm_loadu_ps(d + 2 * ldd + i * 4);
+            __m128 _v_r3 = _mm_loadu_ps(d + 3 * ldd + i * 4);
+            __m128 _v_r4 = _mm_loadu_ps(d + 4 * ldd + i * 4);
+            __m128 _v_r5 = _mm_loadu_ps(d + 5 * ldd + i * 4);
+
+            __m128 _v_t12a = _mm_fmadd_ps(_vmsq2_d2, _v_r3, _mm_mul_ps(_v_r1, _vsq2));
+            __m128 _v_t12b = _mm_fmadd_ps(_vm2, _v_r2, _v_r3);
+            __m128 _v_t34a = _mm_fmadd_ps(_vmsq2_d2, _v_r1, _mm_mul_ps(_v_r3, _vsq2));
+            __m128 _v_t34b = _mm_fmadd_ps(_vm0_5, _v_r2, _v_r4);
+
+            __m128 _v_t0 = _mm_fmadd_ps(_vm2_5, _v_r2, _mm_add_ps(_v_r0, _v_r4));
+            __m128 _v_t1 = _mm_sub_ps(_v_t12b, _v_t12a);
+            __m128 _v_t2 = _mm_add_ps(_v_t12b, _v_t12a);
+            __m128 _v_t3 = _mm_add_ps(_v_t34b, _v_t34a);
+            __m128 _v_t4 = _mm_sub_ps(_v_t34b, _v_t34a);
+            __m128 _v_t5 = _mm_fmadd_ps(_vm2_5, _v_r3, _mm_add_ps(_v_r1, _v_r5));
+
+            _mm_storeu_ps(BTd + 0 * 6 * 4 + i * 4, _v_t0);
+            _mm_storeu_ps(BTd + 1 * 6 * 4 + i * 4, _v_t1);
+            _mm_storeu_ps(BTd + 2 * 6 * 4 + i * 4, _v_t2);
+            _mm_storeu_ps(BTd + 3 * 6 * 4 + i * 4, _v_t3);
+            _mm_storeu_ps(BTd + 4 * 6 * 4 + i * 4, _v_t4);
+            _mm_storeu_ps(BTd + 5 * 6 * 4 + i * 4, _v_t5);
+        }
+    }
+
+    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+        const float sq2 = 1.41421356237f;
+        const float sq2_d2 = 1.41421356237f / 2;
+        __m128 _vm2_5 = _mm_set1_ps(-2.5f);
+        __m128 _vsq2 = _mm_set1_ps(sq2);
+        __m128 _vmsq2_d2 = _mm_set1_ps(-sq2_d2);
+        __m128 _vm2 = _mm_set1_ps(-2.f);
+        __m128 _vm0_5 = _mm_set1_ps(-0.5f);
+
+        for (int i = 0; i < 6; ++i) {
+            __m128 _v_r0 = _mm_loadu_ps(BTd + i * 6 * 4 + 0 * 4);
+            __m128 _v_r1 = _mm_loadu_ps(BTd + i * 6 * 4 + 1 * 4);
+            __m128 _v_r2 = _mm_loadu_ps(BTd + i * 6 * 4 + 2 * 4);
+            __m128 _v_r3 = _mm_loadu_ps(BTd + i * 6 * 4 + 3 * 4);
+            __m128 _v_r4 = _mm_loadu_ps(BTd + i * 6 * 4 + 4 * 4);
+            __m128 _v_r5 = _mm_loadu_ps(BTd + i * 6 * 4 + 5 * 4);
+
+            __m128 _v_t12a = _mm_fmadd_ps(_vmsq2_d2, _v_r3, _mm_mul_ps(_v_r1, _vsq2));
+            __m128 _v_t12b = _mm_fmadd_ps(_vm2, _v_r2, _v_r3);
+            __m128 _v_t34a = _mm_fmadd_ps(_vmsq2_d2, _v_r1, _mm_mul_ps(_v_r3, _vsq2));
+            __m128 _v_t34b = _mm_fmadd_ps(_vm0_5, _v_r2, _v_r4);
+
+            __m128 _v_t0 = _mm_fmadd_ps(_vm2_5, _v_r2, _mm_add_ps(_v_r0, _v_r4));
+            __m128 _v_t1 = _mm_sub_ps(_v_t12b, _v_t12a);
+            __m128 _v_t2 = _mm_add_ps(_v_t12b, _v_t12a);
+            __m128 _v_t3 = _mm_add_ps(_v_t34b, _v_t34a);
+            __m128 _v_t4 = _mm_sub_ps(_v_t34b, _v_t34a);
+            __m128 _v_t5 = _mm_fmadd_ps(_vm2_5, _v_r3, _mm_add_ps(_v_r1, _v_r5));
+
+            _mm_storeu_ps(BTdB + 0 * 4, _v_t0);
+            _mm_storeu_ps(BTdB + 1 * 4, _v_t1);
+            _mm_storeu_ps(BTdB + 2 * 4, _v_t2);
+            _mm_storeu_ps(BTdB + 3 * 4, _v_t3);
+            _mm_storeu_ps(BTdB + 4 * 4, _v_t4);
+            _mm_storeu_ps(BTdB + 5 * 4, _v_t5);
+
+            BTdB += ldx;
+        }
+    }
+
+    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+        float BTd[6 * 6 * 4] = {0};
+        getBTd(BTd, d, ldd);
+        getBTdB(v, ldv, BTd);
+    }
+};
+
+template <>
 struct WinogradDataTransform<8, 3, 1, 4> {
-private:
+   private:
     inline void getBTd(float* BTd, const float* d, int ldd) const {
 
         __m128 _v5_25 = _mm_set1_ps(5.25f);
@@ -352,9 +776,145 @@ private:
         }
     }
 
-public:
+   public:
     inline void operator()(float* v, int ldv, const float* d, int ldd) const {
         float BTd[256] = {0};
+        getBTd(BTd, d, ldd);
+        getBTdB(v, ldv, BTd);
+    }
+};
+
+template <>
+struct WinogradDataTransform<4, 3, 1, 8> {
+    inline void getBTd(float* BTd, const float* d, int ldd) const {
+        for (int i = 0; i < 4; ++i) {
+            __m256 _v_r0 = _mm256_loadu_ps(d + 0 * ldd + i * 8);
+            __m256 _v_r1 = _mm256_loadu_ps(d + 1 * ldd + i * 8);
+            __m256 _v_r2 = _mm256_loadu_ps(d + 2 * ldd + i * 8);
+            __m256 _v_r3 = _mm256_loadu_ps(d + 3 * ldd + i * 8);
+
+            __m256 _v_t0 = _mm256_sub_ps(_v_r0, _v_r2);
+            __m256 _v_t1 = _mm256_add_ps(_v_r0, _v_r2);
+            __m256 _v_t2 = _mm256_sub_ps(_v_r2, _v_r1);
+            __m256 _v_t3 = _mm256_sub_ps(_v_r3, _v_r1);
+
+            _mm256_storeu_ps(BTd + 0 * 4 * 8 + i * 8, _v_t0);
+            _mm256_storeu_ps(BTd + 1 * 4 * 8 + i * 8, _v_t1);
+            _mm256_storeu_ps(BTd + 2 * 4 * 8 + i * 8, _v_t2);
+            _mm256_storeu_ps(BTd + 3 * 4 * 8 + i * 8, _v_t3);
+        }
+    }
+
+    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+        for (int i = 0; i < 4; ++i) {
+            __m256 _v_r0 = _mm256_loadu_ps(BTd + i * 4 * 8 + 0 * 8);
+            __m256 _v_r1 = _mm256_loadu_ps(BTd + i * 4 * 8 + 1 * 8);
+            __m256 _v_r2 = _mm256_loadu_ps(BTd + i * 4 * 8 + 2 * 8);
+            __m256 _v_r3 = _mm256_loadu_ps(BTd + i * 4 * 8 + 3 * 8);
+
+            __m256 _v_t0 = _mm256_sub_ps(_v_r0, _v_r2);
+            __m256 _v_t1 = _mm256_add_ps(_v_r0, _v_r2);
+            __m256 _v_t2 = _mm256_sub_ps(_v_r2, _v_r1);
+            __m256 _v_t3 = _mm256_sub_ps(_v_r3, _v_r1);
+
+            _mm256_storeu_ps(BTdB + i * 4 * 8 + 0 * 8, _v_t0);
+            _mm256_storeu_ps(BTdB + i * 4 * 8 + 1 * 8, _v_t1);
+            _mm256_storeu_ps(BTdB + i * 4 * 8 + 2 * 8, _v_t2);
+            _mm256_storeu_ps(BTdB + i * 4 * 8 + 3 * 8, _v_t3);
+
+            BTdB += ldx;
+        }
+    }
+
+    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+        float BTd[4 * 4 * 8] = {0};
+        getBTd(BTd, d, ldd);
+        getBTdB(v, ldv, BTd);
+    }
+};
+
+template <>
+struct WinogradDataTransform<6, 3, 1, 8> {
+    inline void getBTd(float* BTd, const float* d, int ldd) const {
+        const float sq2 = 1.41421356237f;
+        const float sq2_d2 = 1.41421356237f / 2;
+        __m256 _vm2_5 = _mm256_set1_ps(-2.5f);
+        __m256 _vsq2 = _mm256_set1_ps(sq2);
+        __m256 _vmsq2_d2 = _mm256_set1_ps(-sq2_d2);
+        __m256 _vm2 = _mm256_set1_ps(-2.f);
+        __m256 _vm0_5 = _mm256_set1_ps(-0.5f);
+
+        for (int i = 0; i < 6; ++i) {
+            __m256 _v_r0 = _mm256_loadu_ps(d + 0 * ldd + i * 8);
+            __m256 _v_r1 = _mm256_loadu_ps(d + 1 * ldd + i * 8);
+            __m256 _v_r2 = _mm256_loadu_ps(d + 2 * ldd + i * 8);
+            __m256 _v_r3 = _mm256_loadu_ps(d + 3 * ldd + i * 8);
+            __m256 _v_r4 = _mm256_loadu_ps(d + 4 * ldd + i * 8);
+            __m256 _v_r5 = _mm256_loadu_ps(d + 5 * ldd + i * 8);
+
+            __m256 _v_t12a = _mm256_fmadd_ps(_vmsq2_d2, _v_r3, _mm256_mul_ps(_v_r1, _vsq2));
+            __m256 _v_t12b = _mm256_fmadd_ps(_vm2, _v_r2, _v_r3);
+            __m256 _v_t34a = _mm256_fmadd_ps(_vmsq2_d2, _v_r1, _mm256_mul_ps(_v_r3, _vsq2));
+            __m256 _v_t34b = _mm256_fmadd_ps(_vm0_5, _v_r2, _v_r4);
+
+            __m256 _v_t0 = _mm256_fmadd_ps(_vm2_5, _v_r2, _mm256_add_ps(_v_r0, _v_r4));
+            __m256 _v_t1 = _mm256_sub_ps(_v_t12b, _v_t12a);
+            __m256 _v_t2 = _mm256_add_ps(_v_t12b, _v_t12a);
+            __m256 _v_t3 = _mm256_add_ps(_v_t34b, _v_t34a);
+            __m256 _v_t4 = _mm256_sub_ps(_v_t34b, _v_t34a);
+            __m256 _v_t5 = _mm256_fmadd_ps(_vm2_5, _v_r3, _mm256_add_ps(_v_r1, _v_r5));
+
+            _mm256_storeu_ps(BTd + 0 * 6 * 8 + i * 8, _v_t0);
+            _mm256_storeu_ps(BTd + 1 * 6 * 8 + i * 8, _v_t1);
+            _mm256_storeu_ps(BTd + 2 * 6 * 8 + i * 8, _v_t2);
+            _mm256_storeu_ps(BTd + 3 * 6 * 8 + i * 8, _v_t3);
+            _mm256_storeu_ps(BTd + 4 * 6 * 8 + i * 8, _v_t4);
+            _mm256_storeu_ps(BTd + 5 * 6 * 8 + i * 8, _v_t5);
+        }
+    }
+
+    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+        const float sq2 = 1.41421356237f;
+        const float sq2_d2 = 1.41421356237f / 2;
+        __m256 _vm2_5 = _mm256_set1_ps(-2.5f);
+        __m256 _vsq2 = _mm256_set1_ps(sq2);
+        __m256 _vmsq2_d2 = _mm256_set1_ps(-sq2_d2);
+        __m256 _vm2 = _mm256_set1_ps(-2.f);
+        __m256 _vm0_5 = _mm256_set1_ps(-0.5f);
+
+        for (int i = 0; i < 6; ++i) {
+            __m256 _v_r0 = _mm256_loadu_ps(BTd + i * 6 * 8 + 0 * 8);
+            __m256 _v_r1 = _mm256_loadu_ps(BTd + i * 6 * 8 + 1 * 8);
+            __m256 _v_r2 = _mm256_loadu_ps(BTd + i * 6 * 8 + 2 * 8);
+            __m256 _v_r3 = _mm256_loadu_ps(BTd + i * 6 * 8 + 3 * 8);
+            __m256 _v_r4 = _mm256_loadu_ps(BTd + i * 6 * 8 + 4 * 8);
+            __m256 _v_r5 = _mm256_loadu_ps(BTd + i * 6 * 8 + 5 * 8);
+
+            __m256 _v_t12a = _mm256_fmadd_ps(_vmsq2_d2, _v_r3, _mm256_mul_ps(_v_r1, _vsq2));
+            __m256 _v_t12b = _mm256_fmadd_ps(_vm2, _v_r2, _v_r3);
+            __m256 _v_t34a = _mm256_fmadd_ps(_vmsq2_d2, _v_r1, _mm256_mul_ps(_v_r3, _vsq2));
+            __m256 _v_t34b = _mm256_fmadd_ps(_vm0_5, _v_r2, _v_r4);
+
+            __m256 _v_t0 = _mm256_fmadd_ps(_vm2_5, _v_r2, _mm256_add_ps(_v_r0, _v_r4));
+            __m256 _v_t1 = _mm256_sub_ps(_v_t12b, _v_t12a);
+            __m256 _v_t2 = _mm256_add_ps(_v_t12b, _v_t12a);
+            __m256 _v_t3 = _mm256_add_ps(_v_t34b, _v_t34a);
+            __m256 _v_t4 = _mm256_sub_ps(_v_t34b, _v_t34a);
+            __m256 _v_t5 = _mm256_fmadd_ps(_vm2_5, _v_r3, _mm256_add_ps(_v_r1, _v_r5));
+
+            _mm256_storeu_ps(BTdB + 0 * 8, _v_t0);
+            _mm256_storeu_ps(BTdB + 1 * 8, _v_t1);
+            _mm256_storeu_ps(BTdB + 2 * 8, _v_t2);
+            _mm256_storeu_ps(BTdB + 3 * 8, _v_t3);
+            _mm256_storeu_ps(BTdB + 4 * 8, _v_t4);
+            _mm256_storeu_ps(BTdB + 5 * 8, _v_t5);
+
+            BTdB += ldx;
+        }
+    }
+
+    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+        float BTd[6 * 6 * 8] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
     }
@@ -485,125 +1045,276 @@ struct WinogradDataTransform<8, 3, 1, 8> {
     }
 };
 
-template <int TileSize, int KernelSize, int StrideSize>
-struct WinogradUVTransform {};
+template <>
+struct WinogradUVTransform<8, 3, 1, 1> {
+    inline void getATUV(float* ATUV, const float* UV, int lduv) const {
+        for (int i = 0; i < 8; ++i) {
+            float r0 = UV[0 * lduv + i];
+            float r1 = UV[1 * lduv + i];
+            float r2 = UV[2 * lduv + i];
+            float r3 = UV[3 * lduv + i];
+            float r4 = UV[4 * lduv + i];
+            float r5 = UV[5 * lduv + i];
+            float r6 = UV[6 * lduv + i];
+            float r7 = UV[7 * lduv + i];
 
-inline static void weight_transform_i4x4_k3x3_ch4(float* u, const float* g) {
+            float t024a = r1 + r2;
+            float t135a = r1 - r2;
+            float t024b = r3 + r4;
+            float t135b = r3 - r4;
+            float t024c = r5 + r6;
+            float t135c = r5 - r6;
 
-    __m128 _v_g0 = _mm_loadu_ps(g);
-    __m128 _v_g1 = _mm_loadu_ps(g + 4);
-    __m128 _v_g2 = _mm_loadu_ps(g + 8);
+            float t0 = (r0 + t024a) + (32 * t024c + t024b);
+            float t1 = 16 * t135c + (2 * t135b + t135a);
+            float t2 = 8 * t024c + (4 * t024b + t024a);
+            float t3 = 4 * t135c + (8 * t135b + t135a);
+            float t4 = 2 * t024c + (16 * t024b + t024a);
+            float t5 = (r7 + t135a) + (32 * t135b + t135c);
 
-    __m128 _v_g3 = _mm_loadu_ps(g + 12);
-    __m128 _v_g4 = _mm_loadu_ps(g + 16);
-    __m128 _v_g5 = _mm_loadu_ps(g + 20);
+            ATUV[0 * 8 + i] = t0;
+            ATUV[1 * 8 + i] = t1;
+            ATUV[2 * 8 + i] = t2;
+            ATUV[3 * 8 + i] = t3;
+            ATUV[4 * 8 + i] = t4;
+            ATUV[5 * 8 + i] = t5;
+        }
+    }
 
-    __m128 _v_g6 = _mm_loadu_ps(g + 24);
-    __m128 _v_g7 = _mm_loadu_ps(g + 28);
-    __m128 _v_g8 = _mm_loadu_ps(g + 32);
+    inline void getATUVA(float* ATUVA, int ldx, const float* ATUV) const {
+        for (int i = 0; i < 6; ++i) {
+            float r0 = ATUV[i * 8 + 0];
+            float r1 = ATUV[i * 8 + 1];
+            float r2 = ATUV[i * 8 + 2];
+            float r3 = ATUV[i * 8 + 3];
+            float r4 = ATUV[i * 8 + 4];
+            float r5 = ATUV[i * 8 + 5];
+            float r6 = ATUV[i * 8 + 6];
+            float r7 = ATUV[i * 8 + 7];
 
-    __m128 _v_Gg0 = _v_g0;
-    __m128 _v_Gg1 = _v_g1;
-    __m128 _v_Gg2 = _v_g2;
-    __m128 _v_Gg3 = _mm_mul_ps(_mm_add_ps(_mm_add_ps(_v_g0, _v_g3), _v_g6), _mm_set1_ps(0.5));
-    __m128 _v_Gg4 = _mm_mul_ps(_mm_add_ps(_mm_add_ps(_v_g1, _v_g4), _v_g7), _mm_set1_ps(0.5));
-    __m128 _v_Gg5 = _mm_mul_ps(_mm_add_ps(_mm_add_ps(_v_g2, _v_g5), _v_g8), _mm_set1_ps(0.5));
+            float t024a = r1 + r2;
+            float t135a = r1 - r2;
+            float t024b = r3 + r4;
+            float t135b = r3 - r4;
+            float t024c = r5 + r6;
+            float t135c = r5 - r6;
 
-    __m128 _v_Gg6 = _mm_mul_ps(_mm_add_ps(_mm_sub_ps(_v_g0, _v_g3), _v_g6), _mm_set1_ps(0.5));
-    __m128 _v_Gg7 = _mm_mul_ps(_mm_add_ps(_mm_sub_ps(_v_g1, _v_g4), _v_g7), _mm_set1_ps(0.5));
-    __m128 _v_Gg8 = _mm_mul_ps(_mm_add_ps(_mm_sub_ps(_v_g2, _v_g5), _v_g8), _mm_set1_ps(0.5));
+            float t0 = (r0 + t024a) + (32 * t024c + t024b);
+            float t1 = 16 * t135c + (2 * t135b + t135a);
+            float t2 = 8 * t024c + (4 * t024b + t024a);
+            float t3 = 4 * t135c + (8 * t135b + t135a);
+            float t4 = 2 * t024c + (16 * t024b + t024a);
+            float t5 = (r7 + t135a) + (32 * t135b + t135c);
 
-    __m128 _v_Gg9 = _v_g6;
-    __m128 _v_Gg10 = _v_g7;
-    __m128 _v_Gg11 = _v_g8;
+            ATUVA[0] = t0;
+            ATUVA[1] = t1;
+            ATUVA[2] = t2;
+            ATUVA[3] = t3;
+            ATUVA[4] = t4;
+            ATUVA[5] = t5;
+        }
+    }
 
-    __m128 _v_Gg0_Add_Gg2 = _mm_add_ps(_v_Gg0, _v_Gg2);
+    inline void operator()(float* y, int ldy, const float* uv, int lduv) const {
+        float ATUV[48] = {0};
+        getATUV(ATUV, uv, lduv);
+        getATUVA(y, ldy, ATUV);
+    }
+};
 
-    _mm_storeu_ps(u + 0 * 4, _v_Gg0);
-    _mm_storeu_ps(u + 1 * 4, _mm_mul_ps(_mm_add_ps(_v_Gg0_Add_Gg2, _v_Gg1), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 2 * 4, _mm_mul_ps(_mm_sub_ps(_v_Gg0_Add_Gg2, _v_Gg1), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 3 * 4, _v_Gg2);
+template <>
+struct WinogradUVTransform<8, 3, 1, 4> {
+   private:
+    inline void getATUV(float* ATUV, const float* UV, int lduv) const {
+        __m128 _v32 = _mm_set1_ps(32.0f);
+        __m128 _v16 = _mm_set1_ps(16.0f);
+        __m128 _v8 = _mm_set1_ps(8.f);
+        __m128 _v4 = _mm_set1_ps(4.f);
+        __m128 _v2 = _mm_set1_ps(2.f);
 
-    __m128 _v_Gg3_Add_Gg5 = _mm_add_ps(_v_Gg3, _v_Gg5);
-    _mm_storeu_ps(u + 4 * 4, _v_Gg3);
-    _mm_storeu_ps(u + 5 * 4, _mm_mul_ps(_mm_add_ps(_v_Gg3_Add_Gg5, _v_Gg4), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 6 * 4, _mm_mul_ps(_mm_sub_ps(_v_Gg3_Add_Gg5, _v_Gg4), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 7 * 4, _v_Gg5);
+        for (int i = 0; i < 8; ++i) {
+            __m128 _v_r0 = _mm_loadu_ps(UV + 0 * lduv + i * 4);
+            __m128 _v_r1 = _mm_loadu_ps(UV + 1 * lduv + i * 4);
+            __m128 _v_r2 = _mm_loadu_ps(UV + 2 * lduv + i * 4);
+            __m128 _v_r3 = _mm_loadu_ps(UV + 3 * lduv + i * 4);
+            __m128 _v_r4 = _mm_loadu_ps(UV + 4 * lduv + i * 4);
+            __m128 _v_r5 = _mm_loadu_ps(UV + 5 * lduv + i * 4);
+            __m128 _v_r6 = _mm_loadu_ps(UV + 6 * lduv + i * 4);
+            __m128 _v_r7 = _mm_loadu_ps(UV + 7 * lduv + i * 4);
 
-    __m128 _v_Gg6_Add_Gg8 = _mm_add_ps(_v_Gg6, _v_Gg8);
-    _mm_storeu_ps(u + 8 * 4, _v_Gg6);
-    _mm_storeu_ps(u + 9 * 4, _mm_mul_ps(_mm_add_ps(_v_Gg6_Add_Gg8, _v_Gg7), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 10 * 4, _mm_mul_ps(_mm_sub_ps(_v_Gg6_Add_Gg8, _v_Gg7), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 11 * 4, _v_Gg8);
+            __m128 _v_t024a = _mm_add_ps(_v_r1, _v_r2);
+            __m128 _v_t135a = _mm_sub_ps(_v_r1, _v_r2);
+            __m128 _v_t024b = _mm_add_ps(_v_r3, _v_r4);
+            __m128 _v_t135b = _mm_sub_ps(_v_r3, _v_r4);
+            __m128 _v_t024c = _mm_add_ps(_v_r5, _v_r6);
+            __m128 _v_t135c = _mm_sub_ps(_v_r5, _v_r6);
 
-    __m128 _v_Gg9_Add_Gg11 = _mm_add_ps(_v_Gg9, _v_Gg11);
-    _mm_storeu_ps(u + 12 * 4, _v_Gg9);
-    _mm_storeu_ps(u + 13 * 4, _mm_mul_ps(_mm_add_ps(_v_Gg9_Add_Gg11, _v_Gg10), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 14 * 4, _mm_mul_ps(_mm_sub_ps(_v_Gg9_Add_Gg11, _v_Gg10), _mm_set1_ps(0.5)));
-    _mm_storeu_ps(u + 15 * 4, _v_Gg11);
-}
+            __m128 _v_t0 = _mm_add_ps(_mm_add_ps(_v_r0, _v_t024a), _mm_fmadd_ps(_v32, _v_t024c, _v_t024b));
+            __m128 _v_t1 = _mm_fmadd_ps(_v16, _v_t135c, _mm_fmadd_ps(_v2, _v_t135b, _v_t135a));
+            __m128 _v_t2 = _mm_fmadd_ps(_v8, _v_t024c, _mm_fmadd_ps(_v4, _v_t024b, _v_t024a));
+            __m128 _v_t3 = _mm_fmadd_ps(_v4, _v_t135c, _mm_fmadd_ps(_v8, _v_t135b, _v_t135a));
+            __m128 _v_t4 = _mm_fmadd_ps(_v2, _v_t024c, _mm_fmadd_ps(_v16, _v_t024b, _v_t024a));
+            __m128 _v_t5 = _mm_add_ps(_mm_add_ps(_v_r7, _v_t135a), _mm_fmadd_ps(_v32, _v_t135b, _v_t135c));
 
-inline static void data_transform_i4x4_k3x3_ch4(float* v, const float* d) {
-    __m128 _v_d0 = _mm_loadu_ps(d + 0 * 4);
-    __m128 _v_d1 = _mm_loadu_ps(d + 1 * 4);
-    __m128 _v_d2 = _mm_loadu_ps(d + 2 * 4);
-    __m128 _v_d3 = _mm_loadu_ps(d + 3 * 4);
+            _mm_storeu_ps(ATUV + 0 * 8 * 4 + i * 4, _v_t0);
+            _mm_storeu_ps(ATUV + 1 * 8 * 4 + i * 4, _v_t1);
+            _mm_storeu_ps(ATUV + 2 * 8 * 4 + i * 4, _v_t2);
+            _mm_storeu_ps(ATUV + 3 * 8 * 4 + i * 4, _v_t3);
+            _mm_storeu_ps(ATUV + 4 * 8 * 4 + i * 4, _v_t4);
+            _mm_storeu_ps(ATUV + 5 * 8 * 4 + i * 4, _v_t5);
+        }
+    }
 
-    __m128 _v_d8 = _mm_loadu_ps(d + 8 * 4);
-    __m128 _v_d9 = _mm_loadu_ps(d + 9 * 4);
-    __m128 _v_d10 = _mm_loadu_ps(d + 10 * 4);
-    __m128 _v_d11 = _mm_loadu_ps(d + 11 * 4);
+    inline void getATUVA(float* ATUVA, int ldx, const float* ATUV) const {
+        __m128 _v32 = _mm_set1_ps(32.0f);
+        __m128 _v16 = _mm_set1_ps(16.0f);
+        __m128 _v8 = _mm_set1_ps(8.f);
+        __m128 _v4 = _mm_set1_ps(4.f);
+        __m128 _v2 = _mm_set1_ps(2.f);
 
-    __m128 _v_Btd0 = _mm_sub_ps(_v_d0, _v_d8);
-    __m128 _v_Btd1 = _mm_sub_ps(_v_d1, _v_d9);
-    __m128 _v_Btd2 = _mm_sub_ps(_v_d2, _v_d10);
-    __m128 _v_Btd3 = _mm_sub_ps(_v_d3, _v_d11);
+        for (int i = 0; i < 6; ++i) {
+            __m128 _v_r0 = _mm_loadu_ps(ATUV + i * 8 * 4 + 0 * 4);
+            __m128 _v_r1 = _mm_loadu_ps(ATUV + i * 8 * 4 + 1 * 4);
+            __m128 _v_r2 = _mm_loadu_ps(ATUV + i * 8 * 4 + 2 * 4);
+            __m128 _v_r3 = _mm_loadu_ps(ATUV + i * 8 * 4 + 3 * 4);
+            __m128 _v_r4 = _mm_loadu_ps(ATUV + i * 8 * 4 + 4 * 4);
+            __m128 _v_r5 = _mm_loadu_ps(ATUV + i * 8 * 4 + 5 * 4);
+            __m128 _v_r6 = _mm_loadu_ps(ATUV + i * 8 * 4 + 6 * 4);
+            __m128 _v_r7 = _mm_loadu_ps(ATUV + i * 8 * 4 + 7 * 4);
 
-    _mm_storeu_ps(v + 0 * 4, _mm_sub_ps(_v_Btd0, _v_Btd2));
-    _mm_storeu_ps(v + 1 * 4, _mm_add_ps(_v_Btd1, _v_Btd2));
-    _mm_storeu_ps(v + 2 * 4, _mm_sub_ps(_v_Btd2, _v_Btd1));
-    _mm_storeu_ps(v + 3 * 4, _mm_sub_ps(_v_Btd1, _v_Btd3));
+            __m128 _v_t024a = _mm_add_ps(_v_r1, _v_r2);
+            __m128 _v_t135a = _mm_sub_ps(_v_r1, _v_r2);
+            __m128 _v_t024b = _mm_add_ps(_v_r3, _v_r4);
+            __m128 _v_t135b = _mm_sub_ps(_v_r3, _v_r4);
+            __m128 _v_t024c = _mm_add_ps(_v_r5, _v_r6);
+            __m128 _v_t135c = _mm_sub_ps(_v_r5, _v_r6);
 
-    __m128 _v_d4 = _mm_loadu_ps(d + 4 * 4);
-    __m128 _v_d5 = _mm_loadu_ps(d + 5 * 4);
-    __m128 _v_d6 = _mm_loadu_ps(d + 6 * 4);
-    __m128 _v_d7 = _mm_loadu_ps(d + 7 * 4);
+            __m128 _v_t0 = _mm_add_ps(_mm_add_ps(_v_r0, _v_t024a), _mm_fmadd_ps(_v32, _v_t024c, _v_t024b));
+            __m128 _v_t1 = _mm_fmadd_ps(_v16, _v_t135c, _mm_fmadd_ps(_v2, _v_t135b, _v_t135a));
+            __m128 _v_t2 = _mm_fmadd_ps(_v8, _v_t024c, _mm_fmadd_ps(_v4, _v_t024b, _v_t024a));
+            __m128 _v_t3 = _mm_fmadd_ps(_v4, _v_t135c, _mm_fmadd_ps(_v8, _v_t135b, _v_t135a));
+            __m128 _v_t4 = _mm_fmadd_ps(_v2, _v_t024c, _mm_fmadd_ps(_v16, _v_t024b, _v_t024a));
+            __m128 _v_t5 = _mm_add_ps(_mm_add_ps(_v_r7, _v_t135a), _mm_fmadd_ps(_v32, _v_t135b, _v_t135c));
 
-    __m128 _v_Btd4 = _mm_add_ps(_v_d4, _v_d8);
-    __m128 _v_Btd5 = _mm_add_ps(_v_d5, _v_d9);
-    __m128 _v_Btd6 = _mm_add_ps(_v_d6, _v_d10);
-    __m128 _v_Btd7 = _mm_add_ps(_v_d7, _v_d11);
+            _mm_storeu_ps(ATUVA + 0 * 4, _v_t0);
+            _mm_storeu_ps(ATUVA + 1 * 4, _v_t1);
+            _mm_storeu_ps(ATUVA + 2 * 4, _v_t2);
+            _mm_storeu_ps(ATUVA + 3 * 4, _v_t3);
+            _mm_storeu_ps(ATUVA + 4 * 4, _v_t4);
+            _mm_storeu_ps(ATUVA + 5 * 4, _v_t5);
+            ATUVA += ldx;
+        }
+    }
 
-    _mm_storeu_ps(v + 4 * 4, _mm_sub_ps(_v_Btd4, _v_Btd6));
-    _mm_storeu_ps(v + 5 * 4, _mm_add_ps(_v_Btd5, _v_Btd6));
-    _mm_storeu_ps(v + 6 * 4, _mm_sub_ps(_v_Btd6, _v_Btd5));
-    _mm_storeu_ps(v + 7 * 4, _mm_sub_ps(_v_Btd5, _v_Btd7));
+   public:
+    inline void operator()(float* y, int ldy, const float* uv, int lduv) const {
+        float ATUV[192] = {0};
+        getATUV(ATUV, uv, lduv);
+        getATUVA(y, ldy, ATUV);
+    }
+};
 
-    __m128 _v_Btd8 = _mm_sub_ps(_v_d8, _v_d4);
-    __m128 _v_Btd9 = _mm_sub_ps(_v_d9, _v_d5);
-    __m128 _v_Btd10 = _mm_sub_ps(_v_d10, _v_d6);
-    __m128 _v_Btd11 = _mm_sub_ps(_v_d11, _v_d7);
+template <>
+struct WinogradUVTransform<8, 3, 1, 8> {
+    /*
+AT = np.array([
+	[1.0, 1.0,  1.0,  1.0,  1.0, 32.0, 32.0, 0.0],
+ 	[0.0, 1.0, -1.0,  2.0, -2.0, 16.0,-16.0, 0.0],
+  	[0.0, 1.0,  1.0,  4.0,  4.0,  8.0,  8.0, 0.0],
+    [0.0, 1.0, -1.0,  8.0, -8.0,  4.0, -4.0, 0.0],
+    [0.0, 1.0,  1.0, 16.0, 16.0,  2.0,  2.0, 0.0],
+    [0.0, 1.0, -1.0, 32.0,-32.0,  1.0, -1.0, 1.0]
+])
+*/
+   private:
+    inline void getATUV(float* ATUV, const float* UV, int lduv) const {
+        __m256 _v32 = _mm256_set1_ps(32.0f);
+        __m256 _v16 = _mm256_set1_ps(16.0f);
+        __m256 _v8 = _mm256_set1_ps(8.f);
+        __m256 _v4 = _mm256_set1_ps(4.f);
+        __m256 _v2 = _mm256_set1_ps(2.f);
 
-    _mm_storeu_ps(v + 8 * 4, _mm_sub_ps(_v_Btd8, _v_Btd10));
-    _mm_storeu_ps(v + 9 * 4, _mm_add_ps(_v_Btd9, _v_Btd10));
-    _mm_storeu_ps(v + 10 * 4, _mm_sub_ps(_v_Btd10, _v_Btd9));
-    _mm_storeu_ps(v + 11 * 4, _mm_sub_ps(_v_Btd9, _v_Btd11));
+        for (int i = 0; i < 8; ++i) {
+            __m256 _v_r0 = _mm256_loadu_ps(UV + 0 * lduv + i * 8);
+            __m256 _v_r1 = _mm256_loadu_ps(UV + 1 * lduv + i * 8);
+            __m256 _v_r2 = _mm256_loadu_ps(UV + 2 * lduv + i * 8);
+            __m256 _v_r3 = _mm256_loadu_ps(UV + 3 * lduv + i * 8);
+            __m256 _v_r4 = _mm256_loadu_ps(UV + 4 * lduv + i * 8);
+            __m256 _v_r5 = _mm256_loadu_ps(UV + 5 * lduv + i * 8);
+            __m256 _v_r6 = _mm256_loadu_ps(UV + 6 * lduv + i * 8);
+            __m256 _v_r7 = _mm256_loadu_ps(UV + 7 * lduv + i * 8);
 
-    __m128 _v_d12 = _mm_loadu_ps(d + 12 * 4);
-    __m128 _v_d13 = _mm_loadu_ps(d + 13 * 4);
-    __m128 _v_d14 = _mm_loadu_ps(d + 14 * 4);
-    __m128 _v_d15 = _mm_loadu_ps(d + 15 * 4);
+            __m256 _v_t024a = _mm256_add_ps(_v_r1, _v_r2);
+            __m256 _v_t135a = _mm256_sub_ps(_v_r1, _v_r2);
+            __m256 _v_t024b = _mm256_add_ps(_v_r3, _v_r4);
+            __m256 _v_t135b = _mm256_sub_ps(_v_r3, _v_r4);
+            __m256 _v_t024c = _mm256_add_ps(_v_r5, _v_r6);
+            __m256 _v_t135c = _mm256_sub_ps(_v_r5, _v_r6);
 
-    __m128 _v_Btd12 = _mm_sub_ps(_v_d4, _v_d12);
-    __m128 _v_Btd13 = _mm_sub_ps(_v_d5, _v_d13);
-    __m128 _v_Btd14 = _mm_sub_ps(_v_d6, _v_d14);
-    __m128 _v_Btd15 = _mm_sub_ps(_v_d7, _v_d15);
+            __m256 _v_t0 = _mm256_add_ps(_mm256_add_ps(_v_r0, _v_t024a), _mm256_fmadd_ps(_v32, _v_t024c, _v_t024b));
+            __m256 _v_t1 = _mm256_fmadd_ps(_v16, _v_t135c, _mm256_fmadd_ps(_v2, _v_t135b, _v_t135a));
+            __m256 _v_t2 = _mm256_fmadd_ps(_v8, _v_t024c, _mm256_fmadd_ps(_v4, _v_t024b, _v_t024a));
+            __m256 _v_t3 = _mm256_fmadd_ps(_v4, _v_t135c, _mm256_fmadd_ps(_v8, _v_t135b, _v_t135a));
+            __m256 _v_t4 = _mm256_fmadd_ps(_v2, _v_t024c, _mm256_fmadd_ps(_v16, _v_t024b, _v_t024a));
+            __m256 _v_t5 = _mm256_add_ps(_mm256_add_ps(_v_r7, _v_t135a), _mm256_fmadd_ps(_v32, _v_t135b, _v_t135c));
 
-    _mm_storeu_ps(v + 12 * 4, _mm_sub_ps(_v_Btd12, _v_Btd14));
-    _mm_storeu_ps(v + 13 * 4, _mm_add_ps(_v_Btd13, _v_Btd14));
-    _mm_storeu_ps(v + 14 * 4, _mm_sub_ps(_v_Btd14, _v_Btd13));
-    _mm_storeu_ps(v + 15 * 4, _mm_sub_ps(_v_Btd13, _v_Btd15));
-}
+            _mm256_storeu_ps(ATUV + 0 * 8 * 8 + i * 8, _v_t0);
+            _mm256_storeu_ps(ATUV + 1 * 8 * 8 + i * 8, _v_t1);
+            _mm256_storeu_ps(ATUV + 2 * 8 * 8 + i * 8, _v_t2);
+            _mm256_storeu_ps(ATUV + 3 * 8 * 8 + i * 8, _v_t3);
+            _mm256_storeu_ps(ATUV + 4 * 8 * 8 + i * 8, _v_t4);
+            _mm256_storeu_ps(ATUV + 5 * 8 * 8 + i * 8, _v_t5);
+        }
+    }
+
+    inline void getATUVA(float* ATUVA, int ldx, const float* ATUV) const {
+        __m256 _v32 = _mm256_set1_ps(32.0f);
+        __m256 _v16 = _mm256_set1_ps(16.0f);
+        __m256 _v8 = _mm256_set1_ps(8.f);
+        __m256 _v4 = _mm256_set1_ps(4.f);
+        __m256 _v2 = _mm256_set1_ps(2.f);
+
+        for (int i = 0; i < 6; ++i) {
+            __m256 _v_r0 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 0 * 8);
+            __m256 _v_r1 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 1 * 8);
+            __m256 _v_r2 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 2 * 8);
+            __m256 _v_r3 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 3 * 8);
+            __m256 _v_r4 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 4 * 8);
+            __m256 _v_r5 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 5 * 8);
+            __m256 _v_r6 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 6 * 8);
+            __m256 _v_r7 = _mm256_loadu_ps(ATUV + i * 8 * 8 + 7 * 8);
+
+            __m256 _v_t024a = _mm256_add_ps(_v_r1, _v_r2);
+            __m256 _v_t135a = _mm256_sub_ps(_v_r1, _v_r2);
+            __m256 _v_t024b = _mm256_add_ps(_v_r3, _v_r4);
+            __m256 _v_t135b = _mm256_sub_ps(_v_r3, _v_r4);
+            __m256 _v_t024c = _mm256_add_ps(_v_r5, _v_r6);
+            __m256 _v_t135c = _mm256_sub_ps(_v_r5, _v_r6);
+
+            __m256 _v_t0 = _mm256_add_ps(_mm256_add_ps(_v_r0, _v_t024a), _mm256_fmadd_ps(_v32, _v_t024c, _v_t024b));
+            __m256 _v_t1 = _mm256_fmadd_ps(_v16, _v_t135c, _mm256_fmadd_ps(_v2, _v_t135b, _v_t135a));
+            __m256 _v_t2 = _mm256_fmadd_ps(_v8, _v_t024c, _mm256_fmadd_ps(_v4, _v_t024b, _v_t024a));
+            __m256 _v_t3 = _mm256_fmadd_ps(_v4, _v_t135c, _mm256_fmadd_ps(_v8, _v_t135b, _v_t135a));
+            __m256 _v_t4 = _mm256_fmadd_ps(_v2, _v_t024c, _mm256_fmadd_ps(_v16, _v_t024b, _v_t024a));
+            __m256 _v_t5 = _mm256_add_ps(_mm256_add_ps(_v_r7, _v_t135a), _mm256_fmadd_ps(_v32, _v_t135b, _v_t135c));
+
+            _mm256_storeu_ps(ATUVA + 0 * 8, _v_t0);
+            _mm256_storeu_ps(ATUVA + 1 * 8, _v_t1);
+            _mm256_storeu_ps(ATUVA + 2 * 8, _v_t2);
+            _mm256_storeu_ps(ATUVA + 3 * 8, _v_t3);
+            _mm256_storeu_ps(ATUVA + 4 * 8, _v_t4);
+            _mm256_storeu_ps(ATUVA + 5 * 8, _v_t5);
+            ATUVA += ldx;
+        }
+    }
+
+   public:
+    inline void operator()(float* y, int ldy, const float* uv, int lduv) const {
+        float ATUV[384] = {0};
+        getATUV(ATUV, uv, lduv);
+        getATUVA(y, ldy, ATUV);
+    }
+};
 
 }  // namespace kernel
 }  // namespace cpu
