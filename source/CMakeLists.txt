@@ -8,5 +8,5 @@ set(FastNumSource
 
 add_library(FastNum STATIC ${FastNumSource})
 
-target_include_directories(FastNum PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(FastNum PUBLIC ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/fastnum)
 target_link_libraries(FastNum PUBLIC FastNumCPU)

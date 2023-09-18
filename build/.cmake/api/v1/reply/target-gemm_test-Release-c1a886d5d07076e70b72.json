@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "samples/cpu/MinSizeRel/gemm_test.exe"
+			"path" : "samples/cpu/Release/gemm_test.exe"
 		},
 		{
-			"path" : "samples/cpu/MinSizeRel/gemm_test.pdb"
+			"path" : "samples/cpu/Release/gemm_test.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -62,7 +62,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O1 /Ob1 /DNDEBUG"
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG"
 				}
 			],
 			"includes" : 
@@ -70,6 +70,10 @@
 				{
 					"backtrace" : 5,
 					"path" : "D:/vscode/FastNum/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/vscode/FastNum/include/fastnum"
 				}
 			],
 			"language" : "CXX",
@@ -86,11 +90,11 @@
 			"id" : "FastNum::@411ffd8adc737496fe19"
 		},
 		{
-			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
-		},
-		{
 			"backtrace" : 2,
 			"id" : "FastNumCPU::@7f78f823788276dca7d7"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "gemm_test::@19b04e7d99e82f69b90a",
@@ -99,7 +103,7 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O1 /Ob1 /DNDEBUG",
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG",
 				"role" : "flags"
 			},
 			{
@@ -108,12 +112,12 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "..\\..\\source\\MinSizeRel\\FastNum.lib",
+				"fragment" : "..\\..\\source\\Release\\FastNum.lib",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "..\\..\\source\\cpu\\MinSizeRel\\FastNumCPU.lib",
+				"fragment" : "..\\..\\source\\cpu\\Release\\FastNumCPU.lib",
 				"role" : "libraries"
 			},
 			{

@@ -12,7 +12,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "source/Release/FastNum.lib"
+			"path" : "source/RelWithDebInfo/FastNum.lib"
 		}
 	],
 	"backtrace" : 1,
@@ -59,7 +59,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG"
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG"
 				}
 			],
 			"includes" : 
@@ -67,6 +67,10 @@
 				{
 					"backtrace" : 3,
 					"path" : "D:/vscode/FastNum/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "D:/vscode/FastNum/include/fastnum"
 				}
 			],
 			"language" : "CXX",
@@ -79,11 +83,11 @@
 	"dependencies" : 
 	[
 		{
-			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
-		},
-		{
 			"backtrace" : 2,
 			"id" : "FastNumCPU::@7f78f823788276dca7d7"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "FastNum::@411ffd8adc737496fe19",
