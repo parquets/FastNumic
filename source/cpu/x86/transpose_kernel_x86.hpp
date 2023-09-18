@@ -11,8 +11,8 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-inline void transpose_8x8(__m256& _v_a0, __m256& _v_a1, __m256& _v_a2, __m256& _v_a3, __m256& _v_a4, __m256& _v_a5,
-                          __m256& _v_a6, __m256& _v_a7) {
+inline void
+transpose_8x8(__m256 &_v_a0, __m256 &_v_a1, __m256 &_v_a2, __m256 &_v_a3, __m256 &_v_a4, __m256 &_v_a5, __m256 &_v_a6, __m256 &_v_a7) {
     __m256 _v_t0 = _mm256_unpacklo_ps(_v_a0, _v_a1);  // a0,b0,a1,b1,a4,b4,a5,b5
     __m256 _v_t1 = _mm256_unpackhi_ps(_v_a0, _v_a1);  // a2,b2,a3,b3,a6,b6,a7,b7
     __m256 _v_t2 = _mm256_unpacklo_ps(_v_a2, _v_a3);  // c0,d0,c1,d1,c4,d4,c5,d5
@@ -41,7 +41,7 @@ inline void transpose_8x8(__m256& _v_a0, __m256& _v_a1, __m256& _v_a2, __m256& _
     _v_a7 = _mm256_permute2f128_ps(_v_u3, _v_u7, _MM_SHUFFLE(0, 3, 0, 1));  // a7,b7,c7,d7,e7,f7,g7,h7
 }
 
-inline void transpose_6x8(__m256& _v_a0, __m256& _v_a1, __m256& _v_a2, __m256& _v_a3, __m256& _v_a4, __m256& _v_a5) {
+inline void transpose_6x8(__m256 &_v_a0, __m256 &_v_a1, __m256 &_v_a2, __m256 &_v_a3, __m256 &_v_a4, __m256 &_v_a5) {
     __m256 _v_t0 = _mm256_unpacklo_ps(_v_a0, _v_a1);  // a0,b0,a1,b1,a4,b4,a5,b5
     __m256 _v_t1 = _mm256_unpackhi_ps(_v_a0, _v_a1);  // a2,b2,a3,b3,a6,b6,a7,b7
     __m256 _v_t2 = _mm256_unpacklo_ps(_v_a2, _v_a3);  // c0,d0,c1,d1,c4,d4,c5,d5
@@ -64,7 +64,7 @@ inline void transpose_6x8(__m256& _v_a0, __m256& _v_a1, __m256& _v_a2, __m256& _
     _v_a5 = _mm256_permute2f128_ps(_v_u3, _v_u5, _MM_SHUFFLE(0, 3, 0, 1));  // e6,f6,a7,b7,c7,d7,e7,f7
 }
 
-inline void transpose_4x4(__m128& _v_a0, __m128& _v_a1, __m128& _v_a2, __m128& _v_a3) {
+inline void transpose_4x4(__m128 &_v_a0, __m128 &_v_a1, __m128 &_v_a2, __m128 &_v_a3) {
     __m128 tmp3, tmp2, tmp1, tmp0;
     tmp0 = _mm_unpacklo_ps(_v_a0, _v_a1);
     tmp2 = _mm_unpacklo_ps(_v_a2, _v_a3);
@@ -76,7 +76,7 @@ inline void transpose_4x4(__m128& _v_a0, __m128& _v_a1, __m128& _v_a2, __m128& _
     _v_a3 = _mm_movehl_ps(tmp3, tmp1);
 }
 
-inline void transpose(const float* A, int lda, float* B, int ldb) {
+inline void transpose(const float *A, int lda, float *B, int ldb) {
     __m256 r0, r1, r2, r3, r4, r5, r6, r7;
 
     r0 = _mm256_loadu_ps(A + 0 * lda);

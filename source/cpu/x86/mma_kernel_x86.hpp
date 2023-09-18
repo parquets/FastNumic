@@ -14,11 +14,11 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-inline void mma_mxn(int M, int N, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_mxn(int M, int N, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     for (int k = 0; k < K; ++k) {
         for (int m = 0; m < M; ++m) {
             float tmp = packed_A[m];
-            float* c_ptr = C + m * ldc;
+            float *c_ptr = C + m * ldc;
             int n = 0;
             for (; n < N; ++n) {
                 c_ptr[n] += tmp * packed_B[n];
@@ -29,16 +29,15 @@ inline void mma_mxn(int M, int N, const float* packed_A, const float* packed_B, 
     }
 }
 
-inline void mma_6xn(int N, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    float* c0_ptr = C + 0 * ldc;
-    float* c1_ptr = C + 1 * ldc;
-    float* c2_ptr = C + 2 * ldc;
-    float* c3_ptr = C + 3 * ldc;
-    float* c4_ptr = C + 4 * ldc;
-    float* c5_ptr = C + 5 * ldc;
+inline void mma_6xn(int N, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
+    float *c0_ptr = C + 0 * ldc;
+    float *c1_ptr = C + 1 * ldc;
+    float *c2_ptr = C + 2 * ldc;
+    float *c3_ptr = C + 3 * ldc;
+    float *c4_ptr = C + 4 * ldc;
+    float *c5_ptr = C + 5 * ldc;
 
     for (int k = 0; k < K; ++k) {
-
         float tmp0 = packed_A[0];
         float tmp1 = packed_A[1];
         float tmp2 = packed_A[2];
@@ -60,14 +59,13 @@ inline void mma_6xn(int N, const float* packed_A, const float* packed_B, int K, 
     }
 }
 
-inline void mma_4xn(int N, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    float* c0_ptr = C + 0 * ldc;
-    float* c1_ptr = C + 1 * ldc;
-    float* c2_ptr = C + 2 * ldc;
-    float* c3_ptr = C + 3 * ldc;
+inline void mma_4xn(int N, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
+    float *c0_ptr = C + 0 * ldc;
+    float *c1_ptr = C + 1 * ldc;
+    float *c2_ptr = C + 2 * ldc;
+    float *c3_ptr = C + 3 * ldc;
 
     for (int k = 0; k < K; ++k) {
-
         float tmp0 = packed_A[0];
         float tmp1 = packed_A[1];
         float tmp2 = packed_A[2];
@@ -85,18 +83,17 @@ inline void mma_4xn(int N, const float* packed_A, const float* packed_B, int K, 
     }
 }
 
-inline void mma_8xn(int N, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    float* c0_ptr = C + 0 * ldc;
-    float* c1_ptr = C + 1 * ldc;
-    float* c2_ptr = C + 2 * ldc;
-    float* c3_ptr = C + 3 * ldc;
-    float* c4_ptr = C + 4 * ldc;
-    float* c5_ptr = C + 5 * ldc;
-    float* c6_ptr = C + 6 * ldc;
-    float* c7_ptr = C + 7 * ldc;
+inline void mma_8xn(int N, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
+    float *c0_ptr = C + 0 * ldc;
+    float *c1_ptr = C + 1 * ldc;
+    float *c2_ptr = C + 2 * ldc;
+    float *c3_ptr = C + 3 * ldc;
+    float *c4_ptr = C + 4 * ldc;
+    float *c5_ptr = C + 5 * ldc;
+    float *c6_ptr = C + 6 * ldc;
+    float *c7_ptr = C + 7 * ldc;
 
     for (int k = 0; k < K; ++k) {
-
         float tmp0 = packed_A[0];
         float tmp1 = packed_A[1];
         float tmp2 = packed_A[2];
@@ -122,23 +119,23 @@ inline void mma_8xn(int N, const float* packed_A, const float* packed_B, int K, 
     }
 }
 
-inline void mma_16xn(int N, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    float* c0_ptr = C + 0 * ldc;
-    float* c1_ptr = C + 1 * ldc;
-    float* c2_ptr = C + 2 * ldc;
-    float* c3_ptr = C + 3 * ldc;
-    float* c4_ptr = C + 4 * ldc;
-    float* c5_ptr = C + 5 * ldc;
-    float* c6_ptr = C + 6 * ldc;
-    float* c7_ptr = C + 7 * ldc;
-    float* c8_ptr = C + 8 * ldc;
-    float* c9_ptr = C + 9 * ldc;
-    float* c10_ptr = C + 10 * ldc;
-    float* c11_ptr = C + 11 * ldc;
-    float* c12_ptr = C + 12 * ldc;
-    float* c13_ptr = C + 13 * ldc;
-    float* c14_ptr = C + 14 * ldc;
-    float* c15_ptr = C + 15 * ldc;
+inline void mma_16xn(int N, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
+    float *c0_ptr = C + 0 * ldc;
+    float *c1_ptr = C + 1 * ldc;
+    float *c2_ptr = C + 2 * ldc;
+    float *c3_ptr = C + 3 * ldc;
+    float *c4_ptr = C + 4 * ldc;
+    float *c5_ptr = C + 5 * ldc;
+    float *c6_ptr = C + 6 * ldc;
+    float *c7_ptr = C + 7 * ldc;
+    float *c8_ptr = C + 8 * ldc;
+    float *c9_ptr = C + 9 * ldc;
+    float *c10_ptr = C + 10 * ldc;
+    float *c11_ptr = C + 11 * ldc;
+    float *c12_ptr = C + 12 * ldc;
+    float *c13_ptr = C + 13 * ldc;
+    float *c14_ptr = C + 14 * ldc;
+    float *c15_ptr = C + 15 * ldc;
 
     for (int k = 0; k < K; ++k) {
         float tmp0 = packed_A[0];
@@ -182,8 +179,7 @@ inline void mma_16xn(int N, const float* packed_A, const float* packed_B, int K,
     }
 }
 
-inline void mma_mx8(int M, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-
+inline void mma_mx8(int M, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     for (int k = 0; k < K; ++k) {
         __m256 _v_B = _mm256_loadu_ps(packed_B);
         int m = 0;
@@ -219,7 +215,7 @@ inline void mma_mx8(int M, const float* packed_A, const float* packed_B, int K, 
     }
 }
 
-inline void mma_mx6(int M, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_mx6(int M, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     for (int k = 0; k < K; ++k) {
         float b0 = *packed_B++;
         float b1 = *packed_B++;
@@ -236,7 +232,7 @@ inline void mma_mx6(int M, const float* packed_A, const float* packed_B, int K, 
             float c3 = a * b3;
             float c4 = a * b4;
             float c5 = a * b5;
-            float* c_ptr = C + m * ldc;
+            float *c_ptr = C + m * ldc;
             c_ptr[0] += c0;
             c_ptr[1] += c1;
             c_ptr[2] += c2;
@@ -249,7 +245,7 @@ inline void mma_mx6(int M, const float* packed_A, const float* packed_B, int K, 
     }
 }
 
-inline void mma_mx4(int M, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_mx4(int M, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     for (int k = 0; k < K; ++k) {
         float b0 = *packed_B++;
         float b1 = *packed_B++;
@@ -262,7 +258,7 @@ inline void mma_mx4(int M, const float* packed_A, const float* packed_B, int K, 
             float c1 = a * b1;
             float c2 = a * b2;
             float c3 = a * b3;
-            float* c_ptr = C + m * ldc;
+            float *c_ptr = C + m * ldc;
             c_ptr[0] += c0;
             c_ptr[1] += c1;
             c_ptr[2] += c2;
@@ -273,12 +269,11 @@ inline void mma_mx4(int M, const float* packed_A, const float* packed_B, int K, 
     }
 }
 
-inline void mma_4x4(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-
-    float* c_ptr0 = C + 0 * ldc;
-    float* c_ptr1 = C + 1 * ldc;
-    float* c_ptr2 = C + 2 * ldc;
-    float* c_ptr3 = C + 3 * ldc;
+inline void mma_4x4(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
+    float *c_ptr0 = C + 0 * ldc;
+    float *c_ptr1 = C + 1 * ldc;
+    float *c_ptr2 = C + 2 * ldc;
+    float *c_ptr3 = C + 3 * ldc;
 
     __m128 _v_c0 = _mm_loadu_ps(c_ptr0);
     __m128 _v_c1 = _mm_loadu_ps(c_ptr1);
@@ -308,7 +303,7 @@ inline void mma_4x4(const float* packed_A, const float* packed_B, int K, float* 
     _mm_storeu_ps(c_ptr3, _v_c3);
 }
 
-inline void mma_mx1(int M, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_mx1(int M, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     for (int k = 0; k < K; ++k) {
         float b = *packed_B++;
         for (int m = 0; m < M; ++m) {
@@ -319,13 +314,12 @@ inline void mma_mx1(int M, const float* packed_A, const float* packed_B, int K, 
     }
 }
 
-inline void mma_mx16(int M, const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_mx16(int M, const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     for (int k = 0; k < K; ++k) {
         __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0);
         __m256 _v_b1 = _mm256_loadu_ps(packed_B + 8);
 
         for (int m = 0; m < M; ++m) {
-
             __m256 _v_c0 = _mm256_loadu_ps(C + m * ldc + 0);
             __m256 _v_c1 = _mm256_loadu_ps(C + m * ldc + 8);
             __m256 _v_a = _mm256_broadcast_ss(packed_A + m);
@@ -341,7 +335,7 @@ inline void mma_mx16(int M, const float* packed_A, const float* packed_B, int K,
     }
 }
 
-inline void mma_8x1(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_8x1(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m256 _v_c0 = _mm256_setzero_ps();
     __m256 _v_c1 = _mm256_setzero_ps();
     __m256 _v_c2 = _mm256_setzero_ps();
@@ -392,7 +386,7 @@ inline void mma_8x1(const float* packed_A, const float* packed_B, int K, float* 
     *(C + 7 * ldc) += c_data[7];
 }
 
-inline void mma_4x1(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_4x1(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m128 _v_c0 = _mm_setzero_ps();
     __m128 _v_c1 = _mm_setzero_ps();
     __m128 _v_c2 = _mm_setzero_ps();
@@ -439,15 +433,15 @@ inline void mma_4x1(const float* packed_A, const float* packed_B, int K, float* 
     *(C + 3 * ldc) += c_data[3];
 }
 
-inline void mma_8x8(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    float* c0_ptr = C + 0 * ldc;
-    float* c1_ptr = C + 1 * ldc;
-    float* c2_ptr = C + 2 * ldc;
-    float* c3_ptr = C + 3 * ldc;
-    float* c4_ptr = C + 4 * ldc;
-    float* c5_ptr = C + 5 * ldc;
-    float* c6_ptr = C + 6 * ldc;
-    float* c7_ptr = C + 7 * ldc;
+inline void mma_8x8(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
+    float *c0_ptr = C + 0 * ldc;
+    float *c1_ptr = C + 1 * ldc;
+    float *c2_ptr = C + 2 * ldc;
+    float *c3_ptr = C + 3 * ldc;
+    float *c4_ptr = C + 4 * ldc;
+    float *c5_ptr = C + 5 * ldc;
+    float *c6_ptr = C + 6 * ldc;
+    float *c7_ptr = C + 7 * ldc;
 
     __m256 _vc0 = _mm256_loadu_ps(c0_ptr);
     __m256 _vc1 = _mm256_loadu_ps(c1_ptr);
@@ -462,7 +456,6 @@ inline void mma_8x8(const float* packed_A, const float* packed_B, int K, float* 
     __m256 _va0, _va1, _va2, _va3;
 
     for (int k = 0; k < K; ++k) {
-
         _vb = _mm256_loadu_ps(packed_B);
 
         _va0 = _mm256_broadcast_ss(packed_A + 0);
@@ -499,7 +492,7 @@ inline void mma_8x8(const float* packed_A, const float* packed_B, int K, float* 
     _mm256_storeu_ps(c7_ptr, _vc7);
 }
 
-inline void mma_6x16(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_6x16(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m256 _v_c00 = _mm256_loadu_ps(C);
     __m256 _v_c01 = _mm256_loadu_ps(C + 8);
     __m256 _v_c10 = _mm256_loadu_ps(C + ldc);
@@ -516,7 +509,6 @@ inline void mma_6x16(const float* packed_A, const float* packed_B, int K, float*
     __m256 _v_b0, _v_b1, _v_a;
 
     for (int i = 0; i < K; ++i) {
-
         _v_b0 = _mm256_loadu_ps(packed_B);
         _v_b1 = _mm256_loadu_ps(packed_B + 8);
 
@@ -562,7 +554,7 @@ inline void mma_6x16(const float* packed_A, const float* packed_B, int K, float*
     _mm256_storeu_ps(C + 5 * ldc + 8, _v_c51);
 }
 
-inline void mma_6x8(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_6x8(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m256 _v_c0 = _mm256_loadu_ps(C + 0 * ldc);
     __m256 _v_c1 = _mm256_loadu_ps(C + 2 * ldc);
     __m256 _v_c2 = _mm256_loadu_ps(C + 2 * ldc);
@@ -571,7 +563,6 @@ inline void mma_6x8(const float* packed_A, const float* packed_B, int K, float* 
     __m256 _v_c5 = _mm256_loadu_ps(C + 5 * ldc);
 
     for (int i = 0; i < K; ++i) {
-
         __m256 _v_b0 = _mm256_loadu_ps(packed_B);
 
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
@@ -600,7 +591,7 @@ inline void mma_6x8(const float* packed_A, const float* packed_B, int K, float* 
     _mm256_storeu_ps(C + 5 * ldc, _v_c5);
 }
 
-inline void mma_6x4(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_6x4(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m128 _v_c0 = _mm_loadu_ps(C + 0 * ldc);
     __m128 _v_c1 = _mm_loadu_ps(C + 2 * ldc);
     __m128 _v_c2 = _mm_loadu_ps(C + 2 * ldc);
@@ -609,7 +600,6 @@ inline void mma_6x4(const float* packed_A, const float* packed_B, int K, float* 
     __m128 _v_c5 = _mm_loadu_ps(C + 5 * ldc);
 
     for (int i = 0; i < K; ++i) {
-
         __m128 _v_b0 = _mm_loadu_ps(packed_B);
 
         __m128 _v_a0 = _mm_broadcast_ss(packed_A + 0);
@@ -638,8 +628,7 @@ inline void mma_6x4(const float* packed_A, const float* packed_B, int K, float* 
     _mm_storeu_ps(C + 5 * ldc, _v_c5);
 }
 
-inline void mma_6x1(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-
+inline void mma_6x1(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     float c0 = 0;
     float c1 = 0;
     float c2 = 0;
@@ -648,7 +637,7 @@ inline void mma_6x1(const float* packed_A, const float* packed_B, int K, float* 
     float c5 = 0;
     float c6 = 0;
 
-    for(int k=0; k<K; ++k) {
+    for (int k = 0; k < K; ++k) {
         float a0 = packed_A[0];
         float a1 = packed_A[1];
         float a2 = packed_A[2];
@@ -658,29 +647,28 @@ inline void mma_6x1(const float* packed_A, const float* packed_B, int K, float* 
 
         float b = packed_B[0];
 
-        c0 += a0*b;
-        c1 += a1*b;
-        c2 += a2*b;
-        c3 += a3*b;
-        c4 += a4*b;
-        c5 += a5*b;
+        c0 += a0 * b;
+        c1 += a1 * b;
+        c2 += a2 * b;
+        c3 += a3 * b;
+        c4 += a4 * b;
+        c5 += a5 * b;
     }
-    *(C+0*ldc) += c0;
-    *(C+1*ldc) += c1;
-    *(C+2*ldc) += c2;
-    *(C+3*ldc) += c3;
-    *(C+4*ldc) += c4;
-    *(C+5*ldc) += c5;
+    *(C + 0 * ldc) += c0;
+    *(C + 1 * ldc) += c1;
+    *(C + 2 * ldc) += c2;
+    *(C + 3 * ldc) += c3;
+    *(C + 4 * ldc) += c4;
+    *(C + 5 * ldc) += c5;
 }
 
-inline void print_avx2_ps(__m256& v) {
+inline void print_avx2_ps(__m256 &v) {
     float data[8];
     _mm256_storeu_ps(data, v);
     printf("%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 }
 
-inline void mma_4x16(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
-    
+inline void mma_4x16(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m256 _v_c00 = _mm256_loadu_ps(C + 0 * ldc + 0);
     __m256 _v_c01 = _mm256_loadu_ps(C + 0 * ldc + 8);
     __m256 _v_c10 = _mm256_loadu_ps(C + 1 * ldc + 0);
@@ -691,7 +679,6 @@ inline void mma_4x16(const float* packed_A, const float* packed_B, int K, float*
     __m256 _v_c31 = _mm256_loadu_ps(C + 3 * ldc + 8);
 
     for (int k = 0; k < K; ++k) {
-
         __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0);
         __m256 _v_b1 = _mm256_loadu_ps(packed_B + 8);
 
@@ -728,7 +715,7 @@ inline void mma_4x16(const float* packed_A, const float* packed_B, int K, float*
     _mm256_storeu_ps(C + 3 * ldc + 8, _v_c31);
 }
 
-inline void mma_1x16(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_1x16(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     int k = 0;
 
     __m256 _v_c00 = _mm256_loadu_ps(C + 0);
@@ -737,9 +724,7 @@ inline void mma_1x16(const float* packed_A, const float* packed_B, int K, float*
     __m256 _v_c10 = _mm256_setzero_ps();
     __m256 _v_c11 = _mm256_setzero_ps();
 
-
     for (k = 0; k < K - 1; k += 2) {
-
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
         __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
 
@@ -784,14 +769,13 @@ inline void mma_1x16(const float* packed_A, const float* packed_B, int K, float*
     // }
 }
 
-inline void mma_4x8(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_4x8(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m256 _v_c0 = _mm256_loadu_ps(C + 0 * ldc);
     __m256 _v_c1 = _mm256_loadu_ps(C + 1 * ldc);
     __m256 _v_c2 = _mm256_loadu_ps(C + 2 * ldc);
     __m256 _v_c3 = _mm256_loadu_ps(C + 3 * ldc);
 
     for (int i = 0; i < K; ++i) {
-
         __m256 _v_b0 = _mm256_loadu_ps(packed_B);
 
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
@@ -814,7 +798,7 @@ inline void mma_4x8(const float* packed_A, const float* packed_B, int K, float* 
     _mm256_storeu_ps(C + 3 * ldc, _v_c3);
 }
 
-inline void mma_16x6(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_16x6(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m256 _v_c00 = _mm256_loadu_ps(C);
     __m256 _v_c01 = _mm256_loadu_ps(C + 8);
     __m256 _v_c10 = _mm256_loadu_ps(C + ldc);
@@ -876,7 +860,7 @@ inline void mma_16x6(const float* packed_A, const float* packed_B, int K, float*
     _mm256_storeu_ps(C + 5 * ldc + 8, _v_c41);
 }
 
-inline void mma_1x8(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_1x8(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     int k = 0;
 
     __m256 _v_c0 = _mm256_loadu_ps(C);
@@ -885,7 +869,6 @@ inline void mma_1x8(const float* packed_A, const float* packed_B, int K, float* 
     __m256 _v_c3 = _mm256_setzero_ps();
 
     for (k = 0; k < K - 3; k += 4) {
-
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
         __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
         __m256 _v_a2 = _mm256_broadcast_ss(packed_A + 2);
@@ -919,7 +902,7 @@ inline void mma_1x8(const float* packed_A, const float* packed_B, int K, float* 
     _mm256_storeu_ps(C, _v_c);
 }
 
-inline void mma_1x4(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_1x4(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     int k = 0;
 
     __m128 _v_c0 = _mm_loadu_ps(C);
@@ -928,7 +911,6 @@ inline void mma_1x4(const float* packed_A, const float* packed_B, int K, float* 
     __m128 _v_c3 = _mm_setzero_ps();
 
     for (k = 0; k < K - 3; k += 4) {
-
         __m128 _v_a0 = _mm_broadcast_ss(packed_A + 0);
         __m128 _v_a1 = _mm_broadcast_ss(packed_A + 1);
         __m128 _v_a2 = _mm_broadcast_ss(packed_A + 2);
@@ -960,7 +942,7 @@ inline void mma_1x4(const float* packed_A, const float* packed_B, int K, float* 
     _mm_storeu_ps(C, _v_c);
 }
 
-inline void mma_1x1(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
+inline void mma_1x1(const float *packed_A, const float *packed_B, int K, float *C, int ldc) {
     __m256 _v_c0 = _mm256_setzero_ps();
     __m256 _v_c1 = _mm256_setzero_ps();
     __m256 _v_c2 = _mm256_setzero_ps();
@@ -1010,15 +992,14 @@ inline void mma_1x1(const float* packed_A, const float* packed_B, int K, float* 
     *C += sum;
 }
 
-inline void mma_7x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
-
-    double* c_ptr0 = C + 0 * ldc;
-    double* c_ptr1 = C + 1 * ldc;
-    double* c_ptr2 = C + 2 * ldc;
-    double* c_ptr3 = C + 3 * ldc;
-    double* c_ptr4 = C + 4 * ldc;
-    double* c_ptr5 = C + 5 * ldc;
-    double* c_ptr6 = C + 6 * ldc;
+inline void mma_7x4(const double *packed_A, const double *packed_B, int K, double *C, int ldc) {
+    double *c_ptr0 = C + 0 * ldc;
+    double *c_ptr1 = C + 1 * ldc;
+    double *c_ptr2 = C + 2 * ldc;
+    double *c_ptr3 = C + 3 * ldc;
+    double *c_ptr4 = C + 4 * ldc;
+    double *c_ptr5 = C + 5 * ldc;
+    double *c_ptr6 = C + 6 * ldc;
 
     __m256d _v_c0 = _mm256_loadu_pd(c_ptr0);
     __m256d _v_c1 = _mm256_loadu_pd(c_ptr1);
@@ -1037,7 +1018,6 @@ inline void mma_7x4(const double* packed_A, const double* packed_B, int K, doubl
         __m256d _v_a5 = _mm256_broadcast_sd(packed_A + 5);
         __m256d _v_a6 = _mm256_broadcast_sd(packed_A + 6);
 
-        
         __m256d _v_b = _mm256_loadu_pd(packed_B);
 
         _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b, _v_c0);
@@ -1061,14 +1041,13 @@ inline void mma_7x4(const double* packed_A, const double* packed_B, int K, doubl
     _mm256_storeu_pd(c_ptr6, _v_c6);
 }
 
-inline void mma_6x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
-    
-    double* c_ptr0 = C + 0 * ldc;
-    double* c_ptr1 = C + 1 * ldc;
-    double* c_ptr2 = C + 2 * ldc;
-    double* c_ptr3 = C + 3 * ldc;
-    double* c_ptr4 = C + 4 * ldc;
-    double* c_ptr5 = C + 5 * ldc;
+inline void mma_6x4(const double *packed_A, const double *packed_B, int K, double *C, int ldc) {
+    double *c_ptr0 = C + 0 * ldc;
+    double *c_ptr1 = C + 1 * ldc;
+    double *c_ptr2 = C + 2 * ldc;
+    double *c_ptr3 = C + 3 * ldc;
+    double *c_ptr4 = C + 4 * ldc;
+    double *c_ptr5 = C + 5 * ldc;
 
     __m256d _v_c0 = _mm256_loadu_pd(c_ptr0);
     __m256d _v_c1 = _mm256_loadu_pd(c_ptr1);
@@ -1085,7 +1064,6 @@ inline void mma_6x4(const double* packed_A, const double* packed_B, int K, doubl
         __m256d _v_a4 = _mm256_broadcast_sd(packed_A + 4);
         __m256d _v_a5 = _mm256_broadcast_sd(packed_A + 5);
 
-        
         __m256d _v_b = _mm256_loadu_pd(packed_B);
 
         _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b, _v_c0);
@@ -1107,11 +1085,11 @@ inline void mma_6x4(const double* packed_A, const double* packed_B, int K, doubl
     _mm256_storeu_pd(c_ptr5, _v_c5);
 }
 
-inline void mma_4x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
-    double* c_ptr0 = C + 0 * ldc;
-    double* c_ptr1 = C + 1 * ldc;
-    double* c_ptr2 = C + 2 * ldc;
-    double* c_ptr3 = C + 3 * ldc;
+inline void mma_4x4(const double *packed_A, const double *packed_B, int K, double *C, int ldc) {
+    double *c_ptr0 = C + 0 * ldc;
+    double *c_ptr1 = C + 1 * ldc;
+    double *c_ptr2 = C + 2 * ldc;
+    double *c_ptr3 = C + 3 * ldc;
 
     __m256d _v_c0 = _mm256_loadu_pd(c_ptr0);
     __m256d _v_c1 = _mm256_loadu_pd(c_ptr1);
@@ -1141,13 +1119,13 @@ inline void mma_4x4(const double* packed_A, const double* packed_B, int K, doubl
     _mm256_storeu_pd(c_ptr3, _v_c3);
 }
 
-inline void mma_6x2(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
-    double* c_ptr0 = C + 0 * ldc;
-    double* c_ptr1 = C + 1 * ldc;
-    double* c_ptr2 = C + 2 * ldc;
-    double* c_ptr3 = C + 3 * ldc;
-    double* c_ptr4 = C + 4 * ldc;
-    double* c_ptr5 = C + 5 * ldc;
+inline void mma_6x2(const double *packed_A, const double *packed_B, int K, double *C, int ldc) {
+    double *c_ptr0 = C + 0 * ldc;
+    double *c_ptr1 = C + 1 * ldc;
+    double *c_ptr2 = C + 2 * ldc;
+    double *c_ptr3 = C + 3 * ldc;
+    double *c_ptr4 = C + 4 * ldc;
+    double *c_ptr5 = C + 5 * ldc;
 
     __m128d _v_c0 = _mm_loadu_pd(c_ptr0);
     __m128d _v_c1 = _mm_loadu_pd(c_ptr1);
@@ -1157,7 +1135,6 @@ inline void mma_6x2(const double* packed_A, const double* packed_B, int K, doubl
     __m128d _v_c5 = _mm_loadu_pd(c_ptr5);
 
     for (int k = 0; k < K; ++k) {
-        
         __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
         __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
         __m128d _v_a2 = _mm_set1_pd(packed_A[2]);
@@ -1186,12 +1163,11 @@ inline void mma_6x2(const double* packed_A, const double* packed_B, int K, doubl
     _mm_storeu_pd(c_ptr5, _v_c5);
 }
 
-inline void mma_4x2(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
-    double* c_ptr0 = C + 0 * ldc;
-    double* c_ptr1 = C + 1 * ldc;
-    double* c_ptr2 = C + 2 * ldc;
-    double* c_ptr3 = C + 3 * ldc;
-
+inline void mma_4x2(const double *packed_A, const double *packed_B, int K, double *C, int ldc) {
+    double *c_ptr0 = C + 0 * ldc;
+    double *c_ptr1 = C + 1 * ldc;
+    double *c_ptr2 = C + 2 * ldc;
+    double *c_ptr3 = C + 3 * ldc;
 
     __m128d _v_c0 = _mm_loadu_pd(c_ptr0);
     __m128d _v_c1 = _mm_loadu_pd(c_ptr1);
@@ -1199,12 +1175,10 @@ inline void mma_4x2(const double* packed_A, const double* packed_B, int K, doubl
     __m128d _v_c3 = _mm_loadu_pd(c_ptr3);
 
     for (int k = 0; k < K; ++k) {
-        
         __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
         __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
         __m128d _v_a2 = _mm_set1_pd(packed_A[2]);
         __m128d _v_a3 = _mm_set1_pd(packed_A[3]);
-
 
         __m128d _v_b = _mm_loadu_pd(packed_B);
 
@@ -1223,15 +1197,14 @@ inline void mma_4x2(const double* packed_A, const double* packed_B, int K, doubl
     _mm_storeu_pd(c_ptr3, _v_c3);
 }
 
-inline void mma_2x2(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
-    double* c_ptr0 = C + 0 * ldc;
-    double* c_ptr1 = C + 1 * ldc;
+inline void mma_2x2(const double *packed_A, const double *packed_B, int K, double *C, int ldc) {
+    double *c_ptr0 = C + 0 * ldc;
+    double *c_ptr1 = C + 1 * ldc;
 
     __m128d _v_c0 = _mm_loadu_pd(c_ptr0);
     __m128d _v_c1 = _mm_loadu_pd(c_ptr1);
 
     for (int k = 0; k < K; ++k) {
-        
         __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
         __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
 
@@ -1248,22 +1221,21 @@ inline void mma_2x2(const double* packed_A, const double* packed_B, int K, doubl
     _mm_storeu_pd(c_ptr1, _v_c1);
 }
 
-inline void mma_2x4(const double* packed_A, const double* packed_B, int K, double* C, int ldc) {
-    double* c_ptr0 = C + 0 * ldc;
-    double* c_ptr1 = C + 1 * ldc;
+inline void mma_2x4(const double *packed_A, const double *packed_B, int K, double *C, int ldc) {
+    double *c_ptr0 = C + 0 * ldc;
+    double *c_ptr1 = C + 1 * ldc;
 
-    __m128d _v_c00 = _mm_loadu_pd(c_ptr0+0);
-    __m128d _v_c01 = _mm_loadu_pd(c_ptr0+2);
-    __m128d _v_c10 = _mm_loadu_pd(c_ptr1+0);
-    __m128d _v_c11 = _mm_loadu_pd(c_ptr1+2);
+    __m128d _v_c00 = _mm_loadu_pd(c_ptr0 + 0);
+    __m128d _v_c01 = _mm_loadu_pd(c_ptr0 + 2);
+    __m128d _v_c10 = _mm_loadu_pd(c_ptr1 + 0);
+    __m128d _v_c11 = _mm_loadu_pd(c_ptr1 + 2);
 
     for (int k = 0; k < K; ++k) {
-        
         __m128d _v_a0 = _mm_set1_pd(packed_A[0]);
         __m128d _v_a1 = _mm_set1_pd(packed_A[1]);
 
-        __m128d _v_b0 = _mm_loadu_pd(packed_B+0);
-        __m128d _v_b1 = _mm_loadu_pd(packed_B+2);
+        __m128d _v_b0 = _mm_loadu_pd(packed_B + 0);
+        __m128d _v_b1 = _mm_loadu_pd(packed_B + 2);
 
         _v_c00 = _mm_fmadd_pd(_v_a0, _v_b0, _v_c00);
         _v_c01 = _mm_fmadd_pd(_v_a0, _v_b1, _v_c01);
@@ -1274,13 +1246,11 @@ inline void mma_2x4(const double* packed_A, const double* packed_B, int K, doubl
         packed_B += 4;
     }
 
-    _mm_storeu_pd(c_ptr0+0, _v_c00);
-    _mm_storeu_pd(c_ptr0+2, _v_c01);
-    _mm_storeu_pd(c_ptr1+0, _v_c10);
-    _mm_storeu_pd(c_ptr1+2, _v_c11);
+    _mm_storeu_pd(c_ptr0 + 0, _v_c00);
+    _mm_storeu_pd(c_ptr0 + 2, _v_c01);
+    _mm_storeu_pd(c_ptr1 + 0, _v_c10);
+    _mm_storeu_pd(c_ptr1 + 2, _v_c11);
 }
-
-
 
 }  // namespace kernel
 }  // namespace cpu

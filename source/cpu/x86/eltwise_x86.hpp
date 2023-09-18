@@ -14,7 +14,7 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-inline void scale(float* C, float alpha, const float* A, float beta, int size) {
+inline void scale(float *C, float alpha, const float *A, float beta, int size) {
     int i = 0;
 
     __m256 _v_alpha = _mm256_broadcast_ss(&alpha);
@@ -34,7 +34,7 @@ inline void scale(float* C, float alpha, const float* A, float beta, int size) {
     }
 }
 
-inline void log10(float* A, const float* B, int size) {
+inline void log10(float *A, const float *B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -46,7 +46,7 @@ inline void log10(float* A, const float* B, int size) {
     }
 }
 
-inline void log2(float* A, const float* B, int size) {
+inline void log2(float *A, const float *B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -58,7 +58,7 @@ inline void log2(float* A, const float* B, int size) {
     }
 }
 
-inline void log(float* A, const float* B, int size) {
+inline void log(float *A, const float *B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -70,7 +70,7 @@ inline void log(float* A, const float* B, int size) {
     }
 }
 
-inline void exp10(float* A, const float* B, int size) {
+inline void exp10(float *A, const float *B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -82,7 +82,7 @@ inline void exp10(float* A, const float* B, int size) {
     }
 }
 
-inline void exp2(float* A, const float* B, int size) {
+inline void exp2(float *A, const float *B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -94,7 +94,7 @@ inline void exp2(float* A, const float* B, int size) {
     }
 }
 
-inline void exp(float* A, const float* B, int size) {
+inline void exp(float *A, const float *B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -106,7 +106,7 @@ inline void exp(float* A, const float* B, int size) {
     }
 }
 
-inline void relu(float* A, const float* B, int size) {
+inline void relu(float *A, const float *B, int size) {
     int i;
     for (i = 0; i < size - 7; i += 8) {
         __m256 x = _mm256_loadu_ps(B);
@@ -122,7 +122,7 @@ inline void relu(float* A, const float* B, int size) {
     }
 }
 
-inline void sigmoid(float* A, const float* B, int size) {
+inline void sigmoid(float *A, const float *B, int size) {
     int i;
     for (i = 0; i < size - 7; i += 8) {
         __m256 x = _mm256_loadu_ps(B);

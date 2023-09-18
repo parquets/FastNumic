@@ -15,16 +15,16 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-inline void mpack_h8(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_h8(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     /* 水平方向的 pack 操作*/
-    const float* x0_ptr = X + 0 * ldx;
-    const float* x1_ptr = X + 1 * ldx;
-    const float* x2_ptr = X + 2 * ldx;
-    const float* x3_ptr = X + 3 * ldx;
-    const float* x4_ptr = X + 4 * ldx;
-    const float* x5_ptr = X + 5 * ldx;
-    const float* x6_ptr = X + 6 * ldx;
-    const float* x7_ptr = X + 7 * ldx;
+    const float *x0_ptr = X + 0 * ldx;
+    const float *x1_ptr = X + 1 * ldx;
+    const float *x2_ptr = X + 2 * ldx;
+    const float *x3_ptr = X + 3 * ldx;
+    const float *x4_ptr = X + 4 * ldx;
+    const float *x5_ptr = X + 5 * ldx;
+    const float *x6_ptr = X + 6 * ldx;
+    const float *x7_ptr = X + 7 * ldx;
 
     int i;
     for (i = 0; i < n_pack - 7; i += 8) {
@@ -75,12 +75,11 @@ inline void mpack_h8(float* packed, const float* X, int ldx, int n_pack, int max
     }
 }
 
-inline void mpack_v8(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_v8(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     /* 垂直方向的 pack 操作*/
     int i = 0;
 
     for (i = 0; i < n_pack - 7; i += 8) {
-
         __m256 tmp0 = _mm256_loadu_ps(X + 0 * ldx);
         __m256 tmp1 = _mm256_loadu_ps(X + 1 * ldx);
         __m256 tmp2 = _mm256_loadu_ps(X + 2 * ldx);
@@ -114,13 +113,13 @@ inline void mpack_v8(float* packed, const float* X, int ldx, int n_pack, int max
     }
 }
 
-inline void mpack_h6(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
-    const float* x0_ptr = X + 0 * ldx;
-    const float* x1_ptr = X + 1 * ldx;
-    const float* x2_ptr = X + 2 * ldx;
-    const float* x3_ptr = X + 3 * ldx;
-    const float* x4_ptr = X + 4 * ldx;
-    const float* x5_ptr = X + 5 * ldx;
+inline void mpack_h6(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
+    const float *x0_ptr = X + 0 * ldx;
+    const float *x1_ptr = X + 1 * ldx;
+    const float *x2_ptr = X + 2 * ldx;
+    const float *x3_ptr = X + 3 * ldx;
+    const float *x4_ptr = X + 4 * ldx;
+    const float *x5_ptr = X + 5 * ldx;
 
     int i;
     for (i = 0; i < n_pack - 7; i += 8) {
@@ -131,11 +130,11 @@ inline void mpack_h6(float* packed, const float* X, int ldx, int n_pack, int max
         __m256 r4 = _mm256_loadu_ps(x4_ptr);  // e0,e1,e2,e3,e4,e5,e6,e7
         __m256 r5 = _mm256_loadu_ps(x5_ptr);  // f0,f1,f2,f3,f4,f5,f6,f7
 
-        _mm_prefetch((char*)(x0_ptr + 8), _MM_HINT_T0);
-        _mm_prefetch((char*)(x1_ptr + 8), _MM_HINT_T0);
-        _mm_prefetch((char*)(x2_ptr + 8), _MM_HINT_T0);
-        _mm_prefetch((char*)(x4_ptr + 8), _MM_HINT_T0);
-        _mm_prefetch((char*)(x5_ptr + 8), _MM_HINT_T0);
+        _mm_prefetch((char *)(x0_ptr + 8), _MM_HINT_T0);
+        _mm_prefetch((char *)(x1_ptr + 8), _MM_HINT_T0);
+        _mm_prefetch((char *)(x2_ptr + 8), _MM_HINT_T0);
+        _mm_prefetch((char *)(x4_ptr + 8), _MM_HINT_T0);
+        _mm_prefetch((char *)(x5_ptr + 8), _MM_HINT_T0);
 
         transpose_6x8(r0, r1, r2, r3, r4, r5);
 
@@ -154,7 +153,7 @@ inline void mpack_h6(float* packed, const float* X, int ldx, int n_pack, int max
         x5_ptr += 8;
         packed += 48;
     }
-    //int remain = n_pack-i;
+    // int remain = n_pack-i;
 
     for (; i < n_pack; ++i) {
         *packed++ = *x0_ptr++;
@@ -170,13 +169,13 @@ inline void mpack_h6(float* packed, const float* X, int ldx, int n_pack, int max
     }
 }
 
-inline void mpack_v6(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_v6(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     int i = 0;
     for (i = 0; i < n_pack - 3; i += 4) {
-        const float* x0_ptr = X + 0 * ldx;
-        const float* x1_ptr = X + 1 * ldx;
-        const float* x2_ptr = X + 2 * ldx;
-        const float* x3_ptr = X + 3 * ldx;
+        const float *x0_ptr = X + 0 * ldx;
+        const float *x1_ptr = X + 1 * ldx;
+        const float *x2_ptr = X + 2 * ldx;
+        const float *x3_ptr = X + 3 * ldx;
 
         packed[0] = x0_ptr[0];
         packed[1] = x0_ptr[1];
@@ -230,12 +229,12 @@ inline void mpack_v6(float* packed, const float* X, int ldx, int n_pack, int max
     }
 }
 
-inline void mpack_h4(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_h4(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     /* 水平方向的 pack 操作*/
-    const float* x0_ptr = X + 0 * ldx;
-    const float* x1_ptr = X + 1 * ldx;
-    const float* x2_ptr = X + 2 * ldx;
-    const float* x3_ptr = X + 3 * ldx;
+    const float *x0_ptr = X + 0 * ldx;
+    const float *x1_ptr = X + 1 * ldx;
+    const float *x2_ptr = X + 2 * ldx;
+    const float *x3_ptr = X + 3 * ldx;
 
     int i;
     for (i = 0; i < n_pack - 3; i += 4) {
@@ -270,7 +269,7 @@ inline void mpack_h4(float* packed, const float* X, int ldx, int n_pack, int max
     }
 }
 
-inline void mpack_v4(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_v4(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     int i = 0;
     for (i = 0; i < n_pack - 3; i += 4) {
         __m128 _v_x0 = _mm_loadu_ps(X + 0 * ldx);
@@ -298,24 +297,24 @@ inline void mpack_v4(float* packed, const float* X, int ldx, int n_pack, int max
     }
 }
 
-inline void mpack_h16(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
-    const float* x0_ptr = X + 0 * ldx;
-    const float* x1_ptr = X + 1 * ldx;
-    const float* x2_ptr = X + 2 * ldx;
-    const float* x3_ptr = X + 3 * ldx;
-    const float* x4_ptr = X + 4 * ldx;
-    const float* x5_ptr = X + 5 * ldx;
-    const float* x6_ptr = X + 6 * ldx;
-    const float* x7_ptr = X + 7 * ldx;
+inline void mpack_h16(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
+    const float *x0_ptr = X + 0 * ldx;
+    const float *x1_ptr = X + 1 * ldx;
+    const float *x2_ptr = X + 2 * ldx;
+    const float *x3_ptr = X + 3 * ldx;
+    const float *x4_ptr = X + 4 * ldx;
+    const float *x5_ptr = X + 5 * ldx;
+    const float *x6_ptr = X + 6 * ldx;
+    const float *x7_ptr = X + 7 * ldx;
 
-    const float* x8_ptr = X + 8 * ldx;
-    const float* x9_ptr = X + 9 * ldx;
-    const float* x10_ptr = X + 10 * ldx;
-    const float* x11_ptr = X + 11 * ldx;
-    const float* x12_ptr = X + 12 * ldx;
-    const float* x13_ptr = X + 13 * ldx;
-    const float* x14_ptr = X + 14 * ldx;
-    const float* x15_ptr = X + 15 * ldx;
+    const float *x8_ptr = X + 8 * ldx;
+    const float *x9_ptr = X + 9 * ldx;
+    const float *x10_ptr = X + 10 * ldx;
+    const float *x11_ptr = X + 11 * ldx;
+    const float *x12_ptr = X + 12 * ldx;
+    const float *x13_ptr = X + 13 * ldx;
+    const float *x14_ptr = X + 14 * ldx;
+    const float *x15_ptr = X + 15 * ldx;
 
     int i;
     for (i = 0; i < n_pack - 7; i += 8) {
@@ -401,11 +400,11 @@ inline void mpack_h16(float* packed, const float* X, int ldx, int n_pack, int ma
     }
 }
 
-inline void mpack_v16(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_v16(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     //__m256 d0, d1;
     int i = 0;
     for (i = 0; i < n_pack - 3; i += 4) {
-        //printf("i=%d\n", i);
+        // printf("i=%d\n", i);
         __m256 d0 = _mm256_loadu_ps(X);
         __m256 d1 = _mm256_loadu_ps(X + 8);
         __m256 d2 = _mm256_loadu_ps(X + ldx);
@@ -442,7 +441,7 @@ inline void mpack_v16(float* packed, const float* X, int ldx, int n_pack, int ma
     }
 }
 
-inline void mpack_h1(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_h1(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     memcpy(packed, X, sizeof(float) * n_pack);
     packed += n_pack;
     if (n_pack < max_pack) {
@@ -450,7 +449,7 @@ inline void mpack_h1(float* packed, const float* X, int ldx, int n_pack, int max
     }
 }
 
-inline void mpack_v1(float* packed, const float* X, int ldx, int n_pack, int max_pack) {
+inline void mpack_v1(float *packed, const float *X, int ldx, int n_pack, int max_pack) {
     for (int i = 0; i < n_pack; ++i) {
         *packed++ = *(X + i * ldx);
     }

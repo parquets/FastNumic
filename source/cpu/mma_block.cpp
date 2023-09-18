@@ -3,14 +3,13 @@
 namespace fastnum {
 namespace cpu {
 
-void mma_block(int mc, int nc, int kc, const float* packA, const float* packB, float* C, int ldc) {
-
+void mma_block(int mc, int nc, int kc, const float *packA, const float *packB, float *C, int ldc) {
     int offset_a = 0;
     int offset_b = 0;
 
     int mm = 0, nn = 0;
 
-    //printf("%.2f %.2f %.2f %.2f\n", packA[0], packA[1], packA[2], packA[3]);
+    // printf("%.2f %.2f %.2f %.2f\n", packA[0], packA[1], packA[2], packA[3]);
 
     for (mm = 0; mm < mc - 5; mm += 6) {
         offset_b = 0;
@@ -34,7 +33,7 @@ void mma_block(int mc, int nc, int kc, const float* packA, const float* packB, f
     }
     for (; mm < mc - 3; mm += 4) {
         offset_b = 0;
-        
+
         for (nn = 0; nn < nc - 15; nn += 16) {
             kernel::mma_4x16(packA + offset_a, packB + offset_b, kc, C + mm * ldc + nn, ldc);
             offset_b += 16 * kc;

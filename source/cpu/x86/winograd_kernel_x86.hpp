@@ -17,7 +17,7 @@ namespace kernel {
 
 template <int TileSize, int KernelSize, int StrideSize>
 struct WinogradLayoutTransform {
-    inline void operator()(float* dst, int dst_size, const float* src, int channels, int height, int width) {
+    inline void operator()(float *dst, int dst_size, const float *src, int channels, int height, int width) {
         printf("Error! Undefined Layout Transform for Winograd!\n");
         exit(-1);
     }
@@ -25,16 +25,17 @@ struct WinogradLayoutTransform {
 
 template <>
 struct WinogradLayoutTransform<4, 3, 1> {
-    inline void operator()(float* dst, int dst_size, const float* src, int channels, int height, int width) {
+    inline void operator()(float *dst, int dst_size, const float *src, int channels, int height, int width) {
         for (int h = 0; h < height - 1; h += 2) {
-            for (int w = 0; w < width - 1; w += 2) {}
+            for (int w = 0; w < width - 1; w += 2) {
+            }
         }
     }
 };
 
 template <int TileSize, int KernelSize, int StrideSize, int NPack>
 struct WinogradUVTransform {
-    inline void operator()(float* u, const float* g) const {
+    inline void operator()(float *u, const float *g) const {
         printf("Error! Undefined Winograd UV Transform");
         exit(-1);
     }
@@ -42,7 +43,7 @@ struct WinogradUVTransform {
 
 template <int TileSize, int KernelSize, int StrideSize, int NPack>
 struct WinogradDataTransform {
-    inline void operator()(float* u, const float* g) const {
+    inline void operator()(float *u, const float *g) const {
         printf("Error! Undefined Winograd Data Transform");
         exit(-1);
     }
@@ -50,7 +51,7 @@ struct WinogradDataTransform {
 
 template <int TileSize, int KernelSize, int StrideSize, int NPack>
 struct WinogradWeightTransform {
-    inline void operator()(float* u, const float* g) const {
+    inline void operator()(float *u, const float *g) const {
         printf("Error! Undefined Winograd Weight Transform");
         exit(-1);
     }
@@ -64,7 +65,7 @@ struct WinogradWeightTransform<4, 3, 1, NPack> {
     //     [1.0f / 2, -1.0f / 2, 1.0f / 2],
     //     [0.0f, 0.0f, 1.0f]
     // ]
-    inline void getGg(float* Gg, const float* g) const {
+    inline void getGg(float *Gg, const float *g) const {
         Gg[0] = g[0];
         Gg[1] = g[1];
         Gg[2] = g[2];
@@ -79,7 +80,7 @@ struct WinogradWeightTransform<4, 3, 1, NPack> {
         Gg[11] = g[8];
     }
 
-    inline void getGgGt(float* GgGt, const float* Gg) const {
+    inline void getGgGt(float *GgGt, const float *Gg) const {
         GgGt[0] = Gg[0];
         GgGt[1] = (Gg[0] + Gg[1] + Gg[2]) / 2;
         GgGt[2] = (Gg[0] - Gg[1] + Gg[2]) / 2;
@@ -101,7 +102,7 @@ struct WinogradWeightTransform<4, 3, 1, NPack> {
         GgGt[15] = Gg[11];
     }
 
-    inline void operator()(float* u, const float* g) const {
+    inline void operator()(float *u, const float *g) const {
         int kernel_stride = 3 * 3;
 
         float Gg[NPack][4][3] = {0};
@@ -131,14 +132,14 @@ struct WinogradWeightTransform<6, 3, 1, NPack> {
     /*
     G = np.array([
         [1.0, 0.0, 0.0],
-	    [-2.0 / 3, -sq2 / 3, -1.0 / 3],
-	    [-2.0 / 3, sq2 / 3, -1.0 / 3],
-	    [1.0 / 6, sq2 / 6, 1.0 / 3],
-	    [1.0 / 6, -sq2 / 6, 1.0 / 3],
-	    [0.0, 0.0, 1.0]
+        [-2.0 / 3, -sq2 / 3, -1.0 / 3],
+        [-2.0 / 3, sq2 / 3, -1.0 / 3],
+        [1.0 / 6, sq2 / 6, 1.0 / 3],
+        [1.0 / 6, -sq2 / 6, 1.0 / 3],
+        [0.0, 0.0, 1.0]
     ])
     */
-    inline void getGg(float* Gg, const float* g) const {
+    inline void getGg(float *Gg, const float *g) const {
         const float sq2 = 1.41421356237f;
         Gg[0] = g[0];
         Gg[1] = g[1];
@@ -165,7 +166,7 @@ struct WinogradWeightTransform<6, 3, 1, NPack> {
         Gg[18] = g[9];
     }
 
-    inline void getGgGt(float* GgGt, const float* Gg) const {
+    inline void getGgGt(float *GgGt, const float *Gg) const {
         const float sq2 = 1.41421356237f;
 
         for (int i = 0; i < 6; ++i) {
@@ -181,8 +182,7 @@ struct WinogradWeightTransform<6, 3, 1, NPack> {
         }
     }
 
-    inline void operator()(float* u, const float* g) const {
-
+    inline void operator()(float *u, const float *g) const {
         int kernel_stride = 3 * 3;
 
         float Gg[NPack][6][3] = {0};
@@ -212,22 +212,22 @@ struct WinogradWeightTransform<8, 3, 1, NPack> {
     /*
     G = np.array([
         [1.0,      0.0,       0.0],
-	    [-2.0 / 9, -2.0 / 9,  -2.0 / 9],
-	    [-2.0 / 9, 2.0 / 9,  -2.0 / 9],
-	    [1.0 / 90, 1.0 / 45,  2.0 / 45],
-	    [1.0 / 90, -1.0 / 45, 2.0 / 45],
-	    [1.0 / 45, 1.0 / 90,  1.0 / 180],
-	    [1.0 / 45, -1.0 / 90, 1.0 / 180],
-  	    [0.0,      0.0,       1.0]
+        [-2.0 / 9, -2.0 / 9,  -2.0 / 9],
+        [-2.0 / 9, 2.0 / 9,  -2.0 / 9],
+        [1.0 / 90, 1.0 / 45,  2.0 / 45],
+        [1.0 / 90, -1.0 / 45, 2.0 / 45],
+        [1.0 / 45, 1.0 / 90,  1.0 / 180],
+        [1.0 / 45, -1.0 / 90, 1.0 / 180],
+        [0.0,      0.0,       1.0]
     ])
     */
     /* u = G  g GT*/
     /*
     G -> [8, 3]
     g -> [3, 3]
-    
+
    */
-    inline void getGg(float* Gg, const float* g) const {
+    inline void getGg(float *Gg, const float *g) const {
         /*
         Gg -> [8, 3]
         g  -> [3, 3]
@@ -271,7 +271,7 @@ struct WinogradWeightTransform<8, 3, 1, NPack> {
         Gg[7 * 3 + 2] = g[8];
     }
 
-    inline void getGgGt(float* GgGt, const float* Gg) const {
+    inline void getGgGt(float *GgGt, const float *Gg) const {
         const float c0 = 2.0 / 9;
         const float c1 = 1.0 / 90;
         const float c2 = 1.0 / 45;
@@ -291,8 +291,7 @@ struct WinogradWeightTransform<8, 3, 1, NPack> {
         }
     }
 
-    inline void operator()(float* u, const float* g) const {
-
+    inline void operator()(float *u, const float *g) const {
         int kernel_stride = 3 * 3;
 
         float Gg[NPack][8][3] = {0};
@@ -319,7 +318,7 @@ struct WinogradWeightTransform<8, 3, 1, NPack> {
 
 template <>
 struct WinogradDataTransform<4, 3, 1, 1> {
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         for (int i = 0; i < 4; ++i) {
             float r0 = d[0 * ldd + i];
             float r1 = d[1 * ldd + i];
@@ -338,7 +337,7 @@ struct WinogradDataTransform<4, 3, 1, 1> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         for (int i = 0; i < 4; ++i) {
             float r0 = BTd[0];
             float r1 = BTd[1];
@@ -359,7 +358,7 @@ struct WinogradDataTransform<4, 3, 1, 1> {
         }
     }
 
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[4 * 4] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -372,18 +371,16 @@ struct WinogradDataTransform<6, 3, 1, 1> {
 BT = np.array([
     [1.0,  0.0,  -2.5,  0.0,  1.0, 0.0],
     [0.0, -sq2,   -2.0,  sq2 / 2.0, 1.0, 0.0],
-	[0.0,  sq2,   -2.0, -sq2 / 2.0, 1.0, 0.0],
-	[0.0, -sq2 / 2, -0.5,  sq2,   1.0, 0.0],
-	[0.0,  sq2 / 2, -0.5, -sq2,   1.0, 0.0],
-	[0.0,  1.0,   0.0,  -2.5, 0.0, 1.0]
+    [0.0,  sq2,   -2.0, -sq2 / 2.0, 1.0, 0.0],
+    [0.0, -sq2 / 2, -0.5,  sq2,   1.0, 0.0],
+    [0.0,  sq2 / 2, -0.5, -sq2,   1.0, 0.0],
+    [0.0,  1.0,   0.0,  -2.5, 0.0, 1.0]
 ])
 */
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
-
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         const float sq2 = 1.41421356237f;
 
         for (int i = 0; i < 6; ++i) {
-
             float r0 = d[0 * ldd + i];
             float r1 = d[1 * ldd + i];
             float r2 = d[2 * ldd + i];
@@ -412,7 +409,7 @@ BT = np.array([
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         const float sq2 = 1.41421356237f;
         for (int i = 0; i < 6; ++i) {
             float r0 = BTd[i * 6 + 0];
@@ -445,7 +442,7 @@ BT = np.array([
         }
     }
 
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[6 * 6] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -454,7 +451,7 @@ BT = np.array([
 
 template <>
 struct WinogradDataTransform<8, 3, 1, 1> {
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         for (int i = 0; i < 8; ++i) {
             float r0 = d[0 * ldd + i];
             float r1 = d[1 * ldd + i];
@@ -492,7 +489,7 @@ struct WinogradDataTransform<8, 3, 1, 1> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         for (int i = 0; i < 8; ++i) {
             float r0 = BTd[i * 8 + 0];
             float r1 = BTd[i * 8 + 1];
@@ -532,8 +529,8 @@ struct WinogradDataTransform<8, 3, 1, 1> {
         }
     }
 
-   public:
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+public:
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[64] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -542,7 +539,7 @@ struct WinogradDataTransform<8, 3, 1, 1> {
 
 template <>
 struct WinogradDataTransform<4, 3, 1, 4> {
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         for (int i = 0; i < 4; ++i) {
             __m128 _v_r0 = _mm_loadu_ps(d + 0 * ldd + i * 4);
             __m128 _v_r1 = _mm_loadu_ps(d + 1 * ldd + i * 4);
@@ -561,7 +558,7 @@ struct WinogradDataTransform<4, 3, 1, 4> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         for (int i = 0; i < 4; ++i) {
             __m128 _v_r0 = _mm_loadu_ps(BTd + i * 4 * 4 + 0 * 4);
             __m128 _v_r1 = _mm_loadu_ps(BTd + i * 4 * 4 + 1 * 4);
@@ -582,7 +579,7 @@ struct WinogradDataTransform<4, 3, 1, 4> {
         }
     }
 
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[4 * 4 * 4] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -591,7 +588,7 @@ struct WinogradDataTransform<4, 3, 1, 4> {
 
 template <>
 struct WinogradDataTransform<6, 3, 1, 4> {
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         const float sq2 = 1.41421356237f;
         const float sq2_d2 = 1.41421356237f / 2;
         __m128 _vm2_5 = _mm_set1_ps(-2.5f);
@@ -629,7 +626,7 @@ struct WinogradDataTransform<6, 3, 1, 4> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         const float sq2 = 1.41421356237f;
         const float sq2_d2 = 1.41421356237f / 2;
         __m128 _vm2_5 = _mm_set1_ps(-2.5f);
@@ -669,7 +666,7 @@ struct WinogradDataTransform<6, 3, 1, 4> {
         }
     }
 
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[6 * 6 * 4] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -678,9 +675,8 @@ struct WinogradDataTransform<6, 3, 1, 4> {
 
 template <>
 struct WinogradDataTransform<8, 3, 1, 4> {
-   private:
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
-
+private:
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         __m128 _v5_25 = _mm_set1_ps(5.25f);
         __m128 _vm4_25 = _mm_set1_ps(-4.25f);
         __m128 _vm1_25 = _mm_set1_ps(-1.25f);
@@ -727,7 +723,7 @@ struct WinogradDataTransform<8, 3, 1, 4> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         __m128 _v5_25 = _mm_set1_ps(5.25f);
         __m128 _vm4_25 = _mm_set1_ps(-4.25f);
         __m128 _vm1_25 = _mm_set1_ps(-1.25f);
@@ -776,8 +772,8 @@ struct WinogradDataTransform<8, 3, 1, 4> {
         }
     }
 
-   public:
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+public:
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[256] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -786,7 +782,7 @@ struct WinogradDataTransform<8, 3, 1, 4> {
 
 template <>
 struct WinogradDataTransform<4, 3, 1, 8> {
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         for (int i = 0; i < 4; ++i) {
             __m256 _v_r0 = _mm256_loadu_ps(d + 0 * ldd + i * 8);
             __m256 _v_r1 = _mm256_loadu_ps(d + 1 * ldd + i * 8);
@@ -805,7 +801,7 @@ struct WinogradDataTransform<4, 3, 1, 8> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         for (int i = 0; i < 4; ++i) {
             __m256 _v_r0 = _mm256_loadu_ps(BTd + i * 4 * 8 + 0 * 8);
             __m256 _v_r1 = _mm256_loadu_ps(BTd + i * 4 * 8 + 1 * 8);
@@ -826,7 +822,7 @@ struct WinogradDataTransform<4, 3, 1, 8> {
         }
     }
 
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[4 * 4 * 8] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -835,7 +831,7 @@ struct WinogradDataTransform<4, 3, 1, 8> {
 
 template <>
 struct WinogradDataTransform<6, 3, 1, 8> {
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         const float sq2 = 1.41421356237f;
         const float sq2_d2 = 1.41421356237f / 2;
         __m256 _vm2_5 = _mm256_set1_ps(-2.5f);
@@ -873,7 +869,7 @@ struct WinogradDataTransform<6, 3, 1, 8> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         const float sq2 = 1.41421356237f;
         const float sq2_d2 = 1.41421356237f / 2;
         __m256 _vm2_5 = _mm256_set1_ps(-2.5f);
@@ -913,7 +909,7 @@ struct WinogradDataTransform<6, 3, 1, 8> {
         }
     }
 
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[6 * 6 * 8] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -924,11 +920,11 @@ template <>
 struct WinogradDataTransform<8, 3, 1, 8> {
     /*
     BT = np.array([
-	    [1.0, 0.0,-5.25, 0.00, 5.25, 0.00,-1.0, 0.0],
- 	    [0.0, 1.0, 1.00,-4.25,-4.25, 1.00, 1.0, 0.0],
-  	    [0.0,-1.0, 1.00, 4.25,-4.25,-1.00, 1.0, 0.0],
-  	    [0.0, 0.5, 0.25,-2.50,-1.25, 2.00, 1.0, 0.0],
-  	    [0.0,-0.5, 0.25, 2.50,-1.25,-2.00, 1.0, 0.0],
+        [1.0, 0.0,-5.25, 0.00, 5.25, 0.00,-1.0, 0.0],
+        [0.0, 1.0, 1.00,-4.25,-4.25, 1.00, 1.0, 0.0],
+        [0.0,-1.0, 1.00, 4.25,-4.25,-1.00, 1.0, 0.0],
+        [0.0, 0.5, 0.25,-2.50,-1.25, 2.00, 1.0, 0.0],
+        [0.0,-0.5, 0.25, 2.50,-1.25,-2.00, 1.0, 0.0],
         [0.0, 2.0, 4.00,-2.50,-5.00, 0.50, 1.0, 0.0],
         [0.0,-2.0, 4.00, 2.50,-5.00,-0.50, 1.0, 0.0],
         [0.0,-1.0, 0.00, 5.25, 0.00,-5.25, 0.0, 1.0]
@@ -937,11 +933,10 @@ struct WinogradDataTransform<8, 3, 1, 8> {
     V = BT d B
 
     d  -> [8, 8]
-    BT -> [8, 8] 
+    BT -> [8, 8]
     */
-   private:
-    inline void getBTd(float* BTd, const float* d, int ldd) const {
-
+private:
+    inline void getBTd(float *BTd, const float *d, int ldd) const {
         __m256 _v5_25 = _mm256_set1_ps(5.25f);
         __m256 _vm4_25 = _mm256_set1_ps(-4.25f);
         __m256 _vm1_25 = _mm256_set1_ps(-1.25f);
@@ -988,7 +983,7 @@ struct WinogradDataTransform<8, 3, 1, 8> {
         }
     }
 
-    inline void getBTdB(float* BTdB, int ldx, const float* BTd) const {
+    inline void getBTdB(float *BTdB, int ldx, const float *BTd) const {
         __m256 _v5_25 = _mm256_set1_ps(5.25f);
         __m256 _vm4_25 = _mm256_set1_ps(-4.25f);
         __m256 _vm1_25 = _mm256_set1_ps(-1.25f);
@@ -1037,8 +1032,8 @@ struct WinogradDataTransform<8, 3, 1, 8> {
         }
     }
 
-   public:
-    inline void operator()(float* v, int ldv, const float* d, int ldd) const {
+public:
+    inline void operator()(float *v, int ldv, const float *d, int ldd) const {
         float BTd[512] = {0};
         getBTd(BTd, d, ldd);
         getBTdB(v, ldv, BTd);
@@ -1047,7 +1042,7 @@ struct WinogradDataTransform<8, 3, 1, 8> {
 
 template <>
 struct WinogradUVTransform<8, 3, 1, 1> {
-    inline void getATUV(float* ATUV, const float* UV, int lduv) const {
+    inline void getATUV(float *ATUV, const float *UV, int lduv) const {
         for (int i = 0; i < 8; ++i) {
             float r0 = UV[0 * lduv + i];
             float r1 = UV[1 * lduv + i];
@@ -1081,7 +1076,7 @@ struct WinogradUVTransform<8, 3, 1, 1> {
         }
     }
 
-    inline void getATUVA(float* ATUVA, int ldx, const float* ATUV) const {
+    inline void getATUVA(float *ATUVA, int ldx, const float *ATUV) const {
         for (int i = 0; i < 6; ++i) {
             float r0 = ATUV[i * 8 + 0];
             float r1 = ATUV[i * 8 + 1];
@@ -1115,7 +1110,7 @@ struct WinogradUVTransform<8, 3, 1, 1> {
         }
     }
 
-    inline void operator()(float* y, int ldy, const float* uv, int lduv) const {
+    inline void operator()(float *y, int ldy, const float *uv, int lduv) const {
         float ATUV[48] = {0};
         getATUV(ATUV, uv, lduv);
         getATUVA(y, ldy, ATUV);
@@ -1124,8 +1119,8 @@ struct WinogradUVTransform<8, 3, 1, 1> {
 
 template <>
 struct WinogradUVTransform<8, 3, 1, 4> {
-   private:
-    inline void getATUV(float* ATUV, const float* UV, int lduv) const {
+private:
+    inline void getATUV(float *ATUV, const float *UV, int lduv) const {
         __m128 _v32 = _mm_set1_ps(32.0f);
         __m128 _v16 = _mm_set1_ps(16.0f);
         __m128 _v8 = _mm_set1_ps(8.f);
@@ -1165,7 +1160,7 @@ struct WinogradUVTransform<8, 3, 1, 4> {
         }
     }
 
-    inline void getATUVA(float* ATUVA, int ldx, const float* ATUV) const {
+    inline void getATUVA(float *ATUVA, int ldx, const float *ATUV) const {
         __m128 _v32 = _mm_set1_ps(32.0f);
         __m128 _v16 = _mm_set1_ps(16.0f);
         __m128 _v8 = _mm_set1_ps(8.f);
@@ -1206,8 +1201,8 @@ struct WinogradUVTransform<8, 3, 1, 4> {
         }
     }
 
-   public:
-    inline void operator()(float* y, int ldy, const float* uv, int lduv) const {
+public:
+    inline void operator()(float *y, int ldy, const float *uv, int lduv) const {
         float ATUV[192] = {0};
         getATUV(ATUV, uv, lduv);
         getATUVA(y, ldy, ATUV);
@@ -1218,16 +1213,16 @@ template <>
 struct WinogradUVTransform<8, 3, 1, 8> {
     /*
 AT = np.array([
-	[1.0, 1.0,  1.0,  1.0,  1.0, 32.0, 32.0, 0.0],
- 	[0.0, 1.0, -1.0,  2.0, -2.0, 16.0,-16.0, 0.0],
-  	[0.0, 1.0,  1.0,  4.0,  4.0,  8.0,  8.0, 0.0],
+    [1.0, 1.0,  1.0,  1.0,  1.0, 32.0, 32.0, 0.0],
+    [0.0, 1.0, -1.0,  2.0, -2.0, 16.0,-16.0, 0.0],
+    [0.0, 1.0,  1.0,  4.0,  4.0,  8.0,  8.0, 0.0],
     [0.0, 1.0, -1.0,  8.0, -8.0,  4.0, -4.0, 0.0],
     [0.0, 1.0,  1.0, 16.0, 16.0,  2.0,  2.0, 0.0],
     [0.0, 1.0, -1.0, 32.0,-32.0,  1.0, -1.0, 1.0]
 ])
 */
-   private:
-    inline void getATUV(float* ATUV, const float* UV, int lduv) const {
+private:
+    inline void getATUV(float *ATUV, const float *UV, int lduv) const {
         __m256 _v32 = _mm256_set1_ps(32.0f);
         __m256 _v16 = _mm256_set1_ps(16.0f);
         __m256 _v8 = _mm256_set1_ps(8.f);
@@ -1267,7 +1262,7 @@ AT = np.array([
         }
     }
 
-    inline void getATUVA(float* ATUVA, int ldx, const float* ATUV) const {
+    inline void getATUVA(float *ATUVA, int ldx, const float *ATUV) const {
         __m256 _v32 = _mm256_set1_ps(32.0f);
         __m256 _v16 = _mm256_set1_ps(16.0f);
         __m256 _v8 = _mm256_set1_ps(8.f);
@@ -1308,8 +1303,8 @@ AT = np.array([
         }
     }
 
-   public:
-    inline void operator()(float* y, int ldy, const float* uv, int lduv) const {
+public:
+    inline void operator()(float *y, int ldy, const float *uv, int lduv) const {
         float ATUV[384] = {0};
         getATUV(ATUV, uv, lduv);
         getATUVA(y, ldy, ATUV);

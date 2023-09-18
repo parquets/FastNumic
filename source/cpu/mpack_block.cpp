@@ -3,7 +3,7 @@
 namespace fastnum {
 namespace cpu {
 
-void h_packA(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack) {
+void h_packA(int xc, int yc, float *packed_data, const float *X, int ldx, int n_pack, int max_pack) {
     int x = 0;
     for (x = 0; x < xc - 5; x += 6) {
         kernel::mpack_h6(packed_data, X, ldx, n_pack, max_pack);
@@ -22,7 +22,7 @@ void h_packA(int xc, int yc, float* packed_data, const float* X, int ldx, int n_
     }
 }
 
-void v_packA(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack) {
+void v_packA(int xc, int yc, float *packed_data, const float *X, int ldx, int n_pack, int max_pack) {
     int y;
     for (y = 0; y < yc - 5; y += 6) {
         kernel::mpack_v6(packed_data, X, ldx, n_pack, max_pack);
@@ -41,7 +41,7 @@ void v_packA(int xc, int yc, float* packed_data, const float* X, int ldx, int n_
     }
 }
 
-void h_packB(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack) {
+void h_packB(int xc, int yc, float *packed_data, const float *X, int ldx, int n_pack, int max_pack) {
     int x;
     for (x = 0; x < xc - 15; x += 16) {
         kernel::mpack_h16(packed_data, X, ldx, n_pack, max_pack);
@@ -65,9 +65,10 @@ void h_packB(int xc, int yc, float* packed_data, const float* X, int ldx, int n_
     }
 }
 
-void v_packB(int xc, int yc, float* packed_data, const float* X, int ldx, int n_pack, int max_pack) {
+void v_packB(int xc, int yc, float *packed_data, const float *X, int ldx, int n_pack, int max_pack) {
     int y;
-    for (y = 0; y < yc - 15; y += 16) {;
+    for (y = 0; y < yc - 15; y += 16) {
+        ;
         kernel::mpack_v16(packed_data, X, ldx, n_pack, max_pack);
         packed_data += (16 * xc);
         X += (16);

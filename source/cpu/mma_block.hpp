@@ -8,7 +8,7 @@
 namespace fastnum {
 namespace cpu {
 
-void mma_block(int mc, int nc, int kc, const float* packA, const float* packB, float* C, int ldc);
+void mma_block(int mc, int nc, int kc, const float *packA, const float *packB, float *C, int ldc);
 
 }  // namespace cpu
 }  // namespace fastnum
