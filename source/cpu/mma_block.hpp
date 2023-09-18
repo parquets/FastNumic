@@ -1,6 +1,6 @@
 #pragma once
 
-#include "x86/mma_kernel_x86.hpp"
+#include "x86/mma_x86.hpp"
 
 #define MR 6
 #define NR 16

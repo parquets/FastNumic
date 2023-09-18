@@ -14,7 +14,7 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-inline void scale(float *C, float alpha, const float *A, float beta, int size) {
+inline void scale(float* C, float alpha, const float* A, float beta, int size) {
     int i = 0;
 
     __m256 _v_alpha = _mm256_broadcast_ss(&alpha);
@@ -30,11 +30,11 @@ inline void scale(float *C, float alpha, const float *A, float beta, int size) {
         C += 8;
     }
     for (; i < size; ++i) {
-        C[i] = alpha * A[i] + beta;
+        *C++ = alpha * (*A++) + beta;
     }
 }
 
-inline void log10(float *A, const float *B, int size) {
+inline void log10(float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -42,11 +42,11 @@ inline void log10(float *A, const float *B, int size) {
         _mm256_storeu_ps(A + i, _v_r);
     }
     for (; i < size; ++i) {
-        A[i] = std::log10(B[i]);
+        *A++ = std::log10(*B++);
     }
 }
 
-inline void log2(float *A, const float *B, int size) {
+inline void log2(float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -54,11 +54,11 @@ inline void log2(float *A, const float *B, int size) {
         _mm256_storeu_ps(A + i, _v_r);
     }
     for (; i < size; ++i) {
-        A[i] = std::log2(B[i]);
+        *A++ = std::log2(*B++);
     }
 }
 
-inline void log(float *A, const float *B, int size) {
+inline void log(float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -66,11 +66,11 @@ inline void log(float *A, const float *B, int size) {
         _mm256_storeu_ps(A + i, _v_r);
     }
     for (; i < size; ++i) {
-        A[i] = std::log(B[i]);
+        *A++ = std::log(*B++);
     }
 }
 
-inline void exp10(float *A, const float *B, int size) {
+inline void exp10(float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -78,11 +78,11 @@ inline void exp10(float *A, const float *B, int size) {
         _mm256_storeu_ps(A + i, _v_r);
     }
     for (; i < size; ++i) {
-        A[i] = std::pow(10, B[i]);
+        *A++ = std::pow(10, *B++);
     }
 }
 
-inline void exp2(float *A, const float *B, int size) {
+inline void exp2(float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -90,11 +90,11 @@ inline void exp2(float *A, const float *B, int size) {
         _mm256_storeu_ps(A + i, _v_r);
     }
     for (; i < size; ++i) {
-        A[i] = std::pow(2, B[i]);
+        *A++ = std::pow(2, *B++);
     }
 }
 
-inline void exp(float *A, const float *B, int size) {
+inline void exp(float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_b = _mm256_loadu_ps(B + i);
@@ -102,11 +102,11 @@ inline void exp(float *A, const float *B, int size) {
         _mm256_storeu_ps(A + i, _v_r);
     }
     for (; i < size; ++i) {
-        A[i] = std::exp(B[i]);
+        *A++ = std::exp(*B++);
     }
 }
 
-inline void relu(float *A, const float *B, int size) {
+inline void relu(float* A, const float* B, int size) {
     int i;
     for (i = 0; i < size - 7; i += 8) {
         __m256 x = _mm256_loadu_ps(B);
@@ -122,7 +122,7 @@ inline void relu(float *A, const float *B, int size) {
     }
 }
 
-inline void sigmoid(float *A, const float *B, int size) {
+inline void sigmoid(float* A, const float* B, int size) {
     int i;
     for (i = 0; i < size - 7; i += 8) {
         __m256 x = _mm256_loadu_ps(B);

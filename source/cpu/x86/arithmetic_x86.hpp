@@ -14,7 +14,7 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-inline void add(float *C, const float *A, const float *B, int size) {
+inline void add(float* C, const float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_a = _mm256_loadu_ps(A);
@@ -27,11 +27,11 @@ inline void add(float *C, const float *A, const float *B, int size) {
         C += 8;
     }
     for (; i < size; ++i) {
-        C[i] = A[i] + B[i];
+        *C++ = *A++ + *B++;
     }
 }
 
-inline void sub(float *C, const float *A, const float *B, int size) {
+inline void sub(float* C, const float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_a = _mm256_loadu_ps(A);
@@ -44,11 +44,11 @@ inline void sub(float *C, const float *A, const float *B, int size) {
         C += 8;
     }
     for (; i < size; ++i) {
-        C[i] = A[i] - B[i];
+        *C++ = (*A++) - (*B++);
     }
 }
 
-inline void mul(float *C, const float *A, const float *B, int size) {
+inline void mul(float* C, const float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_a = _mm256_loadu_ps(A);
@@ -61,11 +61,11 @@ inline void mul(float *C, const float *A, const float *B, int size) {
         C += 8;
     }
     for (; i < size; ++i) {
-        C[i] = A[i] * B[i];
+        *C++ = (*A++) * (*B++);
     }
 }
 
-inline void div(float *C, const float *A, const float *B, int size) {
+inline void div(float* C, const float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_a = _mm256_loadu_ps(A);
@@ -79,11 +79,11 @@ inline void div(float *C, const float *A, const float *B, int size) {
         C += 8;
     }
     for (; i < size; ++i) {
-        C[i] = A[i] / B[i];
+        *C++ = (*A++) / (*B++);
     }
 }
 
-inline void fma(float *D, const float *A, const float *B, const float *C, int size) {
+inline void fma(float* D, const float* A, const float* B, const float* C, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
         __m256 _v_a = _mm256_loadu_ps(A);
@@ -100,11 +100,30 @@ inline void fma(float *D, const float *A, const float *B, const float *C, int si
         D += 8;
     }
     for (; i < size; ++i) {
-        D[i] = A[i] * B[i] + C[i];
+        *D++ = (*A++) * (*B++) + (*C++);
     }
 }
 
-inline void add_scaler(float *C, const float *A, const float B, int size) {
+inline void fma(float* D, const float* A, const float* B, const float C, int size) {
+    int i = 0;
+    __m256 _v_c = _mm256_broadcast_ss(&C);
+    for (i = 0; i < size - 7; i += 8) {
+        __m256 _v_a = _mm256_loadu_ps(A);
+        __m256 _v_b = _mm256_loadu_ps(B);
+        __m256 _v_d = _mm256_fmadd_ps(_v_a, _v_b, _v_c);
+
+        _mm256_storeu_ps(D, _v_d);
+
+        A += 8;
+        B += 8;
+        D += 8;
+    }
+    for (; i < size; ++i) {
+        *D++ = (*A++) * (*B++) + C;
+    }
+}
+
+inline void add_scaler(float* C, const float* A, const float B, int size) {
     __m256 _v_b = _mm256_broadcast_ss(&B);
     int i = 0;
 
@@ -114,11 +133,11 @@ inline void add_scaler(float *C, const float *A, const float B, int size) {
         _mm256_storeu_ps(C + i, _v_a);
     }
     for (; i < size; ++i) {
-        C[i] = A[i] + B;
+        *C++ = (*A++) + B;
     }
 }
 
-inline void sub_scaler(float *C, const float *A, const float B, int size) {
+inline void sub_scaler(float* C, const float* A, const float B, int size) {
     __m256 _v_b = _mm256_broadcast_ss(&B);
     int i = 0;
 
@@ -128,11 +147,11 @@ inline void sub_scaler(float *C, const float *A, const float B, int size) {
         _mm256_storeu_ps(C + i, _v_a);
     }
     for (; i < size; ++i) {
-        C[i] = A[i] - B;
+        *C++ = (*A++) - B;
     }
 }
 
-inline void mul_scaler(float *C, const float *A, const float B, int size) {
+inline void mul_scaler(float* C, const float* A, const float B, int size) {
     __m256 _v_b = _mm256_broadcast_ss(&B);
     int i = 0;
 
@@ -142,12 +161,12 @@ inline void mul_scaler(float *C, const float *A, const float B, int size) {
         _mm256_storeu_ps(C + i, _v_a);
     }
     for (; i < size; ++i) {
-        C[i] = A[i] * B;
+        (*C++) = (*A++) * B;
     }
 }
 
-inline void div_scaler(float *C, const float *A, const float B, int size) {
-    float inv_B = 1.0 / B;
+inline void div_scaler(float* C, const float* A, const float B, int size) {
+    float inv_B = static_cast<float>(1.0 / B);
     __m256 _v_b = _mm256_broadcast_ss(&inv_B);
     int i = 0;
 
@@ -157,7 +176,7 @@ inline void div_scaler(float *C, const float *A, const float B, int size) {
         _mm256_storeu_ps(C + i, _v_a);
     }
     for (; i < size; ++i) {
-        C[i] = A[i] * inv_B;
+        *C++ = (*A++) * inv_B;
     }
 }
 

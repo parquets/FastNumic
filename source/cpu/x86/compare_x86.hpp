@@ -15,7 +15,7 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-inline void compare_max(float *C, const float *A, const float *B, int size) {
+inline void compare_max(float* C, const float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 31; i += 32) {
         __m256 _v_a0 = _mm256_loadu_ps(A + 0 * 8);
@@ -78,7 +78,7 @@ inline void compare_max(float *C, const float *A, const float *B, int size) {
     }
 }
 
-inline void compare_min(float *C, const float *A, const float *B, int size) {
+inline void compare_min(float* C, const float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 31; i += 32) {
         __m256 _v_a0 = _mm256_loadu_ps(A + 0 * 8);

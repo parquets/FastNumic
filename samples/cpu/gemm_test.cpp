@@ -78,10 +78,10 @@ void run_gemm_test(int M, int N, int K) {
     memset(C0, 0, sizeof(float) * M * N);
     memset(C1, 0, sizeof(float) * M * N);
 
-    fastnum::cpu::sgemm_nn(M, N, K, 1.0f, A, K, B, N, 0, C0, N);
+    
     auto start = std::chrono::system_clock::now(); 
-    //fastnum::cpu::sgemm_nn(M, N, K, 1.0f, A, K, B, N, 0, C0, N);
-    sgemm_naive_nn(M, N, K, 1.0f, A, K, B, N, 0, C1, N);
+    fastnum::cpu::sgemm_nn(M, N, K, 1.0f, A, K, B, N, 0, C0, N);
+    //sgemm_naive_nn(M, N, K, 1.0f, A, K, B, N, 0, C1, N);
     auto end = std::chrono::system_clock::now();
     //sgemm_naive_nn(M, N, K, 1.0f, A, K, B, N, 0, C1, N);
 

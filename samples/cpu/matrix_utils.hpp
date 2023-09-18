@@ -6,9 +6,9 @@
 
 inline void random_matrix(float* data, int rows, int cols) {
     std::default_random_engine e;
-    std::uniform_real_distribution<float> u(0,2);
+    std::uniform_real_distribution<float> u(0,1);
     for(int i=0;i<rows*cols;++i) {
-        data[i] = u(e);
+        data[i] = u(e)/10.0;
     }
 }
 
@@ -24,4 +24,13 @@ inline bool check_matrix(float* A, float* B, int rows, int cols) {
         }
     }
     return is_same;
+}
+
+inline void print_matrix(float* data, int rows, int cols) {
+    for(int r=0; r<rows; ++r) {
+        for(int c=0; c<cols; ++c) {
+            printf("%.3f ", data[r*cols+c]);
+        }
+        printf("\n");
+    }
 }

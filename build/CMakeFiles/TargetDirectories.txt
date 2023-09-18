@@ -1,5 +1,0 @@
-D:/vscode/FastNum/build/CMakeFiles/ALL_BUILD.dir
-D:/vscode/FastNum/build/CMakeFiles/ZERO_CHECK.dir
-D:/vscode/FastNum/build/source/CMakeFiles/FastNum.dir
-D:/vscode/FastNum/build/source/cpu/CMakeFiles/FastNumCPU.dir
-D:/vscode/FastNum/build/samples/cpu/CMakeFiles/gemm_test.dir
