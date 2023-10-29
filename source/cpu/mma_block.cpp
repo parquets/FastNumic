@@ -9,6 +9,7 @@ void mma_block(int mc, int nc, int kc, const float *packA, const float *packB, f
 
     int mm = 0, nn = 0;
 
+    //printf("%d %d %d\n", mc, nc, kc);
     // printf("%.2f %.2f %.2f %.2f\n", packA[0], packA[1], packA[2], packA[3]);
 
     for (mm = 0; mm < mc - 5; mm += 6) {
@@ -73,6 +74,7 @@ void mma_block(int mc, int nc, int kc, const float *packA, const float *packB, f
         offset_a += kc;
     }
 }
+
 
 }  // namespace cpu
 }  // namespace fastnum

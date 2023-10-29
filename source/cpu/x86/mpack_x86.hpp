@@ -8,7 +8,7 @@
 #include <nmmintrin.h>
 #include <smmintrin.h>
 
-#include "transpose_kernel_x86.hpp"
+#include "transpose_x86.hpp"
 #include "vectorize_x86.hpp"
 
 namespace fastnum {
@@ -238,10 +238,10 @@ inline void mpack_h4(float* packed, const float* X, int ldx, int n_pack, int max
 
     int i;
     for (i = 0; i < n_pack - 3; i += 4) {
-        __m128 _v_a0 = _mm_loadu_ps(x0_ptr);  // a0,a1,a2,a3,a4,a5,a6,a7
-        __m128 _v_a1 = _mm_loadu_ps(x1_ptr);  // b0,b1,b2,b3,b4,b5,b6,b7
-        __m128 _v_a2 = _mm_loadu_ps(x2_ptr);  // c0,c1,c2,c3,c4,c5,c6,c7
-        __m128 _v_a3 = _mm_loadu_ps(x3_ptr);  // d0,d1,d2,d3,d4,d5,d6,d7
+        __m128 _v_a0 = _mm_loadu_ps(x0_ptr);  // a0,a1,a2,a3
+        __m128 _v_a1 = _mm_loadu_ps(x1_ptr);  // b0,b1,b2,b3
+        __m128 _v_a2 = _mm_loadu_ps(x2_ptr);  // c0,c1,c2,c3
+        __m128 _v_a3 = _mm_loadu_ps(x3_ptr);  // d0,d1,d2,d3
 
         transpose_4x4(_v_a0, _v_a1, _v_a2, _v_a3);
 
@@ -286,10 +286,10 @@ inline void mpack_v4(float* packed, const float* X, int ldx, int n_pack, int max
         X += 4 * ldx;
     }
     for (; i < n_pack; ++i) {
-        *packed++ = *X++;
-        *packed++ = *X++;
-        *packed++ = *X++;
-        *packed++ = *X++;
+        *packed++ = X[0];
+        *packed++ = X[1];
+        *packed++ = X[2];
+        *packed++ = X[3];
         X += ldx;
     }
     if (n_pack < max_pack) {
@@ -445,7 +445,7 @@ inline void mpack_h1(float* packed, const float* X, int ldx, int n_pack, int max
     memcpy(packed, X, sizeof(float) * n_pack);
     packed += n_pack;
     if (n_pack < max_pack) {
-        memset(packed, 0, 1 * (max_pack - n_pack) * sizeof(*packed));
+        memset(packed, 0, (max_pack - n_pack) * sizeof(*packed));
     }
 }
 

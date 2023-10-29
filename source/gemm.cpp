@@ -130,5 +130,15 @@ void sgemm_tt(int M, int N, int K, float alpha, const float* A, int lda, const f
     free(packB);
 }
 
+void sgemm(bool AT, bool BT, int M, int N, int K, float alpha, const float *A, int lda, const float *B, int ldb, float beta, float *C, int ldc) {
+    if(AT) {
+        if(BT) sgemm_tt(M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+        else sgemm_tn(M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+    } else {
+        if(BT) sgemm_nt(M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+        else sgemm_nn(M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+    }
+}
+
 }  // namespace cpu
 }  // namespace fastnum

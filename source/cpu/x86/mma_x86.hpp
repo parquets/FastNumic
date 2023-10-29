@@ -420,7 +420,7 @@ inline void mma_4x1(const float* packed_A, const float* packed_B, int K, float* 
         __m128 _v_a = _mm_loadu_ps(packed_A);
         __m128 _v_b = _mm_broadcast_ss(packed_B);
         _v_c = _mm_fmadd_ps(_v_a, _v_b, _v_c);
-        packed_A += 8;
+        packed_A += 4;
         packed_B += 1;
     }
 
@@ -556,7 +556,7 @@ inline void mma_6x16(const float* packed_A, const float* packed_B, int K, float*
 
 inline void mma_6x8(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
     __m256 _v_c0 = _mm256_loadu_ps(C + 0 * ldc);
-    __m256 _v_c1 = _mm256_loadu_ps(C + 2 * ldc);
+    __m256 _v_c1 = _mm256_loadu_ps(C + 1 * ldc);
     __m256 _v_c2 = _mm256_loadu_ps(C + 2 * ldc);
     __m256 _v_c3 = _mm256_loadu_ps(C + 3 * ldc);
     __m256 _v_c4 = _mm256_loadu_ps(C + 4 * ldc);
@@ -593,7 +593,7 @@ inline void mma_6x8(const float* packed_A, const float* packed_B, int K, float* 
 
 inline void mma_6x4(const float* packed_A, const float* packed_B, int K, float* C, int ldc) {
     __m128 _v_c0 = _mm_loadu_ps(C + 0 * ldc);
-    __m128 _v_c1 = _mm_loadu_ps(C + 2 * ldc);
+    __m128 _v_c1 = _mm_loadu_ps(C + 1 * ldc);
     __m128 _v_c2 = _mm_loadu_ps(C + 2 * ldc);
     __m128 _v_c3 = _mm_loadu_ps(C + 3 * ldc);
     __m128 _v_c4 = _mm_loadu_ps(C + 4 * ldc);
@@ -615,6 +615,9 @@ inline void mma_6x4(const float* packed_A, const float* packed_B, int K, float* 
         _v_c3 = _mm_fmadd_ps(_v_a3, _v_b0, _v_c3);
         _v_c4 = _mm_fmadd_ps(_v_a4, _v_b0, _v_c4);
         _v_c5 = _mm_fmadd_ps(_v_a5, _v_b0, _v_c5);
+
+        // printf("packed_A:%.3f %.3f %.3f %.3f %.3f %.3f\n", packed_A[0], packed_A[1], packed_A[2], packed_A[3], packed_A[4], packed_A[5]);
+        // printf("packed_B:%.3f %.3f %.3f %.3f\n", packed_B[0], packed_B[1], packed_B[2], packed_B[3]);
 
         packed_A += 6;
         packed_B += 4;
@@ -653,6 +656,12 @@ inline void mma_6x1(const float* packed_A, const float* packed_B, int K, float* 
         c3 += a3 * b;
         c4 += a4 * b;
         c5 += a5 * b;
+
+        //printf("packed_A:%.3f %.3f %.3f %.3f %.3f %.3f\n", packed_A[0], packed_A[1], packed_A[2], packed_A[3], packed_A[4], packed_A[5]);
+        //printf("packed_B:%.3f\n", packed_B[0]);
+
+        packed_A += 6;
+        packed_B += 1;
     }
     *(C + 0 * ldc) += c0;
     *(C + 1 * ldc) += c1;
@@ -699,11 +708,6 @@ inline void mma_4x16(const float* packed_A, const float* packed_B, int K, float*
         packed_A += 4;
         packed_B += 16;
     }
-
-    // print_avx2_ps(_v_c00);
-    // print_avx2_ps(_v_c10);
-    // print_avx2_ps(_v_c20);
-    // print_avx2_ps(_v_c30);
 
     _mm256_storeu_ps(C + 0 * ldc + 0, _v_c00);
     _mm256_storeu_ps(C + 0 * ldc + 8, _v_c01);

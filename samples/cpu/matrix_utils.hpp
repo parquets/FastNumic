@@ -8,7 +8,7 @@ inline void random_matrix(float* data, int rows, int cols) {
     std::default_random_engine e;
     std::uniform_real_distribution<float> u(0,1);
     for(int i=0;i<rows*cols;++i) {
-        data[i] = u(e)/10.0;
+        data[i] = u(e)/5.0;
     }
 }
 
