@@ -5,6 +5,7 @@ add_subdirectory(cpu)
 set(FastNumSource
     gemm.cpp
     gemv.cpp
+    transpose.cpp
 )
 
 add_library(FastNum STATIC ${FastNumSource})

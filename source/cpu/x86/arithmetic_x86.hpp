@@ -48,6 +48,7 @@ inline void sub(float* C, const float* A, const float* B, int size) {
     }
 }
 
+
 inline void mul(float* C, const float* A, const float* B, int size) {
     int i = 0;
     for (i = 0; i < size - 7; i += 8) {
@@ -103,6 +104,7 @@ inline void fma(float* D, const float* A, const float* B, const float* C, int si
         *D++ = (*A++) * (*B++) + (*C++);
     }
 }
+
 
 inline void fma(float* D, const float* A, const float* B, const float C, int size) {
     int i = 0;

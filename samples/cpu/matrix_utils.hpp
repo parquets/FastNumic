@@ -4,15 +4,17 @@
 #include <ctime>
 #include <cmath>
 
-inline void random_matrix(float* data, int rows, int cols) {
+template <class _Tp>
+inline void random_matrix(_Tp* data, int rows, int cols) {
     std::default_random_engine e;
-    std::uniform_real_distribution<float> u(0,1);
+    std::uniform_real_distribution<_Tp> u(0,1);
     for(int i=0;i<rows*cols;++i) {
         data[i] = u(e)/5.0;
     }
 }
 
-inline bool check_matrix(float* A, float* B, int rows, int cols) {
+template <class _Tp>
+inline bool check_matrix(_Tp* A, _Tp* B, int rows, int cols) {
     bool is_same = true;
     for(int r=0; r < rows; ++r) {
         for(int c=0; c < cols; ++c) {

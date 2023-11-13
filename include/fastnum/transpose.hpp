@@ -7,5 +7,6 @@ namespace cpu {
 
 void transpose(int M, int N, const float* A, int lda, float* B, int ldb);
 
-} // cpu
-} // fastnum
+void transpose(int M, int N, const double* A, int lda, double* B, int ldb);
+}  // namespace cpu
+}  // namespace fastnum
