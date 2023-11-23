@@ -51,7 +51,22 @@ inline void sub(float* C, const float* A, const float* B, int size) {
 
 inline void mul(float* C, const float* A, const float* B, int size) {
     int i = 0;
-    for (i = 0; i < size - 7; i += 8) {
+    for (i = 0; i < size - 15; i += 16) {
+        __m256 _v_a0 = _mm256_loadu_ps(A+0);
+        __m256 _v_a1 = _mm256_loadu_ps(A+8);
+        __m256 _v_b0 = _mm256_loadu_ps(B+0);
+        __m256 _v_b1 = _mm256_loadu_ps(B+8);
+        __m256 _v_c0 = _mm256_mul_ps(_v_a0, _v_b0);
+        __m256 _v_c1 = _mm256_mul_ps(_v_a1, _v_b1);
+        _mm256_storeu_ps(C + 0, _v_c0);
+        _mm256_storeu_ps(C + 8, _v_c1);
+
+
+        A += 16;
+        B += 16;
+        C += 16;
+    }
+    for (; i < size - 7; i += 8) {
         __m256 _v_a = _mm256_loadu_ps(A);
         __m256 _v_b = _mm256_loadu_ps(B);
         __m256 _v_c = _mm256_mul_ps(_v_a, _v_b);

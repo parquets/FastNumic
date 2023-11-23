@@ -63,7 +63,7 @@ void run_dgemv_test(int M, int N) {
     auto t0 = std::chrono::system_clock::now();
     fastnum::cpu::dgemv_t(N, M, 1.0, A, M, B, 0, C0);
     auto t1 = std::chrono::system_clock::now();
-    sgemm_naive_tn(N, 1, M, 1.0, A, M, B, 1, 0.0, C1, 1);
+    dgemm_naive_tn(N, 1, M, 1.0, A, M, B, 1, 0.0, C1, 1);
     auto t2 = std::chrono::system_clock::now();
 
     auto duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);

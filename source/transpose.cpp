@@ -2,9 +2,10 @@
 #include "cpu/x86/stranspose_x86.hpp"
 #include "cpu/x86/dtranspose_x86.hpp"
 
+#include "cuda/transpose.cuh"
+
 namespace fastnum {
 namespace cpu {
-
 namespace kernel {
 
 template <class _Tp>
@@ -112,4 +113,13 @@ void transpose(int M, int N, const double* A, int lda, double* B, int ldb) {
 }
 
 }  // namespace cpu
+
+
+namespace cuda {
+
+void transpose(int M, int N, const float* A, int lda, float* B, int ldb) {
+    transpose_cuda_wrap(M, N, A, lda, B, ldb);
+}
+
+}  // namespace cuda
 }  // namespace fastnum

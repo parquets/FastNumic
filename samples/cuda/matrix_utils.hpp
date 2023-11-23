@@ -9,7 +9,7 @@ inline void random_matrix(_Tp* data, int rows, int cols) {
     std::default_random_engine e;
     std::uniform_real_distribution<_Tp> u(0,1);
     for(int i=0;i<rows*cols;++i) {
-        data[i] = u(e)/2.0;
+        data[i] = u(e)/5.0;
     }
 }
 
@@ -20,7 +20,7 @@ inline bool check_matrix(_Tp* A, _Tp* B, int rows, int cols) {
         for(int c=0; c < cols; ++c) {
             int offset = r*cols+c;
             if(std::fabs(A[offset]-B[offset]) > 5e-4) {
-                printf("offset=%d A=%.5f, B=%.5f\n", offset, A[offset], B[offset]);
+                printf("offset=%d A=%f, B=%f\n", offset, A[offset], B[offset]);
                 return false;
             }
         }
