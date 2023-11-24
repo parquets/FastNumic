@@ -10,14 +10,7 @@ void test_convolution(int in_h, int in_w, int in_channels, int out_channels) {
     float* src = (float*)malloc(sizeof(float)*in_h*in_w*in_channels);
     float* weight = (float*)malloc(sizeof(float)*3*3*in_channels*out_channels);
 
-    // for(int ic=0; ic<in_channels; ++ic) {
-    //     for(int i=0; i<in_h*in_w; ++i) src[ic*in_h*in_w + i] = i/10.0;
-    // }
 
-    // for(int c=0; c<out_channels*in_channels; ++c) {
-    //     for(int i=0; i<3*3; ++i) weight[c*3*3 + i] = i/20.0;
-    // }
-    
 
     random_matrix(src, in_channels, in_h*in_w);
     random_matrix(weight, in_channels*out_channels, 3*3);
@@ -72,3 +65,8 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
+
+/*
+.\convolution_3x3_test.exe 152 206 128 256
+*/
