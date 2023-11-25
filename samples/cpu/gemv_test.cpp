@@ -25,9 +25,9 @@ void run_sgemv_test(int M, int N) {
     memset(C1, 0, sizeof(float) * M);
 
     auto t0 = std::chrono::system_clock::now();
-    fastnum::cpu::sgemv_n(M, N, 1.0, A, N, B, 0, C0);
+    fastnum::cpu::sgemv_n(M, N, 0.5f, A, N, B, 0, C0);
     auto t1 = std::chrono::system_clock::now();
-    sgemm_naive_nn(M, 1, N, 1.0f, A, N, B, 1, 0.0f, C1, 1);
+    sgemm_naive_nn(M, 1, N, 0.5f, A, N, B, 1, 0.0f, C1, 1);
     auto t2 = std::chrono::system_clock::now();
 
     auto duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
@@ -61,9 +61,9 @@ void run_dgemv_test(int M, int N) {
     memset(C1, 0, sizeof(double) * M);
 
     auto t0 = std::chrono::system_clock::now();
-    fastnum::cpu::dgemv_t(N, M, 1.0, A, M, B, 0, C0);
+    fastnum::cpu::dgemv_t(N, M, 0.5, A, M, B, 0, C0);
     auto t1 = std::chrono::system_clock::now();
-    dgemm_naive_tn(N, 1, M, 1.0, A, M, B, 1, 0.0, C1, 1);
+    dgemm_naive_tn(N, 1, M, 0.5, A, M, B, 1, 0.0, C1, 1);
     auto t2 = std::chrono::system_clock::now();
 
     auto duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
