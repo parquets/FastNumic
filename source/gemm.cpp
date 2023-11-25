@@ -25,7 +25,7 @@ void sgemm_nn(int M, int N, int K, float alpha, const float* A, int lda, const f
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            spackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc);
+            spackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, alpha);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
                 spackB_v(s_kc, s_nc, packB, B + kk * ldb + nn, ldb, s_kc);
@@ -47,7 +47,7 @@ void dgemm_nn(int M, int N, int K, double alpha, const double* A, int lda, const
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            dpackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc);
+            dpackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, alpha);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
                 dpackB_v(s_kc, s_nc, packB, B + kk * ldb + nn, ldb, s_kc);
@@ -75,7 +75,7 @@ void sgemm_nt(int M, int N, int K, float alpha, const float* A, int lda, const f
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            spackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc);
+            spackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, alpha);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
                 spackB_h(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc);
@@ -97,7 +97,7 @@ void dgemm_nt(int M, int N, int K, double alpha, const double* A, int lda, const
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            dpackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc);
+            dpackA_h(s_mc, s_kc, packA, A + mm * lda + kk, lda, s_kc, alpha);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
                 dpackB_h(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc);
@@ -125,7 +125,7 @@ void sgemm_tn(int M, int N, int K, float alpha, const float* A, int lda, const f
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            spackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc);
+            spackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, alpha);
 
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
@@ -148,7 +148,7 @@ void dgemm_tn(int M, int N, int K, double alpha, const double* A, int lda, const
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            dpackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc);
+            dpackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, alpha);
 
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
@@ -177,7 +177,7 @@ void sgemm_tt(int M, int N, int K, float alpha, const float* A, int lda, const f
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            spackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc);
+            spackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, alpha);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
                 spackB_h(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc);
@@ -199,7 +199,7 @@ void dgemm_tt(int M, int N, int K, double alpha, const double* A, int lda, const
         int s_mc = std::min(M - mm, MC);
         for (kk = 0; kk < K; kk += KC) {
             int s_kc = std::min(K - kk, KC);
-            dpackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc);
+            dpackA_v(s_kc, s_mc, packA, A + kk * lda + mm, lda, s_kc, alpha);
             for (nn = 0; nn < N; nn += NC) {
                 int s_nc = std::min(N - nn, NC);
                 dpackB_h(s_nc, s_kc, packB, B + nn * ldb + kk, ldb, s_kc);

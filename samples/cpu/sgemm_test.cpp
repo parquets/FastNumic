@@ -23,9 +23,9 @@ void run_sgemm_test(int M, int N, int K) {
     memset(C1, 0, sizeof(float) * M * N);
 
     auto t0 = std::chrono::system_clock::now();
-    fastnum::cpu::sgemm_nn(M, N, K, 1.0f, A, K, B, N, 0, C0, N);
+    fastnum::cpu::sgemm_nn(M, N, K, 0.5f, A, K, B, N, 0, C0, N);
     auto t1 = std::chrono::system_clock::now();
-    sgemm_naive_nn(M, N, K, 1.0f, A, K, B, N, 0, C1, N);
+    sgemm_naive_nn(M, N, K, 0.5f, A, K, B, N, 0, C1, N);
     auto t2 = std::chrono::system_clock::now();
 
     auto duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
@@ -48,9 +48,9 @@ void run_sgemm_test(int M, int N, int K) {
     memset(C1, 0, sizeof(float) * M * N);
 
     t0 = std::chrono::system_clock::now();
-    fastnum::cpu::sgemm_tn(M, N, K, 1.0f, A, M, B, N, 0, C0, N);
+    fastnum::cpu::sgemm_tn(M, N, K, 0.5f, A, M, B, N, 0, C0, N);
     t1 = std::chrono::system_clock::now();
-    sgemm_naive_tn(M, N, K, 1.0f, A, M, B, N, 0, C1, N);
+    sgemm_naive_tn(M, N, K, 0.5f, A, M, B, N, 0, C1, N);
     t2 = std::chrono::system_clock::now();
 
     duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
@@ -73,9 +73,9 @@ void run_sgemm_test(int M, int N, int K) {
     memset(C1, 0, sizeof(float) * M * N);
 
     t0 = std::chrono::system_clock::now();
-    fastnum::cpu::sgemm_nt(M, N, K, 1.0f, A, K, B, K, 0, C0, N);
+    fastnum::cpu::sgemm_nt(M, N, K, 0.5f, A, K, B, K, 0, C0, N);
     t1 = std::chrono::system_clock::now();
-    sgemm_naive_nt(M, N, K, 1.0f, A, K, B, K, 0, C1, N);
+    sgemm_naive_nt(M, N, K, 0.5f, A, K, B, K, 0, C1, N);
     t2 = std::chrono::system_clock::now();
 
     duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
@@ -97,9 +97,9 @@ void run_sgemm_test(int M, int N, int K) {
     memset(C1, 0, sizeof(float) * M * N);
 
     t0 = std::chrono::system_clock::now();
-    fastnum::cpu::sgemm_tt(M, N, K, 1.0f, A, M, B, K, 0, C0, N);
+    fastnum::cpu::sgemm_tt(M, N, K, 0.5f, A, M, B, K, 0, C0, N);
     t1 = std::chrono::system_clock::now();
-    sgemm_naive_tt(M, N, K, 1.0f, A, M, B, K, 0, C1, N);
+    sgemm_naive_tt(M, N, K, 0.5f, A, M, B, K, 0, C1, N);
     t2 = std::chrono::system_clock::now();
 
     duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
@@ -132,6 +132,6 @@ int main(int argc, char* argv[]) {
 }
 
 /*
-./gemm_test 256 256 256
-./gemm_test 1024 1024 1024
+./sgemm_test 256 256 256
+./sgemm_test 1024 1024 1024
 */
