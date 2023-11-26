@@ -12,6 +12,7 @@ set(FastNumSource
     transpose.cpp
     convolution.cpp
     im2col.cpp
+    arithemetic.cpp
 )
 
 add_library(FastNum STATIC ${FastNumSource})

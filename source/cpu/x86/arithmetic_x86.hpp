@@ -172,13 +172,18 @@ inline void mul_scaler(float* C, const float* A, const float B, int size) {
     __m256 _v_b = _mm256_broadcast_ss(&B);
     int i = 0;
 
-    for (i = 0; i < size - 7; ++i) {
-        __m256 _v_a = _mm256_loadu_ps(A + i);
-        _v_a = _mm256_mul_ps(_v_a, _v_b);
-        _mm256_storeu_ps(C + i, _v_a);
+    for (i = 0; i < size - 15; i+=16) {
+        __m256 _v_a0 = _mm256_loadu_ps(A + 0);
+        __m256 _v_a1 = _mm256_loadu_ps(A + 8);
+        _v_a0 = _mm256_mul_ps(_v_a0, _v_b);
+        _v_a1 = _mm256_mul_ps(_v_a1, _v_b);
+        _mm256_storeu_ps(C + 0, _v_a0);
+        _mm256_storeu_ps(C + 8, _v_a1);
+        A += 16;
+        C += 16;
     }
     for (; i < size; ++i) {
-        (*C++) = (*A++) * B;
+        *C++ = (*A++) * B;
     }
 }
 
