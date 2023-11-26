@@ -22,8 +22,8 @@ void sgemm_nn(int M, int N, int K, float alpha, const float* A, int lda, const f
 
     size_t sz_packA = alignSize(MC * KC * sizeof(float), 32);
     size_t sz_packB = alignSize(KC * NC * sizeof(float), 32);
-    float* packA = (float*)alignedMalloc(MC * KC * sizeof(float), 32);
-    float* packB = (float*)alignedMalloc(KC * NC * sizeof(float), 32);
+    float* packA = (float*)alignedMalloc(sz_packA, 32);
+    float* packB = (float*)alignedMalloc(sz_packB, 32);
 
 
     int mm, nn, kk;
@@ -49,8 +49,10 @@ void sgemm_nn(int M, int N, int K, float alpha, const float* A, int lda, const f
 }
 
 void dgemm_nn(int M, int N, int K, double alpha, const double* A, int lda, const double* B, int ldb, double beta, double* C, int ldc) {
-    double* packA = (double*)malloc(MC * KC * sizeof(double));
-    double* packB = (double*)malloc(KC * NC * sizeof(double));
+    size_t sz_packA = alignSize(MC * KC * sizeof(double), 32);
+    size_t sz_packB = alignSize(KC * NC * sizeof(double), 32);
+    double* packA = (double*)alignedMalloc(sz_packA, 32);
+    double* packB = (double*)alignedMalloc(sz_packB, 32);
 
     int mm, nn, kk;
     for (mm = 0; mm < M; mm += MC) {
@@ -66,8 +68,8 @@ void dgemm_nn(int M, int N, int K, double alpha, const double* A, int lda, const
         }
     }
 
-    free(packA);
-    free(packB);
+    alignedFree(packA);
+    alignedFree(packB);
 }
 
 void sgemm_nt(int M, int N, int K, float alpha, const float* A, int lda, const float* B, int ldb, float beta, float* C, int ldc) {
@@ -79,8 +81,8 @@ void sgemm_nt(int M, int N, int K, float alpha, const float* A, int lda, const f
 
     size_t sz_packA = alignSize(MC * KC * sizeof(float), 32);
     size_t sz_packB = alignSize(KC * NC * sizeof(float), 32);
-    float* packA = (float*)alignedMalloc(MC * KC * sizeof(float), 32);
-    float* packB = (float*)alignedMalloc(KC * NC * sizeof(float), 32);
+    float* packA = (float*)alignedMalloc(sz_packA, 32);
+    float* packB = (float*)alignedMalloc(sz_packB, 32);
 
     int mm, nn, kk;
     for (mm = 0; mm < M; mm += MC) {
@@ -104,8 +106,10 @@ void sgemm_nt(int M, int N, int K, float alpha, const float* A, int lda, const f
 }
 
 void dgemm_nt(int M, int N, int K, double alpha, const double* A, int lda, const double* B, int ldb, double beta, double* C, int ldc) {
-    double* packA = (double*)malloc(MC * KC * sizeof(double));
-    double* packB = (double*)malloc(KC * NC * sizeof(double));
+    size_t sz_packA = alignSize(MC * KC * sizeof(double), 32);
+    size_t sz_packB = alignSize(KC * NC * sizeof(double), 32);
+    double* packA = (double*)alignedMalloc(sz_packA, 32);
+    double* packB = (double*)alignedMalloc(sz_packB, 32);
 
     int mm, nn, kk;
     for (mm = 0; mm < M; mm += MC) {
@@ -121,8 +125,8 @@ void dgemm_nt(int M, int N, int K, double alpha, const double* A, int lda, const
         }
     }
 
-    free(packA);
-    free(packB);
+    alignedFree(packA);
+    alignedFree(packB);
 }
 
 void sgemm_tn(int M, int N, int K, float alpha, const float* A, int lda, const float* B, int ldb, float beta, float* C, int ldc) {
@@ -136,8 +140,8 @@ void sgemm_tn(int M, int N, int K, float alpha, const float* A, int lda, const f
     // float* packB = (float*)malloc(KC * NC * sizeof(float));
     size_t sz_packA = alignSize(MC * KC * sizeof(float), 32);
     size_t sz_packB = alignSize(KC * NC * sizeof(float), 32);
-    float* packA = (float*)alignedMalloc(MC * KC * sizeof(float), 32);
-    float* packB = (float*)alignedMalloc(KC * NC * sizeof(float), 32);
+    float* packA = (float*)alignedMalloc(sz_packA, 32);
+    float* packB = (float*)alignedMalloc(sz_packB, 32);
 
     // mul_scaler(M, N, C, ldc, beta, C, ldc);
 
@@ -164,8 +168,10 @@ void sgemm_tn(int M, int N, int K, float alpha, const float* A, int lda, const f
 }
 
 void dgemm_tn(int M, int N, int K, double alpha, const double* A, int lda, const double* B, int ldb, double beta, double* C, int ldc) {
-    double* packA = (double*)malloc(MC * KC * sizeof(double));
-    double* packB = (double*)malloc(KC * NC * sizeof(double));
+    size_t sz_packA = alignSize(MC * KC * sizeof(double), 32);
+    size_t sz_packB = alignSize(KC * NC * sizeof(double), 32);
+    double* packA = (double*)alignedMalloc(sz_packA, 32);
+    double* packB = (double*)alignedMalloc(sz_packB, 32);
 
     int mm, nn, kk;
     for (mm = 0; mm < M; mm += MC) {
@@ -182,8 +188,8 @@ void dgemm_tn(int M, int N, int K, double alpha, const double* A, int lda, const
         }
     }
 
-    free(packA);
-    free(packB);
+    alignedFree(packA);
+    alignedFree(packB);
 }
 
 void sgemm_tt(int M, int N, int K, float alpha, const float* A, int lda, const float* B, int ldb, float beta, float* C, int ldc) {
@@ -197,8 +203,8 @@ void sgemm_tt(int M, int N, int K, float alpha, const float* A, int lda, const f
     // float* packB = (float*)malloc(KC * NC * sizeof(float));
     size_t sz_packA = alignSize(MC * KC * sizeof(float), 32);
     size_t sz_packB = alignSize(KC * NC * sizeof(float), 32);
-    float* packA = (float*)alignedMalloc(MC * KC * sizeof(float), 32);
-    float* packB = (float*)alignedMalloc(KC * NC * sizeof(float), 32);
+    float* packA = (float*)alignedMalloc(sz_packA, 32);
+    float* packB = (float*)alignedMalloc(sz_packB, 32);
 
     // mul_scaler(M, N, C, ldc, beta, C, ldc);
 
@@ -224,8 +230,10 @@ void sgemm_tt(int M, int N, int K, float alpha, const float* A, int lda, const f
 }
 
 void dgemm_tt(int M, int N, int K, double alpha, const double* A, int lda, const double* B, int ldb, double beta, double* C, int ldc) {
-    double* packA = (double*)malloc(MC * KC * sizeof(double));
-    double* packB = (double*)malloc(KC * NC * sizeof(double));
+    size_t sz_packA = alignSize(MC * KC * sizeof(double), 32);
+    size_t sz_packB = alignSize(KC * NC * sizeof(double), 32);
+    double* packA = (double*)alignedMalloc(sz_packA, 32);
+    double* packB = (double*)alignedMalloc(sz_packB, 32);
 
     int mm, nn, kk;
     for (mm = 0; mm < M; mm += MC) {
@@ -241,8 +249,8 @@ void dgemm_tt(int M, int N, int K, double alpha, const double* A, int lda, const
         }
     }
 
-    free(packA);
-    free(packB);
+    alignedFree(packA);
+    alignedFree(packB);
 }
 
 void sgemm(bool AT,

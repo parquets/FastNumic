@@ -43,7 +43,7 @@ inline void dmma_6x4(const double* packed_A, const double* packed_B, int K, doub
         __m256d _v_a4 = _mm256_broadcast_sd(packed_A + 4);
         __m256d _v_a5 = _mm256_broadcast_sd(packed_A + 5);
 
-        __m256d _v_b = _mm256_loadu_pd(packed_B);
+        __m256d _v_b = _mm256_load_pd(packed_B);
 
         _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b, _v_c0);
         _v_c1 = _mm256_fmadd_pd(_v_a1, _v_b, _v_c1);
@@ -122,8 +122,8 @@ inline void dmma_4x8(const double* packed_A, const double* packed_B, int K, doub
         __m256d _v_a2 = _mm256_broadcast_sd(packed_A + 2);
         __m256d _v_a3 = _mm256_broadcast_sd(packed_A + 3);
 
-        __m256d _v_b0 = _mm256_loadu_pd(packed_B + 0);
-        __m256d _v_b1 = _mm256_loadu_pd(packed_B + 4);
+        __m256d _v_b0 = _mm256_load_pd(packed_B + 0);
+        __m256d _v_b1 = _mm256_load_pd(packed_B + 4);
 
         _v_c00 = _mm256_fmadd_pd(_v_a0, _v_b0, _v_c00);
         _v_c10 = _mm256_fmadd_pd(_v_a1, _v_b0, _v_c10);
@@ -167,7 +167,7 @@ inline void dmma_4x4(const double* packed_A, const double* packed_B, int K, doub
         __m256d _v_a3 = _mm256_broadcast_sd(packed_A + 3);
 
 
-        __m256d _v_b = _mm256_loadu_pd(packed_B);
+        __m256d _v_b = _mm256_load_pd(packed_B);
 
 
         _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b, _v_c0);
@@ -194,10 +194,10 @@ inline void dmma_4x1(const double* packed_A, const double* packed_B, int K, doub
     int k = 0;
 
     for (k = 0; k < K - 3; k += 4) {
-        __m256d _v_a0 = _mm256_loadu_pd(packed_A + 4 * 0);
-        __m256d _v_a1 = _mm256_loadu_pd(packed_A + 4 * 1);
-        __m256d _v_a2 = _mm256_loadu_pd(packed_A + 4 * 2);
-        __m256d _v_a3 = _mm256_loadu_pd(packed_A + 4 * 3);
+        __m256d _v_a0 = _mm256_load_pd(packed_A + 4 * 0);
+        __m256d _v_a1 = _mm256_load_pd(packed_A + 4 * 1);
+        __m256d _v_a2 = _mm256_load_pd(packed_A + 4 * 2);
+        __m256d _v_a3 = _mm256_load_pd(packed_A + 4 * 3);
 
         __m256d _v_b0 = _mm256_broadcast_sd(packed_B + 0);
         __m256d _v_b1 = _mm256_broadcast_sd(packed_B + 1);
@@ -216,7 +216,7 @@ inline void dmma_4x1(const double* packed_A, const double* packed_B, int K, doub
     __m256d _v_c = _mm256_add_pd(_mm256_add_pd(_v_c0, _v_c1), _mm256_add_pd(_v_c2, _v_c3));
 
     for (; k < K; ++k) {
-        __m256d _v_a = _mm256_loadu_pd(packed_A);
+        __m256d _v_a = _mm256_load_pd(packed_A);
         __m256d _v_b = _mm256_broadcast_sd(packed_B);
         _v_c = _mm256_fmadd_pd(_v_a, _v_b, _v_c);
         packed_A += 4;
@@ -241,8 +241,8 @@ inline void dmma_1x8(const double* packed_A, const double* packed_B, int K, doub
     for (int k = 0; k < K; ++k) {
         __m256d _v_a0 = _mm256_broadcast_sd(packed_A + 0);
 
-        __m256d _v_b0 = _mm256_loadu_pd(packed_B + 0);
-        __m256d _v_b1 = _mm256_loadu_pd(packed_B + 4);
+        __m256d _v_b0 = _mm256_load_pd(packed_B + 0);
+        __m256d _v_b1 = _mm256_load_pd(packed_B + 4);
 
         _v_c00 = _mm256_fmadd_pd(_v_a0, _v_b0, _v_c00);
         _v_c01 = _mm256_fmadd_pd(_v_a0, _v_b1, _v_c01);
@@ -269,10 +269,10 @@ inline void dmma_1x4(const double* packed_A, const double* packed_B, int K, doub
         __m256d _v_a2 = _mm256_broadcast_sd(packed_A + 2);
         __m256d _v_a3 = _mm256_broadcast_sd(packed_A + 3);
 
-        __m256d _v_b0 = _mm256_loadu_pd(packed_B + 4 * 0);
-        __m256d _v_b1 = _mm256_loadu_pd(packed_B + 4 * 1);
-        __m256d _v_b2 = _mm256_loadu_pd(packed_B + 4 * 2);
-        __m256d _v_b3 = _mm256_loadu_pd(packed_B + 4 * 3);
+        __m256d _v_b0 = _mm256_load_pd(packed_B + 4 * 0);
+        __m256d _v_b1 = _mm256_load_pd(packed_B + 4 * 1);
+        __m256d _v_b2 = _mm256_load_pd(packed_B + 4 * 2);
+        __m256d _v_b3 = _mm256_load_pd(packed_B + 4 * 3);
 
         _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b0, _v_c0);
         _v_c1 = _mm256_fmadd_pd(_v_a1, _v_b1, _v_c1);
@@ -287,7 +287,7 @@ inline void dmma_1x4(const double* packed_A, const double* packed_B, int K, doub
 
     for (; k < K; ++k) {
         __m256d _v_a = _mm256_broadcast_sd(packed_A);
-        __m256d _v_b = _mm256_loadu_pd(packed_B);
+        __m256d _v_b = _mm256_load_pd(packed_B);
         _v_c = _mm256_fmadd_pd(_v_a, _v_b, _v_c);
         packed_A += 1;
         packed_B += 4;
@@ -303,15 +303,15 @@ inline void dmma_1x1(const double* packed_A, const double* packed_B, int K, doub
 
     int k = 0;
     for (k = 0; k < K - 15; k += 16) {
-        __m256d _v_a0 = _mm256_loadu_pd(packed_A + 0 * 4);
-        __m256d _v_a1 = _mm256_loadu_pd(packed_A + 1 * 4);
-        __m256d _v_a2 = _mm256_loadu_pd(packed_A + 2 * 4);
-        __m256d _v_a3 = _mm256_loadu_pd(packed_A + 3 * 4);
+        __m256d _v_a0 = _mm256_load_pd(packed_A + 0 * 4);
+        __m256d _v_a1 = _mm256_load_pd(packed_A + 1 * 4);
+        __m256d _v_a2 = _mm256_load_pd(packed_A + 2 * 4);
+        __m256d _v_a3 = _mm256_load_pd(packed_A + 3 * 4);
 
-        __m256d _v_b0 = _mm256_loadu_pd(packed_B + 0 * 4);
-        __m256d _v_b1 = _mm256_loadu_pd(packed_B + 1 * 4);
-        __m256d _v_b2 = _mm256_loadu_pd(packed_B + 2 * 4);
-        __m256d _v_b3 = _mm256_loadu_pd(packed_B + 3 * 4);
+        __m256d _v_b0 = _mm256_load_pd(packed_B + 0 * 4);
+        __m256d _v_b1 = _mm256_load_pd(packed_B + 1 * 4);
+        __m256d _v_b2 = _mm256_load_pd(packed_B + 2 * 4);
+        __m256d _v_b3 = _mm256_load_pd(packed_B + 3 * 4);
 
         _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b0, _v_c0);
         _v_c1 = _mm256_fmadd_pd(_v_a1, _v_b1, _v_c1);
@@ -326,10 +326,10 @@ inline void dmma_1x1(const double* packed_A, const double* packed_B, int K, doub
     _v_c2 = _mm256_add_pd(_v_c2, _v_c3);
 
     for (; k < K - 7; k += 8) {
-        __m256d _v_a0 = _mm256_loadu_pd(packed_A + 0 * 4);
-        __m256d _v_a1 = _mm256_loadu_pd(packed_A + 1 * 4);
-        __m256d _v_b0 = _mm256_loadu_pd(packed_B + 0 * 4);
-        __m256d _v_b1 = _mm256_loadu_pd(packed_B + 1 * 4);
+        __m256d _v_a0 = _mm256_load_pd(packed_A + 0 * 4);
+        __m256d _v_a1 = _mm256_load_pd(packed_A + 1 * 4);
+        __m256d _v_b0 = _mm256_load_pd(packed_B + 0 * 4);
+        __m256d _v_b1 = _mm256_load_pd(packed_B + 1 * 4);
 
         _v_c0 = _mm256_fmadd_pd(_v_a0, _v_b0, _v_c0);
         _v_c2 = _mm256_fmadd_pd(_v_a1, _v_b1, _v_c2);

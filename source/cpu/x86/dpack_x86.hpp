@@ -56,14 +56,14 @@ inline void dpack_h8(double* packed, const double* X, int ldx, int n_pack, doubl
         r6 = _mm256_mul_pd(r6, _v_scale);
         r7 = _mm256_mul_pd(r7, _v_scale);
 
-        _mm256_storeu_pd(packed + 0, r0);
-        _mm256_storeu_pd(packed + 4, r4);
-        _mm256_storeu_pd(packed + 8, r1);
-        _mm256_storeu_pd(packed + 12, r5);
-        _mm256_storeu_pd(packed + 16, r2);
-        _mm256_storeu_pd(packed + 20, r6);
-        _mm256_storeu_pd(packed + 24, r3);
-        _mm256_storeu_pd(packed + 28, r7);
+        _mm256_store_pd(packed + 0, r0);
+        _mm256_store_pd(packed + 4, r4);
+        _mm256_store_pd(packed + 8, r1);
+        _mm256_store_pd(packed + 12, r5);
+        _mm256_store_pd(packed + 16, r2);
+        _mm256_store_pd(packed + 20, r6);
+        _mm256_store_pd(packed + 24, r3);
+        _mm256_store_pd(packed + 28, r7);
 
         x0_ptr += 4;
         x1_ptr += 4;
@@ -116,12 +116,12 @@ inline void dpack_h6(double* packed, const double* X, int ldx, int n_pack, doubl
         r4 = _mm256_mul_pd(r4, _v_scale);
         r5 = _mm256_mul_pd(r5, _v_scale);
 
-        _mm256_storeu_pd(packed + 0, r0);
-        _mm256_storeu_pd(packed + 4, r1);
-        _mm256_storeu_pd(packed + 8, r2);
-        _mm256_storeu_pd(packed + 12, r3);
-        _mm256_storeu_pd(packed + 16, r4);
-        _mm256_storeu_pd(packed + 20, r5);
+        _mm256_store_pd(packed + 0, r0);
+        _mm256_store_pd(packed + 4, r1);
+        _mm256_store_pd(packed + 8, r2);
+        _mm256_store_pd(packed + 12, r3);
+        _mm256_store_pd(packed + 16, r4);
+        _mm256_store_pd(packed + 20, r5);
 
         x0_ptr += 4;
         x1_ptr += 4;
@@ -164,10 +164,10 @@ inline void dpack_h4(double* packed, const double* X, int ldx, int n_pack, doubl
         r2 = _mm256_mul_pd(r2, _v_scale);
         r3 = _mm256_mul_pd(r3, _v_scale);
 
-        _mm256_storeu_pd(packed + 0, r0);
-        _mm256_storeu_pd(packed + 4, r1);
-        _mm256_storeu_pd(packed + 8, r2);
-        _mm256_storeu_pd(packed + 12, r3);
+        _mm256_store_pd(packed + 0, r0);
+        _mm256_store_pd(packed + 4, r1);
+        _mm256_store_pd(packed + 8, r2);
+        _mm256_store_pd(packed + 12, r3);
 
         x0_ptr += 4;
         x1_ptr += 4;
@@ -207,14 +207,14 @@ inline void dpack_v8(double* packed, const double* X, int ldx, int n_pack, doubl
         r30 = _mm256_mul_pd(r30, _v_scale);
         r31 = _mm256_mul_pd(r31, _v_scale);
 
-        _mm256_storeu_pd(packed + 0, r00);
-        _mm256_storeu_pd(packed + 4, r01);
-        _mm256_storeu_pd(packed + 8, r10);
-        _mm256_storeu_pd(packed + 12, r11);
-        _mm256_storeu_pd(packed + 16, r20);
-        _mm256_storeu_pd(packed + 20, r21);
-        _mm256_storeu_pd(packed + 24, r30);
-        _mm256_storeu_pd(packed + 28, r31);
+        _mm256_store_pd(packed + 0, r00);
+        _mm256_store_pd(packed + 4, r01);
+        _mm256_store_pd(packed + 8, r10);
+        _mm256_store_pd(packed + 12, r11);
+        _mm256_store_pd(packed + 16, r20);
+        _mm256_store_pd(packed + 20, r21);
+        _mm256_store_pd(packed + 24, r30);
+        _mm256_store_pd(packed + 28, r31);
 
         X += 4 * ldx;
         packed += 32;
@@ -225,8 +225,8 @@ inline void dpack_v8(double* packed, const double* X, int ldx, int n_pack, doubl
         __m256d d1 = _mm256_loadu_pd(X + 4);
         d0 = _mm256_mul_pd(d0, _v_scale);
         d1 = _mm256_mul_pd(d1, _v_scale);
-        _mm256_storeu_pd(packed + 0, d0);
-        _mm256_storeu_pd(packed + 4, d1);
+        _mm256_store_pd(packed + 0, d0);
+        _mm256_store_pd(packed + 4, d1);
         X += ldx;
         packed += 8;
     }
@@ -304,10 +304,10 @@ inline void dpack_v4(double* packed, const double* X, int ldx, int n_pack, doubl
         r3 = _mm256_mul_pd(r3, _v_scale);
 
 
-        _mm256_storeu_pd(packed + 0, r0);
-        _mm256_storeu_pd(packed + 4, r1);
-        _mm256_storeu_pd(packed + 8, r2);
-        _mm256_storeu_pd(packed + 12, r3);
+        _mm256_store_pd(packed + 0, r0);
+        _mm256_store_pd(packed + 4, r1);
+        _mm256_store_pd(packed + 8, r2);
+        _mm256_store_pd(packed + 12, r3);
 
         X += 4 * ldx;
         packed += 16;
@@ -316,7 +316,7 @@ inline void dpack_v4(double* packed, const double* X, int ldx, int n_pack, doubl
     for (; i < n_pack; ++i) {
         __m256d d0 = _mm256_loadu_pd(X);
         d0 = _mm256_mul_pd(d0, _v_scale);
-        _mm256_storeu_pd(packed, d0);
+        _mm256_store_pd(packed, d0);
         X += ldx;
         packed += 4;
     }

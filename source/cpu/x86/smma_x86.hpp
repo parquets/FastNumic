@@ -46,7 +46,7 @@ inline void smma_4x4(const float* packed_A, const float* packed_B, int K, float*
         __m128 _v_a2 = _mm_broadcast_ss(packed_A + 2);
         __m128 _v_a3 = _mm_broadcast_ss(packed_A + 3);
 
-        __m128 _v_b = _mm_loadu_ps(packed_B);
+        __m128 _v_b = _mm_load_ps(packed_B);
 
         _v_c0 = _mm_fmadd_ps(_v_a0, _v_b, _v_c0);
         _v_c1 = _mm_fmadd_ps(_v_a1, _v_b, _v_c1);
@@ -72,10 +72,10 @@ inline void smma_8x1(const float* packed_A, const float* packed_B, int K, float*
     int k = 0;
 
     for (k = 0; k < K - 3; k += 4) {
-        __m256 _v_a0 = _mm256_loadu_ps(packed_A + 8 * 0);
-        __m256 _v_a1 = _mm256_loadu_ps(packed_A + 8 * 1);
-        __m256 _v_a2 = _mm256_loadu_ps(packed_A + 8 * 2);
-        __m256 _v_a3 = _mm256_loadu_ps(packed_A + 8 * 3);
+        __m256 _v_a0 = _mm256_load_ps(packed_A + 8 * 0);
+        __m256 _v_a1 = _mm256_load_ps(packed_A + 8 * 1);
+        __m256 _v_a2 = _mm256_load_ps(packed_A + 8 * 2);
+        __m256 _v_a3 = _mm256_load_ps(packed_A + 8 * 3);
 
         __m256 _v_b0 = _mm256_broadcast_ss(packed_B + 0);
         __m256 _v_b1 = _mm256_broadcast_ss(packed_B + 1);
@@ -94,7 +94,7 @@ inline void smma_8x1(const float* packed_A, const float* packed_B, int K, float*
     __m256 _v_c = _mm256_add_ps(_mm256_add_ps(_v_c0, _v_c1), _mm256_add_ps(_v_c2, _v_c3));
 
     for (; k < K; ++k) {
-        __m256 _v_a = _mm256_loadu_ps(packed_A);
+        __m256 _v_a = _mm256_load_ps(packed_A);
         __m256 _v_b = _mm256_broadcast_ss(packed_B);
         _v_c = _mm256_fmadd_ps(_v_a, _v_b, _v_c);
         packed_A += 8;
@@ -123,10 +123,10 @@ inline void smma_4x1(const float* packed_A, const float* packed_B, int K, float*
     int k = 0;
 
     for (k = 0; k < K - 3; k += 4) {
-        __m128 _v_a0 = _mm_loadu_ps(packed_A + 4 * 0);
-        __m128 _v_a1 = _mm_loadu_ps(packed_A + 4 * 1);
-        __m128 _v_a2 = _mm_loadu_ps(packed_A + 4 * 2);
-        __m128 _v_a3 = _mm_loadu_ps(packed_A + 4 * 3);
+        __m128 _v_a0 = _mm_load_ps(packed_A + 4 * 0);
+        __m128 _v_a1 = _mm_load_ps(packed_A + 4 * 1);
+        __m128 _v_a2 = _mm_load_ps(packed_A + 4 * 2);
+        __m128 _v_a3 = _mm_load_ps(packed_A + 4 * 3);
 
         __m128 _v_b0 = _mm_broadcast_ss(packed_B + 0);
         __m128 _v_b1 = _mm_broadcast_ss(packed_B + 1);
@@ -145,7 +145,7 @@ inline void smma_4x1(const float* packed_A, const float* packed_B, int K, float*
     __m128 _v_c = _mm_add_ps(_mm_add_ps(_v_c0, _v_c1), _mm_add_ps(_v_c2, _v_c3));
 
     for (; k < K; ++k) {
-        __m128 _v_a = _mm_loadu_ps(packed_A);
+        __m128 _v_a = _mm_load_ps(packed_A);
         __m128 _v_b = _mm_broadcast_ss(packed_B);
         _v_c = _mm_fmadd_ps(_v_a, _v_b, _v_c);
         packed_A += 4;
@@ -184,7 +184,7 @@ inline void smma_8x8(const float* packed_A, const float* packed_B, int K, float*
     __m256 _va0, _va1, _va2, _va3;
 
     for (int k = 0; k < K; ++k) {
-        _vb = _mm256_loadu_ps(packed_B);
+        _vb = _mm256_load_ps(packed_B);
 
         _va0 = _mm256_broadcast_ss(packed_A + 0);
         _va1 = _mm256_broadcast_ss(packed_A + 1);
@@ -237,8 +237,8 @@ inline void smma_6x16(const float* packed_A, const float* packed_B, int K, float
     __m256 _v_b0, _v_b1, _v_a;
 
     for (int i = 0; i < K; ++i) {
-        _v_b0 = _mm256_loadu_ps(packed_B);
-        _v_b1 = _mm256_loadu_ps(packed_B + 8);
+        _v_b0 = _mm256_load_ps(packed_B);
+        _v_b1 = _mm256_load_ps(packed_B + 8);
 
         _v_a = _mm256_broadcast_ss(packed_A + 0);
         _v_c00 = _mm256_fmadd_ps(_v_a, _v_b0, _v_c00);
@@ -291,7 +291,7 @@ inline void smma_6x8(const float* packed_A, const float* packed_B, int K, float*
     __m256 _v_c5 = _mm256_loadu_ps(C + 5 * ldc);
 
     for (int i = 0; i < K; ++i) {
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B);
+        __m256 _v_b0 = _mm256_load_ps(packed_B);
 
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
         __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
@@ -328,7 +328,7 @@ inline void smma_6x4(const float* packed_A, const float* packed_B, int K, float*
     __m128 _v_c5 = _mm_loadu_ps(C + 5 * ldc);
 
     for (int i = 0; i < K; ++i) {
-        __m128 _v_b0 = _mm_loadu_ps(packed_B);
+        __m128 _v_b0 = _mm_load_ps(packed_B);
 
         __m128 _v_a0 = _mm_broadcast_ss(packed_A + 0);
         __m128 _v_a1 = _mm_broadcast_ss(packed_A + 1);
@@ -405,8 +405,8 @@ inline void smma_4x16(const float* packed_A, const float* packed_B, int K, float
     __m256 _v_c31 = _mm256_loadu_ps(C + 3 * ldc + 8);
 
     for (int k = 0; k < K; ++k) {
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0);
-        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 8);
+        __m256 _v_b0 = _mm256_load_ps(packed_B + 0);
+        __m256 _v_b1 = _mm256_load_ps(packed_B + 8);
 
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
         __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
@@ -449,10 +449,10 @@ inline void smma_1x16(const float* packed_A, const float* packed_B, int K, float
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
         __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
 
-        __m256 _v_b00 = _mm256_loadu_ps(packed_B + 16 * 0 + 0);
-        __m256 _v_b01 = _mm256_loadu_ps(packed_B + 16 * 0 + 8);
-        __m256 _v_b10 = _mm256_loadu_ps(packed_B + 16 * 1 + 0);
-        __m256 _v_b11 = _mm256_loadu_ps(packed_B + 16 * 1 + 8);
+        __m256 _v_b00 = _mm256_load_ps(packed_B + 16 * 0 + 0);
+        __m256 _v_b01 = _mm256_load_ps(packed_B + 16 * 0 + 8);
+        __m256 _v_b10 = _mm256_load_ps(packed_B + 16 * 1 + 0);
+        __m256 _v_b11 = _mm256_load_ps(packed_B + 16 * 1 + 8);
 
         _v_c00 = _mm256_fmadd_ps(_v_a0, _v_b00, _v_c00);
         _v_c01 = _mm256_fmadd_ps(_v_a0, _v_b01, _v_c01);
@@ -468,8 +468,8 @@ inline void smma_1x16(const float* packed_A, const float* packed_B, int K, float
 
     for (; k < K; ++k) {
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 16 * 0 + 0);
-        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 16 * 0 + 8);
+        __m256 _v_b0 = _mm256_load_ps(packed_B + 16 * 0 + 0);
+        __m256 _v_b1 = _mm256_load_ps(packed_B + 16 * 0 + 8);
 
         _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
         _v_c1 = _mm256_fmadd_ps(_v_a0, _v_b1, _v_c1);
@@ -489,7 +489,7 @@ inline void smma_4x8(const float* packed_A, const float* packed_B, int K, float*
     __m256 _v_c3 = _mm256_loadu_ps(C + 3 * ldc);
 
     for (int i = 0; i < K; ++i) {
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B);
+        __m256 _v_b0 = _mm256_load_ps(packed_B);
 
         __m256 _v_a0 = _mm256_broadcast_ss(packed_A + 0);
         __m256 _v_a1 = _mm256_broadcast_ss(packed_A + 1);
@@ -528,8 +528,8 @@ inline void smma_16x6(const float* packed_A, const float* packed_B, int K, float
     __m256 _v_a0, _v_a1, _v_b;
 
     for (int k = 0; k < K; ++k) {
-        _v_a0 = _mm256_loadu_ps(packed_A);
-        _v_a1 = _mm256_loadu_ps(packed_A + 8);
+        _v_a0 = _mm256_load_ps(packed_A);
+        _v_a1 = _mm256_load_ps(packed_A + 8);
 
         _v_b = _mm256_broadcast_ss(packed_B + 0);
         _v_c00 = _mm256_fmadd_ps(_v_b, _v_a0, _v_c00);
@@ -587,10 +587,10 @@ inline void smma_1x8(const float* packed_A, const float* packed_B, int K, float*
         __m256 _v_a2 = _mm256_broadcast_ss(packed_A + 2);
         __m256 _v_a3 = _mm256_broadcast_ss(packed_A + 3);
 
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 8 * 0);
-        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 8 * 1);
-        __m256 _v_b2 = _mm256_loadu_ps(packed_B + 8 * 2);
-        __m256 _v_b3 = _mm256_loadu_ps(packed_B + 8 * 3);
+        __m256 _v_b0 = _mm256_load_ps(packed_B + 8 * 0);
+        __m256 _v_b1 = _mm256_load_ps(packed_B + 8 * 1);
+        __m256 _v_b2 = _mm256_load_ps(packed_B + 8 * 2);
+        __m256 _v_b3 = _mm256_load_ps(packed_B + 8 * 3);
 
         _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
         _v_c1 = _mm256_fmadd_ps(_v_a1, _v_b1, _v_c1);
@@ -605,7 +605,7 @@ inline void smma_1x8(const float* packed_A, const float* packed_B, int K, float*
 
     for (; k < K; ++k) {
         __m256 _v_a = _mm256_broadcast_ss(packed_A + 0);
-        __m256 _v_b = _mm256_loadu_ps(packed_B + 8 * 0);
+        __m256 _v_b = _mm256_load_ps(packed_B + 8 * 0);
 
         _v_c = _mm256_fmadd_ps(_v_a, _v_b, _v_c);
 
@@ -629,10 +629,10 @@ inline void smma_1x4(const float* packed_A, const float* packed_B, int K, float*
         __m128 _v_a2 = _mm_broadcast_ss(packed_A + 2);
         __m128 _v_a3 = _mm_broadcast_ss(packed_A + 3);
 
-        __m128 _v_b0 = _mm_loadu_ps(packed_B + 4 * 0);
-        __m128 _v_b1 = _mm_loadu_ps(packed_B + 4 * 1);
-        __m128 _v_b2 = _mm_loadu_ps(packed_B + 4 * 2);
-        __m128 _v_b3 = _mm_loadu_ps(packed_B + 4 * 3);
+        __m128 _v_b0 = _mm_load_ps(packed_B + 4 * 0);
+        __m128 _v_b1 = _mm_load_ps(packed_B + 4 * 1);
+        __m128 _v_b2 = _mm_load_ps(packed_B + 4 * 2);
+        __m128 _v_b3 = _mm_load_ps(packed_B + 4 * 3);
 
         _v_c0 = _mm_fmadd_ps(_v_a0, _v_b0, _v_c0);
         _v_c1 = _mm_fmadd_ps(_v_a1, _v_b1, _v_c1);
@@ -647,7 +647,7 @@ inline void smma_1x4(const float* packed_A, const float* packed_B, int K, float*
 
     for (; k < K; ++k) {
         __m128 _v_a = _mm_broadcast_ss(packed_A);
-        __m128 _v_b = _mm_loadu_ps(packed_B);
+        __m128 _v_b = _mm_load_ps(packed_B);
         _v_c = _mm_fmadd_ps(_v_a, _v_b, _v_c);
         packed_A += 1;
         packed_B += 4;
@@ -663,15 +663,15 @@ inline void smma_1x1(const float* packed_A, const float* packed_B, int K, float*
 
     int k = 0;
     for (k = 0; k < K - 31; k += 32) {
-        __m256 _v_a0 = _mm256_loadu_ps(packed_A + 0 * 8);
-        __m256 _v_a1 = _mm256_loadu_ps(packed_A + 1 * 8);
-        __m256 _v_a2 = _mm256_loadu_ps(packed_A + 2 * 8);
-        __m256 _v_a3 = _mm256_loadu_ps(packed_A + 3 * 8);
+        __m256 _v_a0 = _mm256_load_ps(packed_A + 0 * 8);
+        __m256 _v_a1 = _mm256_load_ps(packed_A + 1 * 8);
+        __m256 _v_a2 = _mm256_load_ps(packed_A + 2 * 8);
+        __m256 _v_a3 = _mm256_load_ps(packed_A + 3 * 8);
 
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0 * 8);
-        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 1 * 8);
-        __m256 _v_b2 = _mm256_loadu_ps(packed_B + 2 * 8);
-        __m256 _v_b3 = _mm256_loadu_ps(packed_B + 3 * 8);
+        __m256 _v_b0 = _mm256_load_ps(packed_B + 0 * 8);
+        __m256 _v_b1 = _mm256_load_ps(packed_B + 1 * 8);
+        __m256 _v_b2 = _mm256_load_ps(packed_B + 2 * 8);
+        __m256 _v_b3 = _mm256_load_ps(packed_B + 3 * 8);
 
         _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
         _v_c1 = _mm256_fmadd_ps(_v_a1, _v_b1, _v_c1);
@@ -686,10 +686,10 @@ inline void smma_1x1(const float* packed_A, const float* packed_B, int K, float*
     _v_c2 = _mm256_add_ps(_v_c2, _v_c3);
 
     for (; k < K - 15; k += 16) {
-        __m256 _v_a0 = _mm256_loadu_ps(packed_A + 0 * 8);
-        __m256 _v_a1 = _mm256_loadu_ps(packed_A + 1 * 8);
-        __m256 _v_b0 = _mm256_loadu_ps(packed_B + 0 * 8);
-        __m256 _v_b1 = _mm256_loadu_ps(packed_B + 1 * 8);
+        __m256 _v_a0 = _mm256_load_ps(packed_A + 0 * 8);
+        __m256 _v_a1 = _mm256_load_ps(packed_A + 1 * 8);
+        __m256 _v_b0 = _mm256_load_ps(packed_B + 0 * 8);
+        __m256 _v_b1 = _mm256_load_ps(packed_B + 1 * 8);
 
         _v_c0 = _mm256_fmadd_ps(_v_a0, _v_b0, _v_c0);
         _v_c2 = _mm256_fmadd_ps(_v_a1, _v_b1, _v_c2);

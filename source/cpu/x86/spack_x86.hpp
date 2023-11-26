@@ -166,12 +166,12 @@ inline void spack_h6(float* packed, const float* X, int ldx, int n_pack, float s
         r4 = _mm256_mul_ps(r4, _v_scale);
         r5 = _mm256_mul_ps(r5, _v_scale);
 
-        _mm256_storeu_ps(packed + 0, r0);
-        _mm256_storeu_ps(packed + 8, r1);
-        _mm256_storeu_ps(packed + 16, r2);
-        _mm256_storeu_ps(packed + 24, r3);
-        _mm256_storeu_ps(packed + 32, r4);
-        _mm256_storeu_ps(packed + 40, r5);
+        _mm256_store_ps(packed + 0, r0);
+        _mm256_store_ps(packed + 8, r1);
+        _mm256_store_ps(packed + 16, r2);
+        _mm256_store_ps(packed + 24, r3);
+        _mm256_store_ps(packed + 32, r4);
+        _mm256_store_ps(packed + 40, r5);
 
         x0_ptr += 8;
         x1_ptr += 8;
@@ -315,10 +315,10 @@ inline void spack_v4(float* packed, const float* X, int ldx, int n_pack, float s
         _v_x2 = _mm_mul_ps(_v_x2, _v_scale);
         _v_x3 = _mm_mul_ps(_v_x3, _v_scale);
 
-        _mm_storeu_ps(packed, _v_x0);
-        _mm_storeu_ps(packed + 4, _v_x1);
-        _mm_storeu_ps(packed + 8, _v_x2);
-        _mm_storeu_ps(packed + 12, _v_x3);
+        _mm_store_ps(packed, _v_x0);
+        _mm_store_ps(packed + 4, _v_x1);
+        _mm_store_ps(packed + 8, _v_x2);
+        _mm_store_ps(packed + 12, _v_x3);
 
         packed += 16;
         X += 4 * ldx;
