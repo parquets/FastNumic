@@ -388,7 +388,7 @@ inline void winogradUVTransUnit8K3S1Pack4(float* dest, int ldd, const float* sou
 }
 
 inline void winogradUVTransUnit8K3S1Pack8(float* dest, int ldd, const float* source_v, const float* source_u, int lds) {
-    float ATUV[48 * 8];
+    static float ATUV[48 * 8];
     uvTransLeftUnit8K3S1Pack8(ATUV, source_v, source_u, lds);
     uvTransRightUnit8K3S1Pack8(dest, ldd, ATUV);
 }
