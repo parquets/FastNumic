@@ -10,7 +10,7 @@ set(FastNumSource
     gemm.cpp
     gemv.cpp
     transpose.cpp
-    convolution.cpp
+    # convolution.cpp
     im2col.cpp
     arithemetic.cpp
 )

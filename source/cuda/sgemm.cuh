@@ -10,7 +10,7 @@ namespace cuda {
     
 const int BLOCK = 32;
     
-void sgemm_nn_cuda_wrap(int M, int N, int K, 
+__host__ void sgemm_nn_cuda_wrap(int M, int N, int K, 
                         float alpha, 
                         const float* A, int lda, 
                         const float* B, int ldb,

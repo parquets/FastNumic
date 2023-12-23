@@ -138,3 +138,9 @@ int main(int argc, char* argv[]) {
     run_dgemm_test(M, N, K);
     return 0;
 }
+
+/*
+.\dgemm_test.exe 1024 1024 1
+.\dgemm_test.exe 1 1024 1024
+.\dgemm_test.exe 1024 1 1024
+*/

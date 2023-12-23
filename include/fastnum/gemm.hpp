@@ -54,19 +54,17 @@ void dgemm(bool AT,
 
 namespace cuda {
 
-void sgemm(bool AT,
-           bool BT,
-           int M,
-           int N,
-           int K,
-           float alpha,
-           const float* A,
-           int lda,
-           const float* B,
-           int ldb,
-           float beta,
-           float* C,
-           int ldc);
+void sgemm_nn(int M,
+              int N,
+              int K,
+              float alpha,
+              const float* A,
+              int lda,
+              const float* B,
+              int ldb,
+              float beta,
+              float* C,
+              int ldc);
            
 }  // namespace cuda
 }  // namespace fastnum

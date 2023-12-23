@@ -16,7 +16,7 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-static void weightTransLeftUnit4(float* dest, const float* source) {
+static void weightTransLeftF2(float* dest, const float* source) {
     dest[0] = source[0];
     dest[1] = source[1];
     dest[2] = source[2];
@@ -31,7 +31,7 @@ static void weightTransLeftUnit4(float* dest, const float* source) {
     dest[11] = source[8];
 }
 
-static void weightTransRightUnit4(float* dest, const float* source) {
+static void weightTransRightF2(float* dest, const float* source) {
     dest[0] = source[0];
     dest[1] = (source[0] + source[1] + source[2]) / 2;
     dest[2] = (source[0] - source[1] + source[2]) / 2;
@@ -57,7 +57,7 @@ static void weightTransRightUnit4(float* dest, const float* source) {
 
 
 
-static void weightTransLeftUnit8(float* dest, const float* source)  {
+static void weightTransLeftF6(float* dest, const float* source)  {
     /*
         Gg -> [8, 3]
         g  -> [3, 3]
@@ -101,7 +101,7 @@ static void weightTransLeftUnit8(float* dest, const float* source)  {
         dest[7 * 3 + 2] = source[8];
 }
 
-static void weightTransRightUnit8(float* dest, const float* source) {
+static void weightTransRightF6(float* dest, const float* source) {
     const float c0 = static_cast<float>(2.0 / 9);
     const float c1 = static_cast<float>(1.0 / 90);
     const float c2 = static_cast<float>(1.0 / 45);
@@ -219,77 +219,79 @@ inline void winogradWeightTransUnit4K3S1Pack1(float* dest, const float* source) 
     g -> [3, 3]
 
    */
-inline void winogradWeightTransUnit8K3S1Pack8(float* dest, const float* source) {
-    int kernel_stride = 3 * 3;
+// inline void winogradWeightTransUnit8K3S1Pack8(float* dest, const float* source) {
+//     int kernel_stride = 3 * 3;
 
-    float Gg[8][8][3] = {0};
+//     float Gg[8][8][3] = {0};
 
-    for (int i = 0; i < 8; ++i) {
-        weightTransLeftUnit8(&Gg[i][0][0], source + i * kernel_stride);
-    }
+//     for (int i = 0; i < 8; ++i) {
+//         weightTransLeftUnit8(&Gg[i][0][0], source + i * kernel_stride);
+//     }
 
-    float GgGt[8][8][8] = {0};
+//     float GgGt[8][8][8] = {0};
 
-    for (int i = 0; i < 8; ++i) {
-        weightTransRightUnit8(&GgGt[i][0][0], &Gg[i][0][0]);
-    }
+//     for (int i = 0; i < 8; ++i) {
+//         weightTransRightUnit8(&GgGt[i][0][0], &Gg[i][0][0]);
+//     }
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            for (int k = 0; k < 8; ++k) {
-                *dest++ = GgGt[k][i][j];
-            }
-        }
-    }
-}
+//     for (int i = 0; i < 8; ++i) {
+//         for (int j = 0; j < 8; ++j) {
+//             for (int k = 0; k < 8; ++k) {
+//                 *dest++ = GgGt[k][i][j];
+//             }
+//         }
+//     }
+// }
 
-inline void winogradWeightTransUnit8K3S1Pack4(float* dest, const float* source) {
-    int kernel_stride = 3 * 3;
+// inline void winogradWeightTransUnit8K3S1Pack4(float* dest, const float* source) {
+//     int kernel_stride = 3 * 3;
 
-    float Gg[4][8][3] = {0};
+//     float Gg[4][8][3] = {0};
 
-    for (int i = 0; i < 4; ++i) {
-        weightTransLeftUnit8(&Gg[i][0][0], source + i * kernel_stride);
-    }
+//     for (int i = 0; i < 4; ++i) {
+//         weightTransLeftUnit8(&Gg[i][0][0], source + i * kernel_stride);
+//     }
 
-    float GgGt[4][8][8] = {0};
+//     float GgGt[4][8][8] = {0};
 
-    for (int i = 0; i < 4; ++i) {
-        weightTransRightUnit8(&GgGt[i][0][0], &Gg[i][0][0]);
-    }
+//     for (int i = 0; i < 4; ++i) {
+//         weightTransRightUnit8(&GgGt[i][0][0], &Gg[i][0][0]);
+//     }
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            for (int k = 0; k < 4; ++k) {
-                *dest++ = GgGt[k][i][j];
-            }
-        }
-    }
-}
+//     for (int i = 0; i < 8; ++i) {
+//         for (int j = 0; j < 8; ++j) {
+//             for (int k = 0; k < 4; ++k) {
+//                 *dest++ = GgGt[k][i][j];
+//             }
+//         }
+//     }
+// }
 
-inline void winogradWeightTransUnit8K3S1Pack1(float* dest, const float* source) {
-    int kernel_stride = 3 * 3;
+// inline void winogradWeightTransUnit8K3S1Pack1(float* dest, const float* source) {
+//     int kernel_stride = 3 * 3;
 
-    float Gg[1][8][3] = {0};
+//     float Gg[1][8][3] = {0};
 
-    for (int i = 0; i < 1; ++i) {
-        weightTransLeftUnit8(&Gg[i][0][0], source + i * kernel_stride);
-    }
+//     for (int i = 0; i < 1; ++i) {
+//         weightTransLeftUnit8(&Gg[i][0][0], source + i * kernel_stride);
+//     }
 
-    float GgGt[1][8][8] = {0};
+//     float GgGt[1][8][8] = {0};
 
-    for (int i = 0; i < 1; ++i) {
-        weightTransRightUnit8(&GgGt[i][0][0], &Gg[i][0][0]);
-    }
+//     for (int i = 0; i < 1; ++i) {
+//         weightTransRightUnit8(&GgGt[i][0][0], &Gg[i][0][0]);
+//     }
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            for (int k = 0; k < 1; ++k) {
-                *dest++ = GgGt[k][i][j];
-            }
-        }
-    }
-}
+//     for (int i = 0; i < 8; ++i) {
+//         for (int j = 0; j < 8; ++j) {
+//             for (int k = 0; k < 1; ++k) {
+//                 *dest++ = GgGt[k][i][j];
+//             }
+//         }
+//     }
+// }
+
+
 
 
 

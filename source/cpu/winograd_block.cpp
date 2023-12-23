@@ -134,28 +134,28 @@ void winogradConvK3S1Unit4Pack8(float* dest,
 }
 
 
-void winogradConvK3S1Unit8Pack1(float* dest, 
-                                float* u_buffer, 
-                                float* v_buffer, 
-                                float* uv_buffer,
-                                const float* source, 
-                                int src_h, int src_w,
-                                int ldh, int ldc,
-                                const float* weight,
-                                int ldest) {
-    kernel::winogradWeightTransUnit8K3S1Pack1(u_buffer, weight);
+// void winogradConvK3S1Unit8Pack1(float* dest, 
+//                                 float* u_buffer, 
+//                                 float* v_buffer, 
+//                                 float* uv_buffer,
+//                                 const float* source, 
+//                                 int src_h, int src_w,
+//                                 int ldh, int ldc,
+//                                 const float* weight,
+//                                 int ldest) {
+//     kernel::winogradWeightTransUnit8K3S1Pack1(u_buffer, weight);
 
-    int r=0, c=0;
+//     int r=0, c=0;
 
-    for(r=0; r<src_h - 7; r += 6) {
-        for(c=0; c<src_w - 7; c += 6) {
-            kernel::winogradDataTransUnit8K3S1Pack1(v_buffer, 8*1, source + c, ldh, ldc);
-            kernel::winogradUVTransUnit8K3S1Pack1(dest + c, ldest, v_buffer, u_buffer, 8*1);
-        }
-        source += 6 * ldh;
-        dest += 6 * ldest;
-    }
-}
+//     for(r=0; r<src_h - 7; r += 6) {
+//         for(c=0; c<src_w - 7; c += 6) {
+//             kernel::winogradDataTransUnit8K3S1Pack1(v_buffer, 8*1, source + c, ldh, ldc);
+//             kernel::winogradUVTransUnit8K3S1Pack1(dest + c, ldest, v_buffer, u_buffer, 8*1);
+//         }
+//         source += 6 * ldh;
+//         dest += 6 * ldest;
+//     }
+// }
 
 
 void winogradConvK3S1Unit8Pack4(float* dest, 

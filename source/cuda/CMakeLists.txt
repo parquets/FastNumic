@@ -4,11 +4,14 @@ find_package(CUDA REQUIRED)
 
 enable_language(CUDA)
 
+set(CMAKE_BUILD_TYPE Release)
+
 message(STATUS "cuda version:" ${CUDA_VERSION_STRING})
 message(STATUS ${CUDA_INCLUDE_DIRS})
 
 set(FastNumCUDASource
     transpose.cu
+    sgemm.cu
 )
 
 set(CMAKE_CUDA_ARCHITECTURES 86)

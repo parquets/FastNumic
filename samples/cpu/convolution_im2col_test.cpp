@@ -49,7 +49,7 @@ void test_convolution(int in_h, int in_w,
     double time1 = double(duration1.count()) / 1000000.0;
 
     printf("convolution naive time = %.6f s\n", time0);
-    printf("convolution winograd time = %.6f s\n", time1);
+    printf("convolution im2col time = %.6f s\n", time1);
 
     double GFLOPS = ((((2.0*out_h*out_w*out_channels)/1000) * 3*3*in_channels)/1000000)/time1;
     printf("im2col conv GFLOPS = %.3f\n", GFLOPS);

@@ -44,16 +44,10 @@ void im2colGemmConv(float* output, const float* input,
     int K = kernel_h*kernel_w*in_channels;
 
     float* coldata = (float*)malloc(sizeof(float)*K*N);
+
     im2colPadFreeDilationFree(coldata, input, in_channels, in_h, in_w, kernel_h, kernel_w, stride_h, stride_w, dilation_h, dilation_w);
 
-    // for(int r=0; r<N; ++r) {
-    //     for(int c=0; c<K; ++c) {
-    //         printf("%.5f ", coldata[r*K+c]);
-    //     }
-    //     printf("\n");
-    // }
-
-    sgemm_nt(M, N, K, 1.0, weight, K, coldata, K, 0.0, output, N);
+    sgemm_nn(M, N, K, 1.0, weight, K, coldata, N, 0.0, output, N);
 }
 
 void winogradConv2dK3S1(float* output, const float* input,
