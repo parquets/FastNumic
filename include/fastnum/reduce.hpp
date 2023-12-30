@@ -7,8 +7,7 @@ void reduce_add(int M, int N, const float* A, int lda, float* C, int axis = -1);
 void reduce_max(int M, int N, const float* A, int lda, float* C, int axis = -1);
 void reduce_min(int M, int N, const float* A, int lda, float* C, int axis = -1);
 
-void argmax(int M, int N, const float* A, int lda, float* C, int axis = -1);
-void argmin(int M, int N, const float* A, int lda, float* C, int axis = -1);
+
 
 
 }  // namespace cpu

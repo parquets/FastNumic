@@ -6,9 +6,6 @@ namespace cpu {
 void im2colPadFree();
 void im2col();
 
-void convolution1d(float* output, const float* input, int in_channels, int out_channels, int input_length, 
-                   const float* weight, int kernel, 
-                   int stride, int pad, int dilation);
 
 void convolution2d(float* output, const float* input, int in_channels, int out_channels, int input_h, int input_w, 
                    const float* weight, int kernel_h, int kernel_w, 

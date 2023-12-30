@@ -16,7 +16,7 @@ namespace fastnum {
 namespace cpu {
 namespace kernel {
 
-static void weightTransLeftF2(float* dest, const float* source) {
+static inline void weightTransTileLeftF2(float* dest, const float* source) {
     dest[0] = source[0];
     dest[1] = source[1];
     dest[2] = source[2];
@@ -31,7 +31,7 @@ static void weightTransLeftF2(float* dest, const float* source) {
     dest[11] = source[8];
 }
 
-static void weightTransRightF2(float* dest, const float* source) {
+static inline void weightTransTileRightF2(float* dest, const float* source) {
     dest[0] = source[0];
     dest[1] = (source[0] + source[1] + source[2]) / 2;
     dest[2] = (source[0] - source[1] + source[2]) / 2;
@@ -54,7 +54,15 @@ static void weightTransRightF2(float* dest, const float* source) {
 }
 
 
+static inline void weightPackTile(float* dest, const float* source) {
 
+}
+
+
+static inline void conv2dK3S1WeightTrans(float* dest, 
+                                         const float* source, ) {
+
+}
 
 
 static void weightTransLeftF6(float* dest, const float* source)  {

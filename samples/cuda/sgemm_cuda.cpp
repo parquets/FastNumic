@@ -40,7 +40,7 @@ void run_gemm_nn_test(int M, int N, int K) {
     cudaDeviceSynchronize();
     auto t1 = std::chrono::system_clock::now();
 
-    fastnum::cpu::sgemm_nn(M, N, K, 1.0, srcA, K, srcB, N, 0.0, dstC0, N);
+    // fastnum::cpu::sgemm_nn(M, N, K, 1.0, srcA, K, srcB, N, 0.0, dstC0, N);
 
     auto duration0 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
     double time0 = double(duration0.count());
@@ -79,4 +79,5 @@ int main(int argc, char* argv[]) {
 ./sgemm_cuda.exe 1024 1024 1024
 ./sgemm_cuda.exe 2048 2048 2048
 ./sgemm_cuda.exe 4096 4096 4096
+./sgemm_cuda.exe 16384 16384 16384
 */
