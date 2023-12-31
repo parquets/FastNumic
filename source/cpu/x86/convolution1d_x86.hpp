@@ -142,92 +142,88 @@ static inline void conv1dWeightPackOCUnit8(float* dest, const float* weight,
         weight_ptr6 += kernel_size;
         weight_ptr7 += kernel_size;
     }
-
 }
 
+static inline void conv1dWeightPackOCUnit4(float* dest, const float* weight,
+                                          int in_channels, int out_channels,
+                                          int kernel_size) {
 
-// static inline void conv1dWeightPackOC4(float* dest, const float* weight,
-//                         int in_channels, int out_channels,
-//                         int kernel_size) {
-    
-//     for(int oc = 0; oc < out_channels - 3; oc += 4) {
-//         const float* weight_ptr0 = weight + (oc + 0) * in_channels * kernel_size;
-//         const float* weight_ptr1 = weight + (oc + 1) * in_channels * kernel_size;
-//         const float* weight_ptr2 = weight + (oc + 2) * in_channels * kernel_size;
-//         const float* weight_ptr3 = weight + (oc + 3) * in_channels * kernel_size;
-        
-        
-//         float* dest_ptr = dest + 4 * in_channels * kernel_size;
+    const float* weight_ptr0 = weight + 0 * in_channels * kernel_size;
+    const float* weight_ptr1 = weight + 1 * in_channels * kernel_size;
+    const float* weight_ptr2 = weight + 2 * in_channels * kernel_size;
+    const float* weight_ptr3 = weight + 3 * in_channels * kernel_size;
 
-//         __m256i _v_index = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
-//         _v_index = _mm256_mullo_epi32(_v_index, _mm256_set1_epi32(kernel_size));
+    __m256i _v_index = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+    _v_index = _mm256_mullo_epi32(_v_index, _mm256_set1_epi32(kernel_size));
 
+    int ic = 0;
+    for(ic = 0; ic < in_channels - 7; ic += 8) {
+        for(int k = 0; k < kernel_size; ++k) {
+            __m256 _v_k0 = _mm256_i32gather_ps(weight_ptr0 + k, _v_index, sizeof(float));
+            __m256 _v_k1 = _mm256_i32gather_ps(weight_ptr1 + k, _v_index, sizeof(float));
+            __m256 _v_k2 = _mm256_i32gather_ps(weight_ptr2 + k, _v_index, sizeof(float));
+            __m256 _v_k3 = _mm256_i32gather_ps(weight_ptr3 + k, _v_index, sizeof(float));
 
-//         int ic = 0;
-//         for(ic = 0; ic < in_channels - 7; ic += 8) {
-//             for(int k=0; k < kernel_size; ++k) {
-//                 __m256 _v_k0 = _mm256_i32gather_ps(weight_ptr0 + k, _v_index, sizeof(float));
-//                 __m256 _v_k1 = _mm256_i32gather_ps(weight_ptr1 + k, _v_index, sizeof(float));
-//                 __m256 _v_k2 = _mm256_i32gather_ps(weight_ptr2 + k, _v_index, sizeof(float));
-//                 __m256 _v_k3 = _mm256_i32gather_ps(weight_ptr3 + k, _v_index, sizeof(float));
+            transpose_4x8(_v_k0, _v_k1, _v_k2, _v_k3);
 
-//                 transpose_4x8(_v_k0, _v_k1, _v_k2, _v_k3);
+            _mm256_storeu_ps(dest + 0 * 8, _v_k0);
+            _mm256_storeu_ps(dest + 1 * 8, _v_k1);
+            _mm256_storeu_ps(dest + 2 * 8, _v_k2);
+            _mm256_storeu_ps(dest + 3 * 8, _v_k3);
 
-//                 _mm256_storeu_ps(dest_ptr + 0 * 8, _v_k0);
-//                 _mm256_storeu_ps(dest_ptr + 1 * 8, _v_k1);
-//                 _mm256_storeu_ps(dest_ptr + 2 * 8, _v_k2);
-//                 _mm256_storeu_ps(dest_ptr + 3 * 8, _v_k3);
+            dest += 32;
+        }
 
-//                 dest_ptr += 32;
-//             }
-//             weight_ptr0 += 8 * kernel_size;
-//             weight_ptr1 += 8 * kernel_size;
-//             weight_ptr2 += 8 * kernel_size;
-//             weight_ptr3 += 8 * kernel_size;
-//         }
+        weight_ptr0 += 8 * kernel_size;
+        weight_ptr1 += 8 * kernel_size;
+        weight_ptr2 += 8 * kernel_size;
+        weight_ptr3 += 8 * kernel_size;
+    }
 
-//         __m128i _v_index_128 = _mm_setr_epi32(0, 1, 2, 3);
-//         _v_index_128 = _mm_mullo_epi32(_v_index_128, _mm_set1_epi32(kernel_size));
+    __m128i _v_index_128 = _mm_setr_epi32(0, 1, 2, 3);
+    _v_index_128 = _mm_mullo_epi32(_v_index_128, _mm_set1_epi32(kernel_size));
 
-//         for(; ic < in_channels - 3; ic += 4) {
-//             for(int k=0; k < kernel_size; ++k) {
-//                 __m128 _v_k0 = _mm_i32gather_ps(weight_ptr0 + k, _v_index_128, sizeof(float));
-//                 __m128 _v_k1 = _mm_i32gather_ps(weight_ptr1 + k, _v_index_128, sizeof(float));
-//                 __m128 _v_k2 = _mm_i32gather_ps(weight_ptr2 + k, _v_index_128, sizeof(float));
-//                 __m128 _v_k3 = _mm_i32gather_ps(weight_ptr3 + k, _v_index_128, sizeof(float));
+    for(; ic < in_channels - 3; ic += 4) {
+        for(int k = 0; k < kernel_size; ++k) {
+            __m128 _v_k0 = _mm_i32gather_ps(weight_ptr0 + k, _v_index_128, sizeof(float));
+            __m128 _v_k1 = _mm_i32gather_ps(weight_ptr1 + k, _v_index_128, sizeof(float));
+            __m128 _v_k2 = _mm_i32gather_ps(weight_ptr2 + k, _v_index_128, sizeof(float));
+            __m128 _v_k3 = _mm_i32gather_ps(weight_ptr3 + k, _v_index_128, sizeof(float));
 
-//                 transpose_4x4(_v_k0, _v_k1, _v_k2, _v_k3);
+            transpose_4x4(_v_k0, _v_k1, _v_k2, _v_k3);
 
-//                 _mm_storeu_ps(dest_ptr + 0 * 4, _v_k0);
-//                 _mm_storeu_ps(dest_ptr + 1 * 4, _v_k1);
-//                 _mm_storeu_ps(dest_ptr + 2 * 4, _v_k2);
-//                 _mm_storeu_ps(dest_ptr + 3 * 4, _v_k3);
+            _mm_storeu_ps(dest + 0 * 4, _v_k0);
+            _mm_storeu_ps(dest + 1 * 4, _v_k1);
+            _mm_storeu_ps(dest + 2 * 4, _v_k2);
+            _mm_storeu_ps(dest + 3 * 4, _v_k3);
 
-//                 dest_ptr += 16;
-//             }
-//             weight_ptr0 += 4 * kernel_size;
-//             weight_ptr1 += 4 * kernel_size;
-//             weight_ptr2 += 4 * kernel_size;
-//             weight_ptr3 += 4 * kernel_size;
-//         }
+            dest += 16;
+        }
+        weight_ptr0 += 4 * kernel_size;
+        weight_ptr1 += 4 * kernel_size;
+        weight_ptr2 += 4 * kernel_size;
+        weight_ptr3 += 4 * kernel_size;
+    }
 
-//         for(; ic < in_channels; ++ic) {
-//             for(int k = 0; k < kernel_size; ++k) {
-//                 for(int i = 0; i < 4; ++i) {
-//                     dest_ptr[0] = weight_ptr0[i* kernel_size + k];
-//                     dest_ptr[1] = weight_ptr1[i* kernel_size + k];
-//                     dest_ptr[2] = weight_ptr2[i* kernel_size + k];
-//                     dest_ptr[3] = weight_ptr3[i* kernel_size + k];
-//                     dest_ptr += 4;
-//                 }
-//             }
-//             weight_ptr0 += kernel_size;
-//             weight_ptr1 += kernel_size;
-//             weight_ptr2 += kernel_size;
-//             weight_ptr3 += kernel_size;
-//         }
-//     }
-// }
+    for(; ic < in_channels; ++ic) {
+        for(int k = 0; k < kernel_size; ++k) {
+            for(int i = 0; i < 4; ++i) {
+                dest[0] = weight_ptr0[i* kernel_size + k];
+                dest[1] = weight_ptr1[i* kernel_size + k];
+                dest[2] = weight_ptr2[i* kernel_size + k];
+                dest[3] = weight_ptr3[i* kernel_size + k];
+
+                dest += 4;
+            }
+        }
+
+        weight_ptr0 += kernel_size;
+        weight_ptr1 += kernel_size;
+        weight_ptr2 += kernel_size;
+        weight_ptr3 += kernel_size;
+    }
+}
+
 
 // static inline void conv1dWeightPackOC1(float* dest, const float* weight,
 //                         int in_channels, int out_channels,

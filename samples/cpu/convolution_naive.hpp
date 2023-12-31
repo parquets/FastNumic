@@ -1,6 +1,33 @@
 #pragma once
 #include <stdio.h>
 
+
+void convolution1d_naive(float* dst,
+                  const float* src,
+                  int src_w,
+                  int in_channels,
+                  int out_channels,
+                  const float* weight,
+                  int kernel_w,
+                  int stride_w,
+                  int pad_w) {
+
+    int out_w = (src_w - kernel_w) / stride_w + 1;
+
+    for(int oc = 0; oc < out_channels; ++oc) {
+        for(int w=0; w < out_w; ++w) {
+            float* dst_ptr = dst + oc * out_w + w;
+            for(int ic = 0; ic < in_channels; ++ic) {
+                const float* src_ptr = src + ic * src_w + w * stride_w;
+                const float* weight_ptr = weight + oc * in_channels * kernel_w + ic * kernel_w;
+                for(int k=0; k < kernel_w; ++k) {
+                    *dst_ptr += src_ptr[k]*weight_ptr[k];
+                }
+            }
+        }
+    }
+}
+
 void convolution_naive(float* dst,
                        const float* src,
                        int src_h,
