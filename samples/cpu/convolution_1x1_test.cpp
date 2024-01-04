@@ -3,7 +3,7 @@
 #include <chrono>
 #include "convolution_naive.hpp"
 #include "matrix_utils.hpp"
-#include "fastnum/convolution.hpp"
+#include "fastnum/convolution2d.hpp"
 
 void test_convolution(int in_h, int in_w, int in_channels, int out_channels) {
 

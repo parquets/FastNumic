@@ -9,7 +9,9 @@ void test_convolution1d(int in_channels, int out_channels, int in_w, int kernel_
     int out_w = (in_w - kernel_w) / stride_w + 1;
 
     float* input = (float*)malloc(sizeof(float) * in_channels * in_w);
-    float* weight = (float*)malloc(sizeof(float) * out_channels * in_channels * in_w);
+    float* weight = (float*)malloc(sizeof(float) * out_channels * in_channels * kernel_w);
+    printf("in_channels: %d, in_w: %d\n", in_channels, in_w);
+    printf("out_channels: %d, out_w: %d\n", out_channels, out_w);
 
     random_matrix(input, in_channels, in_w);
     random_matrix(weight, in_channels*out_channels, kernel_w);
@@ -60,4 +62,5 @@ int main(int argc, char* argv[]) {
 
 /*
 ./convolution1d_test.exe 64 8 1024 18 1
+./convolution1d_test.exe 133 69 1147 22 1
 */

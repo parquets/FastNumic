@@ -10,10 +10,11 @@ set(FastNumSource
     gemm.cpp
     gemv.cpp
     transpose.cpp
-    # convolution.cpp
+    convolution2d.cpp
     convolution1d.cpp
     im2col.cpp
     arithemetic.cpp
+    pooling.cpp
 )
 
 add_library(FastNum STATIC ${FastNumSource})

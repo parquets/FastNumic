@@ -121,7 +121,7 @@ static inline void meanPoolingHorizontal16(float* dest_value,
     _mm256_storeu_ps(dest_value + 1 * 8, _mm256_mul_ps(_v_x1, _v_scale));
 }
 
-static inline void meanPoolingHorizontal132(float* dest_value,
+static inline void meanPoolingHorizontal32(float* dest_value,
                                             const float* source,
                                             int source_ldh,
                                             int kernel_h,
@@ -263,7 +263,7 @@ static inline void maxPoolingHorizontal16(float* dest_value,
     _mm256_storeu_ps(dest_value + 1 * 8, _v_x1);
 }
 
-static inline void maxPoolingHorizontal132(float* dest_value,
+static inline void maxPoolingHorizontal32(float* dest_value,
                                            const float* source,
                                            int source_ldh,
                                            int kernel_h,
@@ -414,7 +414,7 @@ static inline void maxPoolingHorizontal16(float* dest_value,
 }
 
 
-static inline void maxPoolingHorizontal16(float* dest_value,
+static inline void maxPoolingHorizontal32(float* dest_value,
                                          int* dest_index,
                                          const float* source,
                                          int source_ldh,
@@ -427,13 +427,13 @@ static inline void maxPoolingHorizontal16(float* dest_value,
     __m256 _v_x2 = _mm256_set1_ps(-FLT_MAX);
     __m256 _v_x3 = _mm256_set1_ps(-FLT_MAX);
 
-    __m256 _v_diff = _mm256_setr_ps(0 * stride_w, 1 * stride_w, 2 * stride_w, 3 * stride_w,
-                                    4 * stride_w, 5 * stride_w, 6 * stride_w, 7 * stride_w);
+    __m256 _v_diff = _mm256_setr_ps(0.0f * stride_w, 1.0f * stride_w, 2.0f * stride_w, 3.0f * stride_w,
+                                    4.0f * stride_w, 5.0f * stride_w, 6.0f * stride_w, 7.0f * stride_w);
     
-    __m256 _v_i0 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 0 * 8));
-    __m256 _v_i1 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 1 * 8));
-    __m256 _v_i2 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 2 * 8));
-    __m256 _v_i3 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 3 * 8));
+    __m256 _v_i0 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 0 * 8.0f));
+    __m256 _v_i1 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 1 * 8.0f));
+    __m256 _v_i2 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 2 * 8.0f));
+    __m256 _v_i3 = _mm256_add_ps(_v_diff, _mm256_set1_ps(base_offset + 3 * 8.0f));
 
     if(stride_w == 1) {
         for(int kh = 0; kh < kernel_h; ++kh) {

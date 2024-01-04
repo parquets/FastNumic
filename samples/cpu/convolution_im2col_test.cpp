@@ -3,7 +3,7 @@
 #include <chrono>
 #include "convolution_naive.hpp"
 #include "matrix_utils.hpp"
-#include "fastnum/convolution.hpp"
+#include "fastnum/convolution2d.hpp"
 
 void test_convolution(int in_h, int in_w, 
                       int in_channels, int out_channels, 
@@ -51,7 +51,7 @@ void test_convolution(int in_h, int in_w,
     printf("convolution naive time = %.6f s\n", time0);
     printf("convolution im2col time = %.6f s\n", time1);
 
-    double GFLOPS = ((((2.0*out_h*out_w*out_channels)/1000) * 3*3*in_channels)/1000000)/time1;
+    double GFLOPS = ((((2.0*out_h*out_w*out_channels)/1000) * kernel_h*kernel_w*in_channels)/1000000)/time1;
     printf("im2col conv GFLOPS = %.3f\n", GFLOPS);
 
      if (check_matrix(dst0, dst1, out_channels, out_h*out_w)) {
@@ -86,4 +86,11 @@ int main(int argc, char* argv[]) {
 ./convolution_im2col_test.exe 112 112 64 128 3 3 1 1
 ./convolution_im2col_test.exe 152 202 128 256 3 3 1 1
 ./convolution_im2col_test.exe 3 3 1 1 3 3 1 1
+./convolution_im2col_test.exe 32 32 512 512 1 1 1 1
+./convolution_im2col_test.exe 32 32 1024 1024 1 1 1 1
+./convolution_im2col_test.exe 128 128 256 512 1 1 1 1
+
+./convolution_1x1_test.exe 32 32 512 512 1 1 1 1
+./convolution_1x1_test.exe 32 32 1024 1024 1 1 1 1
+./convolution_1x1_test.exe 128 128 256 512 1 1 1 1
 */
